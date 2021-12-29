@@ -1,0 +1,28 @@
+{
+  "codemetrics.basics.ComplexityLevelExtreme": 25,
+  "codemetrics.basics.ComplexityLevelExtremeDescription": "Extreme",
+  "codemetrics.basics.ComplexityLevelHigh": 10,
+  "codemetrics.basics.ComplexityLevelHighDescription": "High",
+  "codemetrics.basics.ComplexityLevelNormal": 5,
+  "codemetrics.basics.ComplexityLevelNormalDescription": "Normal",
+  "codemetrics.basics.ComplexityLevelLow": 0,
+  "codemetrics.basics.ComplexityLevelLowDescription": "Low",
+  "codemetrics.basics.ComplexityTemplate": "{1} complexity: {0}",
+  "codemetrics.basics.DecorationModeEnabled": false,
+  "codemetrics.basics.Exclude": ["**/*.spec.ts"],
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.rulers": [120],
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "typescriptHero.imports.multiLineWrapThreshold": 120,
+  "typescriptHero.imports.organizeOnSave": true,
+  "typescriptHero.imports.multiLineTrailingComma": true,
+  "typescriptHero.imports.grouping": ["Plains", "Modules", "Workspace"],
+  "sonarlint.analyzerProperties": {
+    "sonar.typescript.exclusions": "**/*.spec.ts"
+  }
+}

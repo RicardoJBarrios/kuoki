@@ -1,0 +1,7 @@
+{
+  "out": "../../documentation/packages/environment",
+  "entryPoints": ["./src/lib/store/index.ts", "./src/lib/service/index.ts", "./src/lib/shared/index.ts"],
+  "tsconfig": "./tsconfig.lib.json",
+  "exclude": "**/*+(index|.spec|.e2e).ts",
+  "excludeExternals": true
+}

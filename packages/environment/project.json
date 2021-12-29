@@ -27,6 +27,16 @@
         "jestConfig": "packages/environment/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "docs": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npx typedoc --options packages/environment/typedoc.json"
+          }
+        ]
+      }
     }
   },
   "tags": []
