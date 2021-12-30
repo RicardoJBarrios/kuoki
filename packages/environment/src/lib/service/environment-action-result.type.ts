@@ -1,4 +1,4 @@
-import { Path } from '../shared';
+import { Path } from '../path';
 import { Property } from '../store';
 
 /**

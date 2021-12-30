@@ -1,4 +1,4 @@
-import { isValidPath } from './path';
+import { isValidPath } from './is-valid-path.function';
 
 describe('isValidPath(value)', () => {
   it(`returns false if no string or Array`, () => {

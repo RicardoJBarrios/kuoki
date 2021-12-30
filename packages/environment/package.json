@@ -1,5 +1,9 @@
 {
   "name": "@kuoki/environment",
+  "description": "A Reactive Environment Management for JS Applications",
   "version": "0.0.1",
-  "type": "commonjs"
+  "type": "commonjs",
+  "peerDependencies": {
+    "lodash-es": ">=4.0.0"
+  }
 }

@@ -1,6 +1,7 @@
 import { get, mergeWith, set } from 'lodash-es';
 
-import { asMutable, isValidPath, Path, pathAsArray, pathAsString } from '../shared';
+import { asMutable } from '../mutation';
+import { isValidPath, Path, pathAsArray, pathAsString } from '../path';
 import { Environment, EnvironmentStore, Property } from '../store';
 import { EnvironmentActionResult } from './environment-action-result.type';
 import { isOverwritingAPathValue } from './is-overwriting-a-path-value.function';
