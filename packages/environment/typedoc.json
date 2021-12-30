@@ -8,5 +8,6 @@
   ],
   "tsconfig": "./tsconfig.lib.json",
   "exclude": "**/*+(index|.spec|.e2e).ts",
-  "excludeExternals": true
+  "excludeExternals": true,
+  "plugin": ["typedoc-plugin-missing-exports"]
 }
