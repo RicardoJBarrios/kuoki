@@ -3,11 +3,12 @@
   "entryPoints": [
     "./src/lib/store/index.ts",
     "./src/lib/service/index.ts",
+    "./src/lib/query/index.ts",
     "./src/lib/path/index.ts",
+    "./src/lib/filters/index.ts",
     "./src/lib/mutation/index.ts"
   ],
   "tsconfig": "./tsconfig.lib.json",
   "exclude": "**/*+(index|.spec|.e2e).ts",
-  "excludeExternals": true,
   "plugin": ["typedoc-plugin-missing-exports"]
 }
