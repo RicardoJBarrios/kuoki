@@ -2,8 +2,6 @@ const nxPreset = require('@nrwl/jest/preset');
 
 module.exports = {
   ...nxPreset,
-  moduleNameMapper: {
-    ...nxPreset.moduleNameMapper,
-    '^lodash-es$': 'lodash',
-  },
+  setupFilesAfterEnv: [...(nxPreset.setupFilesAfterEnv ?? []), 'jest-extended/all'],
+  moduleNameMapper: { ...(nxPreset.moduleNameMapper ?? {}), '^lodash-es$': 'lodash' },
 };
