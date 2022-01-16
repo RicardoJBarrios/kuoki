@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { Environment } from './environment.type';
+import { EnvironmentState } from './environment-state.type';
 
 /**
  * Stores the environment properties that the application needs.
@@ -14,7 +14,7 @@ export abstract class EnvironmentStore {
    * store.getAll$(); // ^-{a:0}--{a:0,b:0}-
    * ```
    */
-  abstract getAll$(): Observable<Environment>;
+  abstract getAll$(): Observable<EnvironmentState>;
 
   /**
    * Gets all properties from the environment store.
@@ -24,7 +24,7 @@ export abstract class EnvironmentStore {
    * store.getAll(); // {a:0}
    * ```
    */
-  abstract getAll(): Environment;
+  abstract getAll(): EnvironmentState;
 
   /**
    * Updates the environment store.
@@ -34,7 +34,7 @@ export abstract class EnvironmentStore {
    * store.update({a:0});
    * ```
    */
-  abstract update(environment: Environment): void;
+  abstract update(environment: EnvironmentState): void;
 
   /**
    * Resets the environment store to the initial state.

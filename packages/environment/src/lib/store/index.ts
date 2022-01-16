@@ -1,6 +1,22 @@
 /**
  * > Stores the environment properties that the application needs.
  *
+ * It is important to ensure that **the store update is an overwrite and not a partial update**,
+ * as the service will manage the entire environment in the implementation,
+ * and a partial update can cause inconsistencies.
+ *
+ * ```js
+ * // Overwrite
+ * // EnvironmentState = {a:0}
+ * store.update({ b: 0 });
+ * // EnvironmentState = {b:0}
+ *
+ * // Partial Update
+ * // EnvironmentState = {a:0}
+ * store.update({ b: 0 });
+ * // EnvironmentState = {a:0,b:0}
+ * ```
+ *
  * ## Use cases
  *
  * Below we present the implementation of this gateway with some state managers.
@@ -71,5 +87,5 @@
  * @module EnvironmentStore
  */
 export * from './environment-store.gateway';
-export * from './environment.type';
+export * from './environment-state.type';
 export * from './property.type';
