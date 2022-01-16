@@ -5,6 +5,7 @@
     "./src/lib/path/index.ts",
     "./src/lib/query/index.ts",
     "./src/lib/service/index.ts",
+    "./src/lib/source/index.ts",
     "./src/lib/store/index.ts"
   ],
   "tsconfig": "./tsconfig.lib.json",
