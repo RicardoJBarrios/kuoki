@@ -1,7 +1,13 @@
 {
   "name": "@kuoki/environment",
-  "description": "A Reactive Environment Management for JS Applications",
   "version": "0.0.1",
+  "description": "A Reactive Environment Management for JS Applications",
+  "keywords": [
+    "environment",
+    "Kuoki",
+    "reactive",
+    "RxJS"
+  ],
   "type": "commonjs",
   "peerDependencies": {
     "lodash-es": ">=4.0.0",
