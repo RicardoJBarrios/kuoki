@@ -1,10 +1,5 @@
 /**
  * > Gets the properties from the environment.
- *
- * ## Use cases
- *
- * ```js
- * ```
  * @module EnvironmentQuery
  */
 export * from './environment-query-config-factory.function';
