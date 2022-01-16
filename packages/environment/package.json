@@ -23,5 +23,6 @@
     "lodash-es": ">=4.0.0",
     "rxjs": ">=7.0.0",
     "uuid": ">=8.0.0"
-  }
+  },
+  "private": false
 }
