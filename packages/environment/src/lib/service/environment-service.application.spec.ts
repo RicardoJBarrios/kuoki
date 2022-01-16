@@ -1,16 +1,16 @@
 import { Observable } from 'rxjs';
 
-import { Environment, EnvironmentStore } from '../store';
-import { EnvironmentService } from './environment-service.gateway';
+import { EnvironmentState, EnvironmentStore } from '../store';
+import { EnvironmentService } from './environment-service.application';
 
 class TestStore extends EnvironmentStore {
-  getAll$(): Observable<Environment> {
+  getAll$(): Observable<EnvironmentState> {
     throw new Error('Method not implemented.');
   }
-  getAll(): Environment {
+  getAll(): EnvironmentState {
     throw new Error('Method not implemented.');
   }
-  update(environment: Environment): void {
+  update(environment: EnvironmentState): void {
     throw new Error('Method not implemented.');
   }
   reset(): void {
@@ -19,14 +19,14 @@ class TestStore extends EnvironmentStore {
 }
 
 describe('EnvironmentService', () => {
-  let environment: Environment;
-  let immutableEnvironment: Readonly<Environment>;
+  let state: EnvironmentState;
+  let readonlyState: Readonly<EnvironmentState>;
   let store: EnvironmentStore;
   let service: EnvironmentService;
 
   beforeEach(() => {
-    environment = { a: 0, x: { y: 0 }, z: [0] };
-    immutableEnvironment = Object.freeze({ a: 1, x: Object.freeze({ y: 0 }), z: [0] });
+    state = { a: 0, x: { y: 0 }, z: [0] };
+    readonlyState = Object.freeze({ a: 1, x: Object.freeze({ y: 0 }), z: [0] });
     store = new TestStore();
     service = new EnvironmentService(store);
   });
@@ -53,7 +53,7 @@ describe('EnvironmentService', () => {
 
   describe('create(path, value)', () => {
     beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(environment);
+      jest.spyOn(store, 'getAll').mockReturnValue(state);
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
@@ -88,7 +88,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'x.z';
       const value = 0;
       expect(store.update).not.toHaveBeenCalled();
@@ -142,7 +142,7 @@ describe('EnvironmentService', () => {
 
   describe('update(path, value)', () => {
     beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(environment);
+      jest.spyOn(store, 'getAll').mockReturnValue(state);
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
@@ -162,7 +162,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'x.y';
       const value = 1;
       expect(store.update).not.toHaveBeenCalled();
@@ -202,7 +202,7 @@ describe('EnvironmentService', () => {
 
   describe('upsert(path, value)', () => {
     beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(environment);
+      jest.spyOn(store, 'getAll').mockReturnValue(state);
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
@@ -237,7 +237,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'x.y';
       const value = 1;
       expect(store.update).not.toHaveBeenCalled();
@@ -263,7 +263,7 @@ describe('EnvironmentService', () => {
 
   describe('delete(path)', () => {
     beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(environment);
+      jest.spyOn(store, 'getAll').mockReturnValue(state);
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
@@ -281,7 +281,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'x.y';
       expect(store.update).not.toHaveBeenCalled();
       service.delete(path);
@@ -316,7 +316,7 @@ describe('EnvironmentService', () => {
 
   describe('add(properties, path?)', () => {
     beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(environment);
+      jest.spyOn(store, 'getAll').mockReturnValue(state);
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
@@ -349,7 +349,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'b';
       const value = { b: 0 };
       expect(store.update).not.toHaveBeenCalled();
@@ -392,7 +392,7 @@ describe('EnvironmentService', () => {
 
   describe('merge(properties, path?)', () => {
     beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(environment);
+      jest.spyOn(store, 'getAll').mockReturnValue(state);
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
@@ -425,7 +425,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'b';
       const value = { b: 0 };
       expect(store.update).not.toHaveBeenCalled();
@@ -435,7 +435,7 @@ describe('EnvironmentService', () => {
     });
 
     it(`updates the environment store merging existing object properties`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(immutableEnvironment);
+      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
       const path = 'x';
       const value = { z: 0 };
       expect(store.update).not.toHaveBeenCalled();
