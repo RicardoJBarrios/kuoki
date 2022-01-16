@@ -1,7 +1,7 @@
 /**
- * Configuration parameters for the Environment module.
+ * Configuration parameters for the {@link EnvironmentQuery}.
  */
-export interface EnvironmentConfig {
+export interface EnvironmentQueryConfig {
   /**
    * The start and end markings for interpolation parameters.
    */

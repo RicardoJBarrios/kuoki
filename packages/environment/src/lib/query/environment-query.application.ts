@@ -1,27 +1,31 @@
 import { get, isEqual, isString, mergeWith } from 'lodash-es';
 import { combineLatest, firstValueFrom, MonoTypeOperatorFunction, Observable } from 'rxjs';
-import { distinctUntilChanged, filter, map, shareReplay, take } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 
 import { AtLeastOne, filterNil } from '../helpers';
 import { Path } from '../path';
 import { mergeArraysCustomizer } from '../shared';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
-import { environmentConfigFactory } from './environment-config-factory.function';
-import { EnvironmentConfig } from './environment-config.interface';
+import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
+import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { GetOptions } from './get-options.interface';
+import { GetProperty } from './get-property.type';
 
 /**
  * Gets the properties from the environment.
  */
 export class EnvironmentQuery {
-  private readonly _config: Required<EnvironmentConfig> = environmentConfigFactory(this.config);
+  /**
+   * The configuration parameters for the environment query.
+   */
+  protected readonly config: Required<EnvironmentQueryConfig> = environmentQueryConfigFactory(this.queryConfig);
 
   /**
    * Gets the properties from the environment store.
    * @param store Manages the environment store.
-   * @param config Partial configuration parameters for the Environment module.
+   * @param queryConfig Partial configuration parameters for the environment query.
    */
-  constructor(protected readonly store: EnvironmentStore, protected readonly config?: EnvironmentConfig) {}
+  constructor(protected readonly store: EnvironmentStore, protected readonly queryConfig?: EnvironmentQueryConfig) {}
 
   /**
    * Gets all the environment properties.
@@ -38,7 +42,7 @@ export class EnvironmentQuery {
   async getAllAsync(): Promise<EnvironmentState> {
     const getAll$: Observable<EnvironmentState> = this.getAll$().pipe(
       filterNil(),
-      filter((environment: EnvironmentState) => Object.keys(environment).length > 0),
+      filter((state: EnvironmentState) => Object.keys(state).length > 0),
     );
 
     return firstValueFrom(getAll$);
@@ -168,7 +172,7 @@ export class EnvironmentQuery {
    */
   get$<T = Property>(path: Path, options?: GetOptions<T>): Observable<T | undefined> {
     return this.getAll$().pipe(
-      map((environment: EnvironmentState) => this._getProperty(environment, path)),
+      map((state: EnvironmentState) => this._getProperty(state, path)),
       map((property?: Property) => this._getDefaultValue(property, options?.defaultValue)),
       map((property?: Property) => this._getTargetType(property, options?.targetType)),
       map((property?: Property | T) =>
@@ -186,7 +190,7 @@ export class EnvironmentQuery {
    * @see Path
    */
   getAsync<T = Property>(path: Path, options?: GetOptions<T>): Promise<T | undefined> {
-    const get$: Observable<T | undefined> = this.get$<T>(path, options).pipe(filterNil(), take(1));
+    const get$: Observable<T | undefined> = this.get$<T>(path, options).pipe(filterNil());
 
     return firstValueFrom(get$);
   }
@@ -199,9 +203,9 @@ export class EnvironmentQuery {
    * @see Path
    */
   get<T = Property>(path: Path, options?: GetOptions<T>): T | undefined {
-    const environment: EnvironmentState = this.getAll();
+    const state: EnvironmentState = this.getAll();
 
-    let property: Property | T | undefined = this._getProperty(environment, path);
+    let property: GetProperty<T> = this._getProperty(state, path);
     property = this._getDefaultValue(property, options?.defaultValue);
     property = this._getTargetType(property, options?.targetType);
     property = this._getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment);
@@ -209,15 +213,15 @@ export class EnvironmentQuery {
     return property as T;
   }
 
-  private _getProperty(environment: EnvironmentState, path: Path): Property | undefined {
-    return get(environment, path);
+  private _getProperty(state: EnvironmentState, path: Path): Property | undefined {
+    return get(state, path);
   }
 
   private _getDefaultValue(property?: Property, defaultValue?: Property): Property | undefined {
     return property === undefined && defaultValue !== undefined ? defaultValue : property;
   }
 
-  private _getTargetType<T>(property?: Property, targetType?: (property: Property) => T): Property | T | undefined {
+  private _getTargetType<T>(property?: Property, targetType?: (property: Property) => T): GetProperty<T> {
     return property !== undefined && targetType !== undefined ? targetType(property) : property;
   }
 
@@ -225,10 +229,10 @@ export class EnvironmentQuery {
     property?: Property | T,
     transpile?: EnvironmentState,
     interpolation?: [string, string],
-    useEnvironmentToTranspile?: boolean,
-  ): Property | T | undefined {
+    transpileEnvironment?: boolean,
+  ): GetProperty<T> {
     return property !== undefined && transpile !== undefined
-      ? this._transpile(transpile, property, interpolation, useEnvironmentToTranspile)
+      ? this._transpile(transpile, property, interpolation, transpileEnvironment)
       : property;
   }
 
@@ -236,16 +240,16 @@ export class EnvironmentQuery {
     transpile: EnvironmentState,
     property?: Property | T,
     interpolation?: [string, string],
-    useEnvironmentToTranspile?: boolean,
-  ): Property | T | undefined {
-    const config: Required<EnvironmentConfig> = this._config;
+    transpileEnvironment?: boolean,
+  ): GetProperty<T> {
+    const config: Required<EnvironmentQueryConfig> = this.config;
 
     if (interpolation != null) {
       config.interpolation = interpolation;
     }
 
-    if (useEnvironmentToTranspile != null) {
-      config.transpileEnvironment = useEnvironmentToTranspile;
+    if (transpileEnvironment != null) {
+      config.transpileEnvironment = transpileEnvironment;
     }
 
     if (isString(property)) {
@@ -276,14 +280,14 @@ export class EnvironmentQuery {
     return [...chars].map((char: string) => `\\${char}`).join('');
   }
 
-  private _getTranspileProperties(properties: EnvironmentState, useEnvironmentToTranspile: boolean): EnvironmentState {
-    if (!useEnvironmentToTranspile) {
+  private _getTranspileProperties(properties: EnvironmentState, transpileEnvironment: boolean): EnvironmentState {
+    if (!transpileEnvironment) {
       return properties;
     }
 
-    const environment: EnvironmentState = this.store.getAll();
+    const state: EnvironmentState = this.store.getAll();
 
-    return mergeWith(environment, properties, mergeArraysCustomizer);
+    return mergeWith(state, properties, mergeArraysCustomizer);
   }
 
   private _replacer(substring: string, match: string, properties: EnvironmentState): string {

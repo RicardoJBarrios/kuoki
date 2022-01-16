@@ -7,7 +7,8 @@
  * ```
  * @module EnvironmentQuery
  */
-export * from './environment-config-factory.function';
-export * from './environment-config.interface';
-export * from './environment-query.gateway';
+export * from './environment-query-config-factory.function';
+export * from './environment-query-config.interface';
+export * from './environment-query.application';
 export * from './get-options.interface';
+export * from './get-property.type';

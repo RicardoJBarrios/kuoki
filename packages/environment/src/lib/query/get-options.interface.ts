@@ -1,16 +1,23 @@
 import { EnvironmentState, Property } from '../store';
-import { EnvironmentConfig } from './environment-config.interface';
+import { EnvironmentQueryConfig } from './environment-query-config.interface';
 
 /**
  * The options to get a property.
+ * @typeParam T The expected property value type.
  */
-export interface GetOptions<T = unknown> extends EnvironmentConfig {
+export interface GetOptions<T> extends EnvironmentQueryConfig {
   /**
    * The default value to resolve if no value is found.
    */
   defaultValue?: Property;
   /**
-   * The expected type converter function.
+   * Converts the returned value.
+   * @param property The value of the property at path.
+   * @returns The converted value.
+   * @example
+   * ```js
+   * { targetType: (property) => String(property) }
+   * ```
    */
   targetType?: (property: Property) => T;
   /**
