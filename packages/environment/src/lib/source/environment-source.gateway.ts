@@ -8,6 +8,11 @@ import { EnvironmentState } from '../store';
  */
 export abstract class EnvironmentSource {
   /**
+   * The internal id.
+   */
+  id?: string;
+
+  /**
    * The source name.
    */
   name?: string;
