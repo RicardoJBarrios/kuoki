@@ -1,5 +1,5 @@
 {
-  "out": "../../documentation/packages/environment",
+  "out": "../../docs/environment/api",
   "entryPoints": [
     "./src/lib/helpers/index.ts",
     "./src/lib/loader/index.ts",
