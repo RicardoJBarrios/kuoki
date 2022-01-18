@@ -66,7 +66,7 @@ export class EnvironmentService {
       return { code: 422, path: pathAsString(path), value };
     }
 
-    this._upsertStore(state, path, value);
+    this.upsertStore(state, path, value);
 
     return { code: 201, path: pathAsString(path), value };
   }
@@ -103,7 +103,7 @@ export class EnvironmentService {
       return { code: 422, path: pathAsString(path), value };
     }
 
-    this._upsertStore(state, path, value);
+    this.upsertStore(state, path, value);
 
     return { code: 200, path: pathAsString(path), value };
   }
@@ -136,7 +136,7 @@ export class EnvironmentService {
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
-    this._upsertStore(state, path, value);
+    this.upsertStore(state, path, value);
 
     return { code: property === undefined ? 201 : 200, path: pathAsString(path), value };
   }
@@ -172,12 +172,12 @@ export class EnvironmentService {
       return { code: 422, path: pathAsString(path) };
     }
 
-    this._upsertStore(state, path);
+    this.upsertStore(state, path);
 
     return { code: 200, path: pathAsString(path) };
   }
 
-  private _upsertStore(state: EnvironmentState, path: Path, value?: Property): void {
+  protected upsertStore(state: EnvironmentState, path: Path, value?: Property): void {
     const mutableState: EnvironmentState = mutable(state);
     const newState: EnvironmentState = set(mutableState, path, value);
 
