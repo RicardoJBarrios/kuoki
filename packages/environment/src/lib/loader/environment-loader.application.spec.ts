@@ -164,7 +164,7 @@ errorIgnoreRequiredSource[0].requiredToLoad = true;
 
 class ErrorMessageSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
-    return throwError(111).pipe(delayThrow(5));
+    return throwError(() => new Error('111')).pipe(delayThrow(5));
   }
 }
 
