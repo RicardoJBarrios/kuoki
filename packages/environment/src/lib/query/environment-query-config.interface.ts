@@ -1,5 +1,6 @@
 /**
- * Configuration parameters for the {@link EnvironmentQuery}.
+ * Configuration parameters for the EnvironmentQuery.
+ * @see {@link EnvironmentQuery}
  */
 export interface EnvironmentQueryConfig {
   /**
