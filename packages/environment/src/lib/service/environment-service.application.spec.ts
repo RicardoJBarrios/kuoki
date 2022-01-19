@@ -1,22 +1,6 @@
-import { Observable } from 'rxjs';
-
 import { EnvironmentState, EnvironmentStore } from '../store';
+import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
 import { EnvironmentService } from './environment-service.application';
-
-class TestStore extends EnvironmentStore {
-  getAll$(): Observable<EnvironmentState> {
-    throw new Error('Method not implemented.');
-  }
-  getAll(): EnvironmentState {
-    throw new Error('Method not implemented.');
-  }
-  update(environment: EnvironmentState): void {
-    throw new Error('Method not implemented.');
-  }
-  reset(): void {
-    throw new Error('Method not implemented.');
-  }
-}
 
 describe('EnvironmentService', () => {
   let state: EnvironmentState;
@@ -27,7 +11,7 @@ describe('EnvironmentService', () => {
   beforeEach(() => {
     state = { a: 0, x: { y: 0 }, z: [0] };
     readonlyState = Object.freeze({ a: 1, x: Object.freeze({ y: 0 }), z: [0] });
-    store = new TestStore();
+    store = new TestEnvironmentStore();
     service = new EnvironmentService(store);
   });
 
