@@ -2,6 +2,7 @@
  * > Gets the properties from the environment.
  * @module EnvironmentQuery
  */
+export * from './create-environment-query.function';
 export * from './environment-query-config-factory.function';
 export * from './environment-query-config.interface';
 export * from './environment-query.application';
