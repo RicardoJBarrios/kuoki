@@ -34,6 +34,9 @@
         "commands": [
           {
             "command": "npx typedoc --options packages/environment/typedoc.json"
+          },
+          {
+            "command": "nx test environment --code-coverage"
           }
         ]
       }
