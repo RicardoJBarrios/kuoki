@@ -21,7 +21,7 @@ jobs:
         with:
           projectBaseDir: packages/environment/
           args: >
-            -Dsonar.organization=my-kuoki
+            -Dsonar.organization=kuoki
             -Dsonar.projectKey=kuoki-environment
             -Dsonar.projectName=Environment
             -Dsonar.sources=src/lib
