@@ -20,13 +20,13 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           projectBaseDir: packages/environment/
-        args: >
-          -Dsonar.organization=my-kuoki
-          -Dsonar.projectKey=kuoki-environment
-          -Dsonar.projectName=Environment
-          -Dsonar.sources=src/lib
-          -Dsonar.exclusions=**/*.spec.ts
-          -Dsonar.sourceEncoding=UTF-8
+          args: >
+            -Dsonar.organization=my-kuoki
+            -Dsonar.projectKey=kuoki-environment
+            -Dsonar.projectName=Environment
+            -Dsonar.sources=src/lib
+            -Dsonar.exclusions=**/*.spec.ts
+            -Dsonar.sourceEncoding=UTF-8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
