@@ -22,7 +22,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/environment"],
+      "outputs": ["docs/environment/coverage/lcov-report"],
       "options": {
         "jestConfig": "packages/environment/jest.config.js",
         "passWithNoTests": true
@@ -34,6 +34,9 @@
         "commands": [
           {
             "command": "npx typedoc --options packages/environment/typedoc.json"
+          },
+          {
+            "command": "nx test environment --code-coverage"
           }
         ]
       }

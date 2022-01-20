@@ -50,13 +50,17 @@ export class EnvironmentLoader {
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
-   * @returns A promise to load once the `requiredToLoad` sources are loaded.
+   * @returns A promise once the `requiredToLoad` sources are loaded.
+   * @example
+   * ```js
+   * loader.load().then(() => {})
+   * ```
    */
   async load(): Promise<void> {
     lifecycleHook(this, 'onBeforeLoad');
 
-    this._watchRequiredToLoadSources();
-    this._loadSources();
+    this.watchRequiredToLoadSources();
+    this.loadSources();
 
     return firstValueFrom(this.loadSubject$)
       .then(() => {
@@ -66,11 +70,10 @@ export class EnvironmentLoader {
       .catch(<E>(error: E) => {
         lifecycleHook(this, 'onAfterError', error);
         throw error;
-      })
-      .finally(() => this.onDestroy());
+      });
   }
 
-  private _watchRequiredToLoadSources(): void {
+  protected watchRequiredToLoadSources(): void {
     const requiredToLoadSources: Set<string> = new Set(
       this.loaderSources
         .filter((source: Required<EnvironmentSource>) => source.requiredToLoad)
@@ -86,31 +89,36 @@ export class EnvironmentLoader {
       .subscribe();
   }
 
-  private _loadSources(): void {
-    merge(this._loadOrderedSources(), this._loadUnorderedSources())
-      .pipe(finalize(() => lifecycleHook(this, 'onAfterComplete')))
+  protected loadSources(): void {
+    merge(this.loadOrderedSources(), this.loadUnorderedSources())
+      .pipe(
+        finalize(() => {
+          lifecycleHook(this, 'onAfterComplete');
+          this.onDestroy();
+        }),
+      )
       .subscribe();
   }
 
-  private _loadOrderedSources(): Observable<EnvironmentState> {
+  protected loadOrderedSources(): Observable<EnvironmentState> {
     const orderedSources: Required<EnvironmentSource>[] = this.loaderSources.filter(
       (source: Required<EnvironmentSource>) => source.loadInOrder,
     );
-    const orderedSources$: Observable<EnvironmentState>[] = this._getSources$(orderedSources);
+    const orderedSources$: Observable<EnvironmentState>[] = this.getSources$(orderedSources);
 
     return concat(...orderedSources$);
   }
 
-  private _loadUnorderedSources(): Observable<EnvironmentState> {
+  protected loadUnorderedSources(): Observable<EnvironmentState> {
     const unorderedSources: Required<EnvironmentSource>[] = this.loaderSources.filter(
       (source: Required<EnvironmentSource>) => !source.loadInOrder,
     );
-    const unorderedSources$: Observable<EnvironmentState>[] = this._getSources$(unorderedSources);
+    const unorderedSources$: Observable<EnvironmentState>[] = this.getSources$(unorderedSources);
 
     return merge(...unorderedSources$);
   }
 
-  private _getSources$(sources: Required<EnvironmentSource>[]): Observable<EnvironmentState>[] {
+  protected getSources$(sources: Required<EnvironmentSource>[]): Observable<EnvironmentState>[] {
     return sources.map((source: Required<EnvironmentSource>) => {
       return defer(() => {
         lifecycleHook(this, 'onBeforeSourceLoad', source);
@@ -121,16 +129,16 @@ export class EnvironmentLoader {
           next: (properties: EnvironmentState) => {
             lifecycleHook(this, 'onBeforeSourceAdd', properties, source);
             const modifiedProperties: EnvironmentState = this.preAddProperties(properties, source);
-            this._saveSourceValueToStore(modifiedProperties, source);
+            this.saveSourceValueToStore(modifiedProperties, source);
             lifecycleHook(this, 'onAfterSourceAdd', modifiedProperties, source);
           },
         }),
-        catchError(<E>(error: E) => this._checkSourceLoadError(error, source)),
+        catchError(<E>(error: E) => this.checkSourceLoadError(error, source)),
         finalize(() => {
           lifecycleHook(this, 'onAfterSourceComplete', source);
-          this._checkRequiredToLoad(source);
+          this.checkRequiredToLoad(source);
         }),
-        takeUntil(this._getSafeSourceSubject$(source.id)),
+        takeUntil(this.getSafeSourceSubject$(source.id)),
       );
     });
   }
@@ -145,7 +153,7 @@ export class EnvironmentLoader {
     return properties;
   }
 
-  private _saveSourceValueToStore(properties: EnvironmentState, source: Required<EnvironmentSource>): void {
+  protected saveSourceValueToStore(properties: EnvironmentState, source: Required<EnvironmentSource>): void {
     if (source.mergeProperties) {
       this.service.merge(properties, source.path);
     } else {
@@ -153,8 +161,8 @@ export class EnvironmentLoader {
     }
   }
 
-  private _checkSourceLoadError<E>(error: E, source: Required<EnvironmentSource>): Observable<EnvironmentState> {
-    const newError: Error = this._getError(error);
+  protected checkSourceLoadError<E>(error: E, source: Required<EnvironmentSource>): Observable<EnvironmentState> {
+    const newError: Error = this.getError(error);
     const sourceId: string = source.name ?? source.id;
     const originalMessage: string = newError.message ? `: ${newError.message}` : '';
     newError.message = `The Environment EnvironmentSource "${sourceId}" failed to load${originalMessage}`;
@@ -168,7 +176,7 @@ export class EnvironmentLoader {
     return of({});
   }
 
-  private _getError<E>(error: E): Error {
+  protected getError<E>(error: E): Error {
     if (error instanceof Error) {
       return error;
     }
@@ -179,7 +187,7 @@ export class EnvironmentLoader {
     return newError;
   }
 
-  private _checkRequiredToLoad(source: Required<EnvironmentSource>): void {
+  protected checkRequiredToLoad(source: Required<EnvironmentSource>): void {
     if (source.requiredToLoad) {
       const requiredToLoadLoaded: Set<string> = this.requiredToLoadSubject$.getValue().add(source.id);
 
@@ -187,7 +195,7 @@ export class EnvironmentLoader {
     }
   }
 
-  private _getSafeSourceSubject$(id: string): ReplaySubject<void> {
+  protected getSafeSourceSubject$(id: string): ReplaySubject<void> {
     let subject: ReplaySubject<void> | undefined = this.sourcesSubject$.get(id);
 
     if (subject === undefined) {
@@ -228,7 +236,7 @@ export class EnvironmentLoader {
 
     if (sourceSubject$ != null) {
       sourceSubject$.next();
-      this._checkRequiredToLoad(source);
+      this.checkRequiredToLoad(source);
     }
   }
 

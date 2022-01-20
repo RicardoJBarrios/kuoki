@@ -63,10 +63,10 @@ export class EnvironmentQuery {
    * @see Path
    */
   containsAll$(...paths: AtLeastOne<Path>): Observable<boolean> {
-    const containsList$: Observable<boolean>[] = paths.map((path: Path) => this._contains$(path));
+    const containsList$: Observable<boolean>[] = paths.map((path: Path) => this.containsImpl$(path));
 
     return combineLatest(containsList$).pipe(
-      map((containsList: Array<boolean>) => this._containsAll(containsList)),
+      map((containsList: Array<boolean>) => this.containsAllImpl(containsList)),
       distinctUntilChanged(),
     );
   }
@@ -78,7 +78,7 @@ export class EnvironmentQuery {
    * @see Path
    */
   containsAllAsync(...paths: AtLeastOne<Path>): Promise<boolean> {
-    const containsAll$: Observable<boolean> = this.containsAll$(...paths).pipe(this._containsAsync());
+    const containsAll$: Observable<boolean> = this.containsAll$(...paths).pipe(this.containsAsyncImpl());
 
     return firstValueFrom(containsAll$);
   }
@@ -90,9 +90,9 @@ export class EnvironmentQuery {
    * @see Path
    */
   containsAll(...paths: AtLeastOne<Path>): boolean {
-    const containsList: Array<boolean> = paths.map((path: Path) => this._contains(path));
+    const containsList: Array<boolean> = paths.map((path: Path) => this.containsImpl(path));
 
-    return this._containsAll(containsList);
+    return this.containsAllImpl(containsList);
   }
 
   /**
@@ -102,10 +102,10 @@ export class EnvironmentQuery {
    * @see Path
    */
   containsSome$(...paths: AtLeastOne<Path>): Observable<boolean> {
-    const containsList$: Observable<boolean>[] = paths.map((path: Path) => this._contains$(path));
+    const containsList$: Observable<boolean>[] = paths.map((path: Path) => this.containsImpl$(path));
 
     return combineLatest(containsList$).pipe(
-      map((containsList: Array<boolean>) => this._containsSome(containsList)),
+      map((containsList: Array<boolean>) => this.containsSomeImpl(containsList)),
       distinctUntilChanged(),
     );
   }
@@ -117,7 +117,7 @@ export class EnvironmentQuery {
    * @see Path
    */
   containsSomeAsync(...paths: AtLeastOne<Path>): Promise<boolean> {
-    const containsSome$: Observable<boolean> = this.containsSome$(...paths).pipe(this._containsAsync());
+    const containsSome$: Observable<boolean> = this.containsSome$(...paths).pipe(this.containsAsyncImpl());
 
     return firstValueFrom(containsSome$);
   }
@@ -129,37 +129,37 @@ export class EnvironmentQuery {
    * @see Path
    */
   containsSome(...paths: AtLeastOne<Path>): boolean {
-    const containsList: Array<boolean> = paths.map((path: Path) => this._contains(path));
+    const containsList: Array<boolean> = paths.map((path: Path) => this.containsImpl(path));
 
-    return this._containsSome(containsList);
+    return this.containsSomeImpl(containsList);
   }
 
-  private _containsDef(property?: Property): boolean {
+  protected containsDefImpl(property?: Property): boolean {
     return property !== undefined;
   }
 
-  private _contains$(path: Path): Observable<boolean> {
+  protected containsImpl$(path: Path): Observable<boolean> {
     return this.get$<Property>(path).pipe(
-      map((property?: Property) => this._containsDef(property)),
+      map((property?: Property) => this.containsDefImpl(property)),
       distinctUntilChanged(),
     );
   }
 
-  private _contains(path: Path): boolean {
+  protected containsImpl(path: Path): boolean {
     const property: Property | undefined = this.get(path);
 
-    return this._containsDef(property);
+    return this.containsDefImpl(property);
   }
 
-  private _containsAsync(): MonoTypeOperatorFunction<boolean> {
+  protected containsAsyncImpl(): MonoTypeOperatorFunction<boolean> {
     return (observable: Observable<boolean>) => observable.pipe(filter((property: boolean) => property === true));
   }
 
-  private _containsAll(containsList: Array<boolean>): boolean {
+  protected containsAllImpl(containsList: Array<boolean>): boolean {
     return containsList.every((contains: boolean) => contains);
   }
 
-  private _containsSome(containsList: Array<boolean>): boolean {
+  protected containsSomeImpl(containsList: Array<boolean>): boolean {
     return containsList.some((contains: boolean) => contains);
   }
 
@@ -172,11 +172,11 @@ export class EnvironmentQuery {
    */
   get$<T = Property>(path: Path, options?: GetOptions<T>): Observable<T | undefined> {
     return this.getAll$().pipe(
-      map((state: EnvironmentState) => this._getProperty(state, path)),
-      map((property?: Property) => this._getDefaultValue(property, options?.defaultValue)),
-      map((property?: Property) => this._getTargetType(property, options?.targetType)),
+      map((state: EnvironmentState) => this.getProperty(state, path)),
+      map((property?: Property) => this.getDefaultValue(property, options?.defaultValue)),
+      map((property?: Property) => this.getTargetType(property, options?.targetType)),
       map((property?: Property | T) =>
-        this._getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment),
+        this.getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment),
       ),
       distinctUntilChanged(isEqual),
     );
@@ -205,38 +205,38 @@ export class EnvironmentQuery {
   get<T = Property>(path: Path, options?: GetOptions<T>): T | undefined {
     const state: EnvironmentState = this.getAll();
 
-    let property: GetProperty<T> = this._getProperty(state, path);
-    property = this._getDefaultValue(property, options?.defaultValue);
-    property = this._getTargetType(property, options?.targetType);
-    property = this._getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment);
+    let property: GetProperty<T> = this.getProperty(state, path);
+    property = this.getDefaultValue(property, options?.defaultValue);
+    property = this.getTargetType(property, options?.targetType);
+    property = this.getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment);
 
     return property as T;
   }
 
-  private _getProperty(state: EnvironmentState, path: Path): Property | undefined {
+  protected getProperty(state: EnvironmentState, path: Path): Property | undefined {
     return get(state, path);
   }
 
-  private _getDefaultValue(property?: Property, defaultValue?: Property): Property | undefined {
+  protected getDefaultValue(property?: Property, defaultValue?: Property): Property | undefined {
     return property === undefined && defaultValue !== undefined ? defaultValue : property;
   }
 
-  private _getTargetType<T>(property?: Property, targetType?: (property: Property) => T): GetProperty<T> {
+  protected getTargetType<T>(property?: Property, targetType?: (property: Property) => T): GetProperty<T> {
     return property !== undefined && targetType !== undefined ? targetType(property) : property;
   }
 
-  private _getTranspile<T>(
+  protected getTranspile<T>(
     property?: Property | T,
     transpile?: EnvironmentState,
     interpolation?: [string, string],
     transpileEnvironment?: boolean,
   ): GetProperty<T> {
     return property !== undefined && transpile !== undefined
-      ? this._transpile(transpile, property, interpolation, transpileEnvironment)
+      ? this.transpile(transpile, property, interpolation, transpileEnvironment)
       : property;
   }
 
-  private _transpile<T>(
+  protected transpile<T>(
     transpile: EnvironmentState,
     property?: Property | T,
     interpolation?: [string, string],
@@ -253,34 +253,34 @@ export class EnvironmentQuery {
     }
 
     if (isString(property)) {
-      const matcher: RegExp = this._getMatcher(config.interpolation);
+      const matcher: RegExp = this.getMatcher(config.interpolation);
 
       return property.replace(matcher, (substring: string, match: string) => {
-        const transpileProperties: EnvironmentState = this._getTranspileProperties(
+        const transpileProperties: EnvironmentState = this.getTranspileProperties(
           transpile,
           config.transpileEnvironment,
         );
 
-        return this._replacer(substring, match, transpileProperties);
+        return this.replacer(substring, match, transpileProperties);
       });
     }
 
     return property;
   }
 
-  private _getMatcher(interpolation: [string, string]): RegExp {
+  protected getMatcher(interpolation: [string, string]): RegExp {
     const [start, end]: [string, string] = interpolation;
-    const escapedStart: string = this._escapeChars(start);
-    const escapedEnd: string = this._escapeChars(end);
+    const escapedStart: string = this.escapeChars(start);
+    const escapedEnd: string = this.escapeChars(end);
 
     return new RegExp(`${escapedStart}\\s*(.*?)\\s*${escapedEnd}`, 'g');
   }
 
-  private _escapeChars(chars: string): string {
+  protected escapeChars(chars: string): string {
     return [...chars].map((char: string) => `\\${char}`).join('');
   }
 
-  private _getTranspileProperties(properties: EnvironmentState, transpileEnvironment: boolean): EnvironmentState {
+  protected getTranspileProperties(properties: EnvironmentState, transpileEnvironment: boolean): EnvironmentState {
     if (!transpileEnvironment) {
       return properties;
     }
@@ -290,7 +290,7 @@ export class EnvironmentQuery {
     return mergeWith(state, properties, mergeArraysCustomizer);
   }
 
-  private _replacer(substring: string, match: string, properties: EnvironmentState): string {
+  protected replacer(substring: string, match: string, properties: EnvironmentState): string {
     const value: Property | undefined = get(properties, match);
 
     if (value == null) {

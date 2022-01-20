@@ -2,6 +2,7 @@
  * > Loads the environment properties from the provided asynchronous sources.
  * @module EnvironmentLoader
  */
+export * from './create-environment-loader.function';
 export * from './environment-loader.application';
 export * from './on-after-complete.interface';
 export * from './on-after-error.interface';

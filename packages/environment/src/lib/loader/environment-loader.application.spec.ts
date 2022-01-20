@@ -15,27 +15,13 @@ import {
 
 import { EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
-import { EnvironmentState, EnvironmentStore } from '../store';
+import { EnvironmentState } from '../store';
+import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
 import { EnvironmentLoader } from './environment-loader.application';
 import { environmentSourcesFactory } from './environment-sources-factory.function';
 
 function delayThrow<T>(due: number | Date): MonoTypeOperatorFunction<T> {
   return catchError(<E>(error: E) => timer(due).pipe(mergeMap(() => throwError(() => error))));
-}
-
-class TestStore extends EnvironmentStore {
-  getAll$(): Observable<EnvironmentState> {
-    throw new Error('Method not implemented.');
-  }
-  getAll(): EnvironmentState {
-    throw new Error('Method not implemented.');
-  }
-  update(properties: EnvironmentState): void {
-    throw new Error('Method not implemented.');
-  }
-  reset(): void {
-    throw new Error('Method not implemented.');
-  }
 }
 
 class TestLoader extends EnvironmentLoader {
@@ -164,7 +150,7 @@ errorIgnoreRequiredSource[0].requiredToLoad = true;
 
 class ErrorMessageSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
-    return throwError(111).pipe(delayThrow(5));
+    return throwError(() => new Error('111')).pipe(delayThrow(5));
   }
 }
 
@@ -195,7 +181,7 @@ describe('EnvironmentLoader', () => {
   let loader: TestLoader;
 
   beforeEach(() => {
-    service = new EnvironmentService(new TestStore());
+    service = new EnvironmentService(new TestEnvironmentStore());
     loader = new TestLoader(service);
     jest.spyOn(service as any, 'add').mockImplementation((p) => null);
     jest.spyOn(service as any, 'merge').mockImplementation(() => null);
