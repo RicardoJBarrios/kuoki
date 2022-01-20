@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 16
         run: yarn install --frozen-lockfile
-        run: npx nx docs environment
+        run: yarn nx test environment --code-coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
