@@ -28,7 +28,6 @@ jobs:
             -Dsonar.projectKey=kuoki-environment
             -Dsonar.projectName=Environment
             -Dsonar.sources=packages/environment/src/lib
-            -Dsonar.exclusions=**/*.spec.ts
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.typescript.lcov.reportPaths=./packages/environment/lcov.info
         env:
