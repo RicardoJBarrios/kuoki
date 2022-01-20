@@ -23,15 +23,14 @@ jobs:
       - run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory=./packages/environment --skip-nx-cache
       - uses: SonarSource/sonarcloud-github-action@master
         with:
-          projectBaseDir: packages/environment/
           args: >
             -Dsonar.organization=kuoki
             -Dsonar.projectKey=kuoki-environment
             -Dsonar.projectName=Environment
-            -Dsonar.sources=src/lib
+            -Dsonar.sources=packages/environment/src/lib
             -Dsonar.exclusions=**/*.spec.ts
             -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.typescript.lcov.reportPaths=./lcov.info
+            -Dsonar.typescript.lcov.reportPaths=packages/environment/lcov.info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
