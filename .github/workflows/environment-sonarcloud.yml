@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Extract version
-          id: extract_version
-          uses: Saionaro/extract-package-version@v1
-          with:
-            path: packages/environment/
+        id: extract_version
+        uses: Saionaro/extract-package-version@v1
+        with:
+          path: packages/environment/
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
