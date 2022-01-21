@@ -10,7 +10,7 @@
   ],
   "homepage": "https://github.com/RicardoJBarrios/kuoki/tree/main/packages/environment",
   "bugs": {
-    "url": "https://github.com/RicardoJBarrios/kuoki/issues"
+    "url": "https://github.com/RicardoJBarrios/kuoki/labels/environment"
   },
   "license": "MIT",
   "type": "commonjs",
