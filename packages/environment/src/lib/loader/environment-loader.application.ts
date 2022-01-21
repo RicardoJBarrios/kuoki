@@ -32,6 +32,7 @@ export class EnvironmentLoader {
   protected readonly requiredToLoadSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject(new Set());
   protected readonly sourcesSubject$: Map<string, ReplaySubject<void>> = new Map();
   protected readonly loaderSources: ReadonlyArray<Required<EnvironmentSource>>;
+  protected isLoading = false;
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
@@ -58,6 +59,7 @@ export class EnvironmentLoader {
    */
   async load(): Promise<void> {
     lifecycleHook(this, 'onBeforeLoad');
+    this.isLoading = true;
 
     this.watchRequiredToLoadSources();
     this.loadSources();
@@ -70,6 +72,9 @@ export class EnvironmentLoader {
       .catch(<E>(error: E) => {
         lifecycleHook(this, 'onAfterError', error);
         throw error;
+      })
+      .finally(() => {
+        this.isLoading = false;
       });
   }
 
@@ -169,7 +174,7 @@ export class EnvironmentLoader {
 
     lifecycleHook(this, 'onAfterSourceError', newError, source);
 
-    if (source.requiredToLoad && !source.ignoreError && !this.loadSubject$.isStopped) {
+    if (source.requiredToLoad && !source.ignoreError && this.isLoading) {
       this.rejectLoad(newError);
     }
 
