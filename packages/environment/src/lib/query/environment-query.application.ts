@@ -139,7 +139,7 @@ export class EnvironmentQuery {
   }
 
   protected containsImpl$(path: Path): Observable<boolean> {
-    return this.get$<Property>(path).pipe(
+    return this.get$(path).pipe(
       map((property?: Property) => this.containsDefImpl(property)),
       distinctUntilChanged()
     );
