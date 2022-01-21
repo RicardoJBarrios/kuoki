@@ -17,7 +17,7 @@ jobs:
         id: extract_version
         uses: Saionaro/extract-package-version@v1.1.1
         with:
-          path: packages/environment/
+          path: ./packages/environment/
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
