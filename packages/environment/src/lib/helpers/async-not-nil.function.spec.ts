@@ -28,7 +28,7 @@ describe('asyncNotNil(source, due?)', () => {
     await expect(asyncNotNil(source(), 1)).rejects.toThrowError({
       ...new Error(),
       message: 'Timeout has occurred',
-      name: 'TimeoutError',
+      name: 'TimeoutError'
     });
   });
 
@@ -37,7 +37,7 @@ describe('asyncNotNil(source, due?)', () => {
     await expect(asyncNotNil(source())).rejects.toThrowError({
       ...new Error(),
       message: 'no elements in sequence',
-      name: 'EmptyError',
+      name: 'EmptyError'
     });
   });
 });

@@ -28,10 +28,10 @@ function environmentSourceFactory(source: EnvironmentSource): Required<Environme
     requiredToLoad: false,
     loadInOrder: false,
     mergeProperties: false,
-    ignoreError: false,
+    ignoreError: false
   };
 
   return assignInWith(source, defaultValues, <T>(sourceValue: T | undefined, defaultValue: T) =>
-    sourceValue === undefined ? defaultValue : sourceValue,
+    sourceValue === undefined ? defaultValue : sourceValue
   ) as Required<EnvironmentSource>;
 }

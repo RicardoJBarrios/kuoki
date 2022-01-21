@@ -14,7 +14,7 @@ import {
   ReplaySubject,
   take,
   takeUntil,
-  tap,
+  tap
 } from 'rxjs';
 import { ArrayOrSingle } from 'ts-essentials';
 
@@ -41,7 +41,7 @@ export class EnvironmentLoader {
    */
   constructor(
     protected readonly service: EnvironmentService,
-    protected readonly sources?: ArrayOrSingle<EnvironmentSource>,
+    protected readonly sources?: ArrayOrSingle<EnvironmentSource>
   ) {
     this.loaderSources = environmentSourcesFactory(this.sources);
     this.loaderSources.forEach((source: Required<EnvironmentSource>) => {
@@ -82,14 +82,14 @@ export class EnvironmentLoader {
     const requiredToLoadSources: Set<string> = new Set(
       this.loaderSources
         .filter((source: Required<EnvironmentSource>) => source.requiredToLoad)
-        .map((source: Required<EnvironmentSource>) => source.id),
+        .map((source: Required<EnvironmentSource>) => source.id)
     );
 
     this.requiredToLoadSubject$
       .pipe(
         filter((requiredToLoadLoaded: Set<string>) => isEqual(requiredToLoadLoaded, requiredToLoadSources)),
         tap({ next: () => this.resolveLoad() }),
-        take(1),
+        take(1)
       )
       .subscribe();
   }
@@ -100,14 +100,14 @@ export class EnvironmentLoader {
         finalize(() => {
           lifecycleHook(this, 'onAfterComplete');
           this.onDestroy();
-        }),
+        })
       )
       .subscribe();
   }
 
   protected loadOrderedSources(): Observable<EnvironmentState> {
     const orderedSources: Required<EnvironmentSource>[] = this.loaderSources.filter(
-      (source: Required<EnvironmentSource>) => source.loadInOrder,
+      (source: Required<EnvironmentSource>) => source.loadInOrder
     );
     const orderedSources$: Observable<EnvironmentState>[] = this.getSources$(orderedSources);
 
@@ -116,7 +116,7 @@ export class EnvironmentLoader {
 
   protected loadUnorderedSources(): Observable<EnvironmentState> {
     const unorderedSources: Required<EnvironmentSource>[] = this.loaderSources.filter(
-      (source: Required<EnvironmentSource>) => !source.loadInOrder,
+      (source: Required<EnvironmentSource>) => !source.loadInOrder
     );
     const unorderedSources$: Observable<EnvironmentState>[] = this.getSources$(unorderedSources);
 
@@ -136,14 +136,14 @@ export class EnvironmentLoader {
             const modifiedProperties: EnvironmentState = this.preAddProperties(properties, source);
             this.saveSourceValueToStore(modifiedProperties, source);
             lifecycleHook(this, 'onAfterSourceAdd', modifiedProperties, source);
-          },
+          }
         }),
         catchError(<E>(error: E) => this.checkSourceLoadError(error, source)),
         finalize(() => {
           lifecycleHook(this, 'onAfterSourceComplete', source);
           this.checkRequiredToLoad(source);
         }),
-        takeUntil(this.getSafeSourceSubject$(source.id)),
+        takeUntil(this.getSafeSourceSubject$(source.id))
       );
     });
   }

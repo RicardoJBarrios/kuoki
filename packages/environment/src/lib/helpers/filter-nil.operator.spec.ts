@@ -11,6 +11,6 @@ describe('filterNil()', () => {
       const source = m.cold('-a-b-c-d-', values);
       const expected = m.cold('-a-----d-', values);
       m.expect(source.pipe(filterNil())).toBeObservable(expected as TestObservableLike<any>);
-    }),
+    })
   );
 });

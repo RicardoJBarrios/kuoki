@@ -4,5 +4,5 @@ module.exports = {
   ...nxPreset,
   setupFilesAfterEnv: [...(nxPreset.setupFilesAfterEnv ?? []), 'jest-extended/all'],
   moduleNameMapper: { ...(nxPreset.moduleNameMapper ?? {}), '^lodash-es$': 'lodash' },
-  coverageReporters: [...(nxPreset.coverageReporters ?? []), 'lcov'],
+  coverageReporters: [...(nxPreset.coverageReporters ?? []), 'lcov']
 };

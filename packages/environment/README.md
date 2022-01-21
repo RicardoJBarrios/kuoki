@@ -61,17 +61,17 @@ const store = {
   getAll$: () => state.asObservable(),
   getAll: () => state.getValue(),
   update: (environment) => state.next(environment),
-  reset: () => state.next(initialState),
+  reset: () => state.next(initialState)
 };
 
 // env.json = { userName: 'JohnDoe01' }
 const fileSource = {
   requiredToLoad: true,
-  load: async () => fetch('env.json'),
+  load: async () => fetch('env.json')
 };
 const constSource = {
   requiredToLoad: true,
-  load: () => [{ name: 'John Doe' }],
+  load: () => [{ name: 'John Doe' }]
 };
 
 const service = createEnvironmentService(store);

@@ -149,7 +149,7 @@ describe('environmentSourcesFactory()', () => {
   it(`(sources[]) returns all as complete sources`, () => {
     const sources: Required<EnvironmentSource>[] = environmentSourcesFactory([
       new ImplementsEnvironmentSource(),
-      new ExtendsEnvironmentSource(),
+      new ExtendsEnvironmentSource()
     ]);
     expect(sources).toBeArrayOfSize(2);
     expect(validate(sources[0].id)).toBeTrue();

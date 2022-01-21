@@ -13,7 +13,7 @@ import { EnvironmentLoader } from './environment-loader.application';
  */
 export function createEnvironmentLoader(
   service: EnvironmentService,
-  sources?: ArrayOrSingle<EnvironmentSource>,
+  sources?: ArrayOrSingle<EnvironmentSource>
 ): EnvironmentLoader {
   return new EnvironmentLoader(service, sources);
 }

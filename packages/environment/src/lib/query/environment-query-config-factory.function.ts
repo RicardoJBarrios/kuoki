@@ -19,6 +19,6 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
 export function environmentQueryConfigFactory(config?: EnvironmentQueryConfig): Required<EnvironmentQueryConfig> {
   return {
     interpolation: config?.interpolation ?? ['{{', '}}'],
-    transpileEnvironment: config?.transpileEnvironment ?? false,
+    transpileEnvironment: config?.transpileEnvironment ?? false
   };
 }

@@ -42,7 +42,7 @@ export class EnvironmentQuery {
   async getAllAsync(): Promise<EnvironmentState> {
     const getAll$: Observable<EnvironmentState> = this.getAll$().pipe(
       filterNil(),
-      filter((state: EnvironmentState) => Object.keys(state).length > 0),
+      filter((state: EnvironmentState) => Object.keys(state).length > 0)
     );
 
     return firstValueFrom(getAll$);
@@ -67,7 +67,7 @@ export class EnvironmentQuery {
 
     return combineLatest(containsList$).pipe(
       map((containsList: Array<boolean>) => this.containsAllImpl(containsList)),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -106,7 +106,7 @@ export class EnvironmentQuery {
 
     return combineLatest(containsList$).pipe(
       map((containsList: Array<boolean>) => this.containsSomeImpl(containsList)),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -141,7 +141,7 @@ export class EnvironmentQuery {
   protected containsImpl$(path: Path): Observable<boolean> {
     return this.get$<Property>(path).pipe(
       map((property?: Property) => this.containsDefImpl(property)),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -176,9 +176,9 @@ export class EnvironmentQuery {
       map((property?: Property) => this.getDefaultValue(property, options?.defaultValue)),
       map((property?: Property) => this.getTargetType(property, options?.targetType)),
       map((property?: Property | T) =>
-        this.getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment),
+        this.getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment)
       ),
-      distinctUntilChanged(isEqual),
+      distinctUntilChanged(isEqual)
     );
   }
 
@@ -229,7 +229,7 @@ export class EnvironmentQuery {
     property?: Property | T,
     transpile?: EnvironmentState,
     interpolation?: [string, string],
-    transpileEnvironment?: boolean,
+    transpileEnvironment?: boolean
   ): GetProperty<T> {
     return property !== undefined && transpile !== undefined
       ? this.transpile(transpile, property, interpolation, transpileEnvironment)
@@ -240,7 +240,7 @@ export class EnvironmentQuery {
     transpile: EnvironmentState,
     property?: Property | T,
     interpolation?: [string, string],
-    transpileEnvironment?: boolean,
+    transpileEnvironment?: boolean
   ): GetProperty<T> {
     const config: Required<EnvironmentQueryConfig> = this.config;
 
@@ -258,7 +258,7 @@ export class EnvironmentQuery {
       return property.replace(matcher, (substring: string, match: string) => {
         const transpileProperties: EnvironmentState = this.getTranspileProperties(
           transpile,
-          config.transpileEnvironment,
+          config.transpileEnvironment
         );
 
         return this.replacer(substring, match, transpileProperties);

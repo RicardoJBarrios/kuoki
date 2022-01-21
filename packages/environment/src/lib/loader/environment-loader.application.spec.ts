@@ -10,7 +10,7 @@ import {
   of,
   take,
   throwError,
-  timer,
+  timer
 } from 'rxjs';
 
 import { EnvironmentService } from '../service';
@@ -102,7 +102,7 @@ class MultipleSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
     return interval(5).pipe(
       map((n) => ({ multiple: n })),
-      take(3),
+      take(3)
     );
   }
 }
@@ -168,7 +168,7 @@ class MultipleWithErrorSource extends EnvironmentSource {
         }
         return { multiple: n };
       }),
-      take(3),
+      take(3)
     );
   }
 }
@@ -240,14 +240,14 @@ describe('EnvironmentLoader', () => {
     it(`returns rejected Promise on requiredToLoad source error`, async () => {
       (loader as any)['loaderSources'] = errorRequiredSource;
       await expect(loader.load()).rejects.toThrowError(
-        'The Environment EnvironmentSource "ErrorRequiredSource" failed to load',
+        'The Environment EnvironmentSource "ErrorRequiredSource" failed to load'
       );
     });
 
     it(`returns rejected Promise with message on requiredToLoad source error`, async () => {
       (loader as any)['loaderSources'] = errorMessageRequiredOrderedSource;
       await expect(loader.load()).rejects.toThrowError(
-        'The Environment EnvironmentSource "ErrorMessageRequiredOrderedSource" failed to load: 111',
+        'The Environment EnvironmentSource "ErrorMessageRequiredOrderedSource" failed to load: 111'
       );
     });
   });
@@ -325,7 +325,7 @@ describe('EnvironmentLoader', () => {
     const completeSources = [
       ...observableRequiredOrderedSource,
       ...multipleRequiredOrderedSource,
-      ...observableRequiredOrderedSource2,
+      ...observableRequiredOrderedSource2
     ];
 
     it(`forces the load to resolve`, async () => {
@@ -455,7 +455,7 @@ describe('EnvironmentLoader', () => {
         (loader as any)['loaderSources'] = [
           ...observableRequiredOrderedSource,
           ...observableRequiredOrderedSource2,
-          ...observableOrderedSource,
+          ...observableOrderedSource
         ];
         await loader.load().then(() => {
           expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
@@ -469,7 +469,7 @@ describe('EnvironmentLoader', () => {
           ...observableRequiredOrderedSource,
           ...multipleRequiredOrderedSource,
           ...observableRequiredOrderedSource2,
-          ...observableOrderedSource,
+          ...observableOrderedSource
         ];
         await loader.load().then(() => {
           expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
@@ -498,7 +498,7 @@ describe('EnvironmentLoader', () => {
         (loader as any)['loaderSources'] = [
           ...observableRequiredOrderedSource,
           ...errorOrderedSource,
-          ...observableRequiredOrderedSource2,
+          ...observableRequiredOrderedSource2
         ];
         await loader.load().then(() => {
           expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
@@ -511,7 +511,7 @@ describe('EnvironmentLoader', () => {
         (loader as any)['loaderSources'] = [
           ...observableRequiredOrderedSource,
           ...errorRequiredOrderedSource,
-          ...observableRequiredOrderedSource2,
+          ...observableRequiredOrderedSource2
         ];
         const error = new Error('The Environment EnvironmentSource "ErrorRequiredOrderedSource" failed to load');
         await loader.load().catch((err) => {
@@ -563,7 +563,7 @@ describe('EnvironmentLoader', () => {
         (loader as any)['loaderSources'] = [
           ...observableRequiredOrderedSource,
           ...multipleRequiredOrderedSource,
-          ...observableOrderedSource,
+          ...observableOrderedSource
         ];
         loader.load();
         expect(service.add).not.toHaveBeenCalled();
@@ -608,7 +608,7 @@ describe('EnvironmentLoader', () => {
           ...multipleRequiredOrderedSource,
           ...observableOrderedSource,
           ...observableSource,
-          ...arraySource,
+          ...arraySource
         ];
         loader.load();
         expect(service.add).toHaveBeenNthCalledWith(1, { array: 0 }, undefined);
@@ -649,7 +649,7 @@ describe('EnvironmentLoader', () => {
         (loader as any)['loaderSources'] = [
           ...multipleWithErrorOrderedSource,
           ...errorOrderedSource,
-          ...observableOrderedSource,
+          ...observableOrderedSource
         ];
         loader.load();
         expect(service.add).not.toHaveBeenCalled();
@@ -797,7 +797,7 @@ describe('EnvironmentLoader', () => {
       expect(loader.preAddProperties).toHaveBeenNthCalledWith(
         1,
         { observable: 0 },
-        (loader as any)['loaderSources'][0],
+        (loader as any)['loaderSources'][0]
       );
       expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
     });
@@ -809,7 +809,7 @@ describe('EnvironmentLoader', () => {
       expect(loader.preAddProperties).toHaveBeenNthCalledWith(
         1,
         { observable: 0 },
-        (loader as any)['loaderSources'][0],
+        (loader as any)['loaderSources'][0]
       );
       expect(service.add).toHaveBeenNthCalledWith(1, { middleware: 0 }, undefined);
     });
@@ -957,7 +957,7 @@ describe('EnvironmentLoader', () => {
       await expect(loader.load()).toReject();
       expect(loader.onAfterError).toHaveBeenNthCalledWith(
         1,
-        new Error('The Environment EnvironmentSource "ErrorRequiredOrderedSource" failed to load'),
+        new Error('The Environment EnvironmentSource "ErrorRequiredOrderedSource" failed to load')
       );
     });
 
@@ -979,7 +979,7 @@ describe('EnvironmentLoader', () => {
       expect(loader.onBeforeSourceAdd).toHaveBeenNthCalledWith(
         1,
         { observable: 0 },
-        (loader as any)['loaderSources'][0],
+        (loader as any)['loaderSources'][0]
       );
     });
 
@@ -989,7 +989,7 @@ describe('EnvironmentLoader', () => {
       expect(loader.onAfterSourceAdd).toHaveBeenNthCalledWith(
         1,
         { observable: 0 },
-        (loader as any)['loaderSources'][0],
+        (loader as any)['loaderSources'][0]
       );
     });
 
@@ -999,7 +999,7 @@ describe('EnvironmentLoader', () => {
       expect(loader.onAfterSourceError).toHaveBeenNthCalledWith(
         1,
         new Error('The Environment EnvironmentSource "ErrorRequiredOrderedSource" failed to load'),
-        (loader as any)['loaderSources'][0],
+        (loader as any)['loaderSources'][0]
       );
     });
 

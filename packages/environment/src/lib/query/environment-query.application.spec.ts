@@ -33,7 +33,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: envA1, b: envB1 });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.getAll$()).toBeObservable(expected);
-    }),
+    })
   );
 
   it(`getAll$() returns always the last value`, () => {
@@ -72,7 +72,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-t---f---t-|', { t: true, f: false });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.containsAll$('b', 'a.a')).toBeObservable(expected);
-    }),
+    })
   );
 
   it(`containsAll$(...paths) returns always the last value`, () => {
@@ -117,7 +117,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-t---f---t-|', { t: true, f: false });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.containsSome$('a.a', 'z')).toBeObservable(expected);
-    }),
+    })
   );
 
   it(`containsSome$(...paths) returns always the last value`, () => {
@@ -161,7 +161,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: 0, b: undefined });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.get$('a.a')).toBeObservable(expected);
-    }),
+    })
   );
 
   it(`get$(path) returns always the last value`, () => {
@@ -185,7 +185,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: 0, b: 1 });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.get$('a.a', { defaultValue })).toBeObservable(expected);
-    }),
+    })
   );
 
   it(
@@ -196,7 +196,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: '0', b: undefined });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.get$('a.a', { targetType })).toBeObservable(expected);
-    }),
+    })
   );
 
   it(
@@ -207,7 +207,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: '0', b: '{{ a.b }}' });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.get$('b', { transpile })).toBeObservable(expected);
-    }),
+    })
   );
 
   it(
@@ -220,7 +220,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: 0, b: '2' });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
       m.expect(query.get$('a.a', { defaultValue, targetType, transpile })).toBeObservable(expected);
-    }),
+    })
   );
 
   // getAsync
