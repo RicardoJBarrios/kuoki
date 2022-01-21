@@ -208,7 +208,7 @@ export class EnvironmentQuery {
     let property: GetProperty<T> = this.getProperty(state, path);
     property = this.getDefaultValue(property, options?.defaultValue);
     property = this.getTargetType(property, options?.targetType);
-    property = this.getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment);
+    property = this.getTranspile(property, options?.transpile, options?.transpileEnvironment, options?.interpolation);
 
     return property as T;
   }
@@ -228,19 +228,19 @@ export class EnvironmentQuery {
   protected getTranspile<T>(
     property?: Property | T,
     transpile?: EnvironmentState,
-    interpolation?: [string, string],
-    transpileEnvironment?: boolean
+    transpileEnvironment?: boolean,
+    interpolation?: [string, string]
   ): GetProperty<T> {
     return property !== undefined && transpile !== undefined
-      ? this.transpile(transpile, property, interpolation, transpileEnvironment)
+      ? this.transpile(transpile, property, transpileEnvironment, interpolation)
       : property;
   }
 
   protected transpile<T>(
     transpile: EnvironmentState,
     property?: Property | T,
-    interpolation?: [string, string],
-    transpileEnvironment?: boolean
+    transpileEnvironment?: boolean,
+    interpolation?: [string, string]
   ): GetProperty<T> {
     const config: Required<EnvironmentQueryConfig> = this.config;
 
