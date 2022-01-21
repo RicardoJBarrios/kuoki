@@ -176,7 +176,7 @@ export class EnvironmentQuery {
       map((property?: Property) => this.getDefaultValue(property, options?.defaultValue)),
       map((property?: Property) => this.getTargetType(property, options?.targetType)),
       map((property?: Property | T) =>
-        this.getTranspile(property, options?.transpile, options?.interpolation, options?.transpileEnvironment)
+        this.getTranspile(property, options?.transpile, options?.transpileEnvironment, options?.interpolation)
       ),
       distinctUntilChanged(isEqual)
     );
