@@ -2,6 +2,8 @@
 
 > A Reactive Environment Management for JS Applications
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kuoki-environment&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kuoki-environment) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kuoki-environment&metric=coverage)](https://sonarcloud.io/summary/new_code?id=kuoki-environment)
+
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
