@@ -4,6 +4,7 @@ import { mutable } from '../helpers';
 import { isPath, overwritesPath, Path, pathAsArray, pathAsString } from '../path';
 import { mergeArraysCustomizer } from '../shared';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
+import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
 
 /**
@@ -19,18 +20,18 @@ export class EnvironmentService {
   /**
    * Resets the environment to the initial state.
    * @returns The result as {@link EnvironmentResult} with the code:
-   * - 200 Store reseted.
+   * - 205 Store reseted.
    * @example
    * ```js
    * // EnvironmentState = {a:0}
-   * service.reset(); // {code:200}
+   * service.reset(); // {code:205}
    * // EnvironmentState = {}
    * ```
    */
   reset(): EnvironmentResult {
     this.store.reset();
 
-    return { code: 200 };
+    return { code: EnvironmentResultCode.RESET };
   }
 
   /**
@@ -55,7 +56,7 @@ export class EnvironmentService {
    */
   create(path: Path, value: Property): EnvironmentResult {
     if (!isPath(path)) {
-      return { code: 400, path: pathAsString(path), value };
+      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path), value };
     }
 
     path = pathAsArray(path);
@@ -63,12 +64,12 @@ export class EnvironmentService {
     const property: Property | undefined = get(state, path);
 
     if (property !== undefined || overwritesPath(path, state)) {
-      return { code: 422, path: pathAsString(path), value };
+      return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path), value };
     }
 
     this.upsertStore(state, path, value);
 
-    return { code: 201, path: pathAsString(path), value };
+    return { code: EnvironmentResultCode.CREATED, path: pathAsString(path), value };
   }
 
   /**
@@ -93,19 +94,19 @@ export class EnvironmentService {
    */
   update(path: Path, value: Property): EnvironmentResult {
     if (!isPath(path)) {
-      return { code: 400, path: pathAsString(path), value };
+      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path), value };
     }
 
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
     if (property === undefined) {
-      return { code: 422, path: pathAsString(path), value };
+      return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path), value };
     }
 
     this.upsertStore(state, path, value);
 
-    return { code: 200, path: pathAsString(path), value };
+    return { code: EnvironmentResultCode.UPDATED, path: pathAsString(path), value };
   }
 
   /**
@@ -130,7 +131,7 @@ export class EnvironmentService {
    */
   upsert(path: Path, value: Property): EnvironmentResult {
     if (!isPath(path)) {
-      return { code: 400, path: pathAsString(path), value };
+      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path), value };
     }
 
     const state: EnvironmentState = this.store.getAll();
@@ -138,7 +139,11 @@ export class EnvironmentService {
 
     this.upsertStore(state, path, value);
 
-    return { code: property === undefined ? 201 : 200, path: pathAsString(path), value };
+    return {
+      code: property === undefined ? EnvironmentResultCode.CREATED : EnvironmentResultCode.UPDATED,
+      path: pathAsString(path),
+      value
+    };
   }
 
   /**
@@ -146,13 +151,13 @@ export class EnvironmentService {
    * Ignores the action if property doesn't exist or is an invalid path.
    * @param path The path of the property to delete.
    * @returns The result as {@link EnvironmentResult} with the code:
-   * - 200 Property deleted
+   * - 204 Property deleted
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * @example
    * ```js
    * // EnvironmentState = {a:0, b:1}
-   * service.delete('a'); // {code:200,path:'a'}
+   * service.delete('a'); // {code:204,path:'a'}
    * // EnvironmentState = {b:1}
    * service.delete('2a'); // {code:400,path:'2a'}
    * // EnvironmentState = {b:1}
@@ -162,19 +167,19 @@ export class EnvironmentService {
    */
   delete(path: Path): EnvironmentResult {
     if (!isPath(path)) {
-      return { code: 400, path: pathAsString(path) };
+      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path) };
     }
 
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
     if (property === undefined) {
-      return { code: 422, path: pathAsString(path) };
+      return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path) };
     }
 
     this.upsertStore(state, path);
 
-    return { code: 200, path: pathAsString(path) };
+    return { code: EnvironmentResultCode.DELETED, path: pathAsString(path) };
   }
 
   protected upsertStore(state: EnvironmentState, path: Path, value?: Property): void {
@@ -207,7 +212,7 @@ export class EnvironmentService {
    */
   add(properties: EnvironmentState, path?: Path): EnvironmentResult {
     if (path != null && !isPath(path)) {
-      return { code: 400, value: properties, path: pathAsString(path) };
+      return { code: EnvironmentResultCode.INVALID_PATH, value: properties, path: pathAsString(path) };
     }
 
     const state: EnvironmentState = mutable(this.store.getAll());
@@ -215,7 +220,11 @@ export class EnvironmentService {
 
     this.store.update(newState);
 
-    return { code: 200, value: properties, path: path == null ? undefined : pathAsString(path) };
+    return {
+      code: EnvironmentResultCode.UPDATED,
+      value: properties,
+      path: path == null ? undefined : pathAsString(path)
+    };
   }
 
   /**
@@ -241,7 +250,7 @@ export class EnvironmentService {
    */
   merge(properties: EnvironmentState, path?: Path): EnvironmentResult {
     if (path != null && !isPath(path)) {
-      return { code: 400, value: properties, path: pathAsString(path) };
+      return { code: EnvironmentResultCode.INVALID_PATH, value: properties, path: pathAsString(path) };
     }
 
     const state: EnvironmentState = mutable(this.store.getAll());
@@ -250,6 +259,10 @@ export class EnvironmentService {
 
     this.store.update(newState);
 
-    return { code: 200, value: properties, path: path == null ? undefined : pathAsString(path) };
+    return {
+      code: EnvironmentResultCode.UPDATED,
+      value: properties,
+      path: path == null ? undefined : pathAsString(path)
+    };
   }
 }

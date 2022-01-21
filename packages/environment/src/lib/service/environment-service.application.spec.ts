@@ -24,8 +24,8 @@ describe('EnvironmentService', () => {
       jest.spyOn(store, 'reset').mockImplementation(() => null);
     });
 
-    it(`returns {code:200}`, () => {
-      expect(service.reset()).toEqual({ code: 200 });
+    it(`returns {code:205}`, () => {
+      expect(service.reset()).toEqual({ code: 205 });
     });
 
     it(`resets the environment store to the initial state`, () => {
@@ -251,9 +251,9 @@ describe('EnvironmentService', () => {
       jest.spyOn(store, 'update').mockImplementation(() => null);
     });
 
-    it(`returns {code:200, path} if property deleted`, () => {
+    it(`returns {code:204, path} if property deleted`, () => {
       const path = 'x.y';
-      expect(service.delete(path)).toEqual({ code: 200, path });
+      expect(service.delete(path)).toEqual({ code: 204, path });
     });
 
     it(`updates the environment store if property deleted`, () => {
