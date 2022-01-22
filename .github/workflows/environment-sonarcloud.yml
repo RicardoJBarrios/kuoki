@@ -33,7 +33,7 @@ jobs:
             -Dsonar.organization=kuoki
             -Dsonar.projectKey=kuoki-environment
             -Dsonar.projectName=Environment
-            -Dsonar.description="A Reactive Environment Management for JS Applications"
+            -Dsonar.description='A Reactive Environment Management for JS Applications'
             -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
             -Dsonar.links.homepage=https://github.com/RicardoJBarrios/kuoki/tree/main/packages/environment
             -Dsonar.links.ci=https://github.com/RicardoJBarrios/kuoki/actions
@@ -47,40 +47,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-# jobs:
-#   sonarcloud:
-#     name: SonarCloud
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#         with:
-#           fetch-depth: 0
-#       - uses: Saionaro/extract-package-version@v1.1.1
-#         id: extract_version
-#         with:
-#           path: ./packages/environment/
-#       - uses: actions/setup-node@v2
-#         with:
-#           node-version: 16
-#       - run: yarn install --frozen-lockfile
-#       - run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory=./packages/environment
-#       - run: yarn nx lint environment --format json --outputFile packages/environment/eslint.json
-#       - uses: SonarSource/sonarcloud-github-action@master
-#         with:
-#           args: >
-#             -Dsonar.organization=kuoki
-#             -Dsonar.projectKey=kuoki-environment
-#             -Dsonar.projectName=Environment
-#             -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
-#             -Dsonar.links.homepage=https://github.com/RicardoJBarrios/kuoki/tree/main/packages/environment
-#             -Dsonar.links.ci=https://github.com/RicardoJBarrios/kuoki/actions
-#             -Dsonar.links.issue=https://github.com/RicardoJBarrios/kuoki/labels/environment
-#             -Dsonar.links.scm=https://github.com/RicardoJBarrios/kuoki.git
-#             -Dsonar.sources=packages/environment/src/lib
-#             -Dsonar.exclusions=**/*.spec.ts
-#             -Dsonar.sourceEncoding=UTF-8
-#             -Dsonar.javascript.lcov.reportPaths=packages/environment/lcov.info
-#             -Dsonar.eslint.reportPaths=packages/environment/eslint.json
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
