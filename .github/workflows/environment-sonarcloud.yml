@@ -13,33 +13,20 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Extract version
+      - uses: Saionaro/extract-package-version@v1.1.1
         id: extract_version
-        uses: Saionaro/extract-package-version@v1.1.1
         with:
           path: ./packages/environment/
-
-      - name: Setup Node
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 16
-          
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Generate Coverage Report
-        run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory=./packages/environment
-
-      - name: Generate Linter Report
-        run: yarn nx lint environment --format json --outputFile packages/environment/eslint.json
-
-      - name: Send to SonarCloud
-        uses: SonarSource/sonarcloud-github-action@master
+      - run: yarn install --frozen-lockfile
+      - run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory=./packages/environment
+      - run: yarn nx lint environment --format json --outputFile packages/environment/eslint.json
+      - uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
             -Dsonar.organization=kuoki
