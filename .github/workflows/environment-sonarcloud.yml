@@ -51,7 +51,7 @@ jobs:
             -Dsonar.links.issue=https://github.com/RicardoJBarrios/kuoki/labels/environment
             -Dsonar.links.scm=https://github.com/RicardoJBarrios/kuoki.git
             -Dsonar.sources=packages/environment/src/lib
-            -Dsonar.tests=**/*.spec.ts
+            -Dsonar.exclusions=**/*.spec.ts
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.javascript.lcov.reportPaths=packages/environment/lcov.info
             -Dsonar.eslint.reportPaths=packages/environment/eslint.json
