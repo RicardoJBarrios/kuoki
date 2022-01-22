@@ -46,7 +46,6 @@ jobs:
             -Dsonar.projectKey=kuoki-environment
             -Dsonar.projectName=Environment
             -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
-            -Dsonar.projectDescription=A Reactive Environment Management for JS Applications
             -Dsonar.links.homepage=https://github.com/RicardoJBarrios/kuoki/tree/main/packages/environment
             -Dsonar.links.ci=https://github.com/RicardoJBarrios/kuoki/actions
             -Dsonar.links.issue=https://github.com/RicardoJBarrios/kuoki/labels/environment
