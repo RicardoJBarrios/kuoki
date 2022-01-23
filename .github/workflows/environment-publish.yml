@@ -6,17 +6,8 @@ on:
     types: [created]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - run: yarn install --frozen-lockfile
-
   publish-npm:
-    needs: build
+    name: Publish on npm
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +16,7 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: yarn install --frozen-lockfile
-      - run: npx nx build environment
+      - run: yarn nx build environment
       - run: npm publish dist/packages/environment
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
