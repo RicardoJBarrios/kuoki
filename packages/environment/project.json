@@ -32,13 +32,10 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          {
-            "command": "npx typedoc --options packages/environment/typedoc.json"
-          },
-          {
-            "command": "nx test environment --code-coverage"
-          }
-        ]
+          "npx typedoc --options packages/environment/typedoc.json",
+          "nx test environment --code-coverage --skip-nx-cache"
+        ],
+        "parallel": false
       }
     },
     "version": {
