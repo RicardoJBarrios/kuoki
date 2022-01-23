@@ -1,7 +1,7 @@
 {
   "name": "@kuoki/environment",
   "version": "0.0.1",
-  "description": "A Reactive Environment Management for JS Applications",
+  "description": "A Reactive Environment Management for JavaScript and TypeScript Applications",
   "keywords": [
     "environment",
     "Kuoki",
