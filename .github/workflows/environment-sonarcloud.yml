@@ -29,20 +29,7 @@ jobs:
       - run: sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/environment/eslint.json
       - uses: SonarSource/sonarcloud-github-action@master
         with:
-          args: >
-            -Dsonar.organization=kuoki
-            -Dsonar.projectKey=kuoki-environment
-            -Dsonar.projectName=Environment
-            -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
-            -Dsonar.links.homepage=https://github.com/RicardoJBarrios/kuoki/tree/main/packages/environment
-            -Dsonar.links.ci=https://github.com/RicardoJBarrios/kuoki/actions
-            -Dsonar.links.issue=https://github.com/RicardoJBarrios/kuoki/labels/environment
-            -Dsonar.links.scm=https://github.com/RicardoJBarrios/kuoki.git
-            -Dsonar.sources=packages/environment/src/lib
-            -Dsonar.exclusions=**/*.spec.ts
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.javascript.lcov.reportPaths=packages/environment/lcov.info
-            -Dsonar.eslint.reportPaths=packages/environment/eslint.json
+          projectBaseDir: packages/environment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
