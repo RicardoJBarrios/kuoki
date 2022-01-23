@@ -2,11 +2,8 @@ name: Environment SonarCloud
 
 on:
   workflow_dispatch:
-#  push:
-#    branches:
-#      - master
-#  pull_request:
-#    types: [opened, synchronize, reopened]
+  release:
+    types: [created]
 
 jobs:
   sonarcloud:
@@ -19,12 +16,12 @@ jobs:
       - uses: Saionaro/extract-package-version@v1.1.1
         id: extract_version
         with:
-          path: ./packages/environment/
+          path: packages/environment
       - uses: actions/setup-node@v2
         with:
           node-version: 16
       - run: yarn install --frozen-lockfile
-      - run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory=./packages/environment --skip-nx-cache
+      - run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory packages/environment --skip-nx-cache
       - run: sed -i 's#packages/environment/##g' packages/environment/lcov.info
       - run: yarn nx lint environment --format json --outputFile packages/environment/eslint.json --skip-nx-cache
       - run: sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/environment/eslint.json
