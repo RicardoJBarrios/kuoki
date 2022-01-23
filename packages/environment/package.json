@@ -4,11 +4,12 @@
   "description": "A Reactive Environment Management for JavaScript and TypeScript Applications",
   "keywords": [
     "environment",
-    "Kuoki",
     "reactive",
-    "RxJS"
+    "RxJS",
+    "JavaScript",
+    "TypeScript"
   ],
-  "homepage": "https://github.com/RicardoJBarrios/kuoki/tree/main/packages/environment",
+  "homepage": "https://ricardojbarrios.github.io/kuoki/environment/",
   "bugs": {
     "url": "https://github.com/RicardoJBarrios/kuoki/labels/environment"
   },
