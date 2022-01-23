@@ -25,6 +25,7 @@ jobs:
           node-version: 16
       - run: yarn install --frozen-lockfile
       - run: yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory=./packages/environment
+      - run: sed -i 's#packages/environment/##g' packages/environment/lcov.info
       - run: yarn nx lint environment --format json --outputFile packages/environment/eslint.json
       - run: sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/environment/eslint.json
       - uses: SonarSource/sonarcloud-github-action@master
