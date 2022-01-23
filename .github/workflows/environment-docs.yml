@@ -1,4 +1,4 @@
-name: Environment Publish
+name: Environment Docs
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     types: [created]
 
 jobs:
-  publish-npm:
+  publish-docs:
     name: Publish Documentation
     runs-on: ubuntu-latest
     steps:
