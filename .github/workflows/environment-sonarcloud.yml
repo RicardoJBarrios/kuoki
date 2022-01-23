@@ -31,6 +31,8 @@ jobs:
       - uses: SonarSource/sonarcloud-github-action@master
         with:
           projectBaseDir: packages/environment
+          args: >
+            -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
