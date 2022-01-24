@@ -17,7 +17,7 @@
 
 This library provides an environment properties store that is populated by asyncronous sources and exposes a query to get the values, as well a service to modify them at runtime.
 
-The common way to manage the application properties in JavaScript frameworks is to define environment values in a constant or env file an load them at build stage. This strategy is not suitable for developments where, for example, the final build is deployed in a repositoy manager such as Nexus or Artifactory and reused in diferent environments, or in a microservices architecture where the properties are loaded from a config manager service. This library addresses this and other gaps by allowing, among others, the following behaviors:
+The common way to manage the application properties in JavaScript frameworks is to define environment values in a constant or env file and load them at build stage. This strategy is not suitable for developments where, for example, the final build is deployed in a repositoy manager such as Nexus or Artifactory and reused in diferent environments, or in a microservices architecture where the properties are loaded from a config manager service. This library addresses this and other gaps by allowing, among others, the following behaviors:
 
 - Get properties from constants
 - Get properties from local sources, such as files
