@@ -2,7 +2,7 @@
 
 > A Reactive Environment Management for JS Applications
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kuoki-environment&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kuoki-environment) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kuoki-environment&metric=coverage)](https://sonarcloud.io/summary/new_code?id=kuoki-environment)
+[![Documentation](https://img.shields.io/badge/docs-ready-blue?style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/) [![Quality Gate Status](https://img.shields.io/sonar/quality_gate/kuoki-environment?logo=sonar&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/overview?id=kuoki-environment) [![Coverage](https://img.shields.io/sonar/coverage/kuoki-environment/master?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/coverage/) [![npm](https://img.shields.io/npm/v/@kuoki/environment?style=flat-square)](https://www.npmjs.com/package/@kuoki/environment) [![GitHub](https://img.shields.io/github/license/ricardojbarrios/kuoki?style=flat-square)](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md) [![GitHub issues environment](https://img.shields.io/github/issues/ricardojbarrios/kuoki/environment?label=issues&style=flat-square)](https://github.com/RicardoJBarrios/kuoki/labels/environment)
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
@@ -10,8 +10,6 @@
     <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#license">License</a></li>
   </ol>
 </details>
 
@@ -43,13 +41,13 @@ npm install --save @kuoki/environment
 
 ## Usage
 
-The steps to generate an environment manager are described below. Each of the steps is described in depth, with examples and common hacks, in the [documentation](./) of each module.
+The steps to generate an environment manager are described below. Each of the steps is described in depth, with examples and common hacks, in the [documentation](https://ricardojbarrios.github.io/kuoki/environment/) of each module.
 
-1. Implement and instantiate an `EnvironmentStore` gateway object so that the library uses the same state manager as the rest of the application.
-1. Create an instance of `EnvironmentService` to handle the modification of environment properties.
-1. Create an instance of `EnvironmentQuery` to get environment properties.
-1. Implement and instantiate as many `EnvironmentSource` gateway objects as needed to get the environment properties.
-1. Create an instance of `EnvironmentLoader` to get the properties from the sources.
+1. Implement and instantiate an [`EnvironmentStore`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentStore.html) gateway object so that the library uses the same state manager as the rest of the application.
+1. Create an instance of [`EnvironmentService`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentService.html) to handle the modification of environment properties.
+1. Create an instance of [`EnvironmentQuery`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentQuery.html) to get environment properties.
+1. Implement and instantiate as many [`EnvironmentSource`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentSource.html) gateway objects as needed to get the environment properties.
+1. Create an instance of [`EnvironmentLoader`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentLoader.html) to get the properties from the sources.
 
 ```js
 import { createEnvironmentLoader, createEnvironmentQuery, createEnvironmentService } from '@kuoki/environment';
@@ -82,11 +80,3 @@ loader.load().then(() => {
   console.log(query.getAll()); // LOG {name:'John Doe',userName:'JohnDoe01'}
 });
 ```
-
-## Roadmap
-
-See the [open issues](https://github.com/RicardoJBarrios/kuoki/labels/environment) for a full list of proposed features (and known issues).
-
-## License
-
-Distributed under the MIT License. See [`LICENSE`](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md) for more information.
