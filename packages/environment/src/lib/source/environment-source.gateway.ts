@@ -188,14 +188,14 @@ export abstract class EnvironmentSource {
 
   /**
    * The path to set the properties in the environment.
-   * @see Path
+   * @see {@link Path}
    */
   path?: Path;
 
   /**
    * Asynchronously loads the environment properties from the source.
    *
-   * The PropertiesSource can returns a Promise.
+   * The EnvironmentSource can returns a Promise.
    * @example
    * ```js
    * const promiseSource = { load: () => Promise.resolve({ a: 0 }) };
@@ -203,7 +203,7 @@ export abstract class EnvironmentSource {
    * // sets the PromiseSource properties after 0 ms
    * ```
    *
-   * The PropertiesSource can returns an Observable or any other Subscribable type.
+   * The EnvironmentSource can returns an Observable or any other Subscribable type.
    * @example
    * ```js
    * const observableSource = { load: () =>  of({ a: 0 }) };
@@ -213,7 +213,7 @@ export abstract class EnvironmentSource {
    * // sets the multipleObservableSource properties after 0 ms, 1 ms and 2 ms
    * ```
    *
-   * The PropertiesSource can returns an Array or any Iterable type.
+   * The EnvironmentSource can returns an Array or any Iterable type.
    * @example
    * ```js
    * const arraySource = { load: () => ([{ a: 0 }]) };
