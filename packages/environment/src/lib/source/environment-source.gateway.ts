@@ -9,22 +9,19 @@ import { EnvironmentState } from '../store';
 export abstract class EnvironmentSource {
   /**
    * The internal id.
+   *
+   * This id is used by the loader to manage sources, so it should never be duplicated.
+   * If left undefined, the loader will assign a random id.
    */
   id?: string;
 
   /**
    * The source name.
    *
-   * @example
-   * ```js
-   * source.name = 'fileSource';
-   * ```
-   *
    * Set the name if you're planning to use a loader source lifecycle to add custom behavior to the source.
    * This way it will be easier to discriminate the source to decide whether or not the custom code is executed.
    * Avoid the use of `constructor.name` because if the code is minimized or uglified on build the constructor
    * name changes.
-   *
    */
   name?: string;
 
@@ -217,7 +214,7 @@ export abstract class EnvironmentSource {
    * @example
    * ```js
    * const arraySource = { load: () => ([{ a: 0 }]) };
-   * const multipleArraySource = { load: () => ([{ a: 0 }, { b: 0 }, { c: 0 }]) }
+   * const multipleArraySource = { load: () => ([{ a: 0 }, { b: 0 }, { c: 0 }]) };
    * loader.load(); // resolves immediately
    * // sets the arraySource properties after 0 ms
    * // sets the multipleArraySource properties after 0 ms, 1 ms and 2 ms
