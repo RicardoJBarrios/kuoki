@@ -207,6 +207,6 @@ last source, because ordered sources must complete to let the next one start.
 ```ts
 const serverSideEventSource = {
   loadInOrder: false,
-  load: () => sseFetch('/endpoint')
+  load: () => sse.get('https://api.com/sse')
 };
 ```
