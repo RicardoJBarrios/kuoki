@@ -5,7 +5,8 @@
   "description": "Libraries to help with frontend development",
   "scripts": {
     "commit": "cz",
-    "update": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)"
+    "format:all": "nx format:write --all",
+    "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)"
   },
   "private": true,
   "dependencies": {
@@ -71,4 +72,3 @@
     }
   }
 }
-

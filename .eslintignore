@@ -1,1 +1,4 @@
 **/*.spec.ts
+**/CHANGELOG.md
+/dist
+/docs
