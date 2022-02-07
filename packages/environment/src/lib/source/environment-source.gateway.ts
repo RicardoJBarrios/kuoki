@@ -2,66 +2,53 @@ import { ObservableInput } from 'rxjs';
 
 import { Path } from '../path';
 import { EnvironmentState } from '../store';
+import { SourceStrategy } from './source-strategy.enum';
 
 /**
- * The source from which to get environment properties asynchronously.
+ * The source from which to get environment properties.
  */
 export abstract class EnvironmentSource {
   /**
-   * The internal id.
-   *
-   * This id is used by the loader to manage sources, so it must never be duplicated.
-   * If left undefined, the loader will assign a random id.
+   * Used by the loader to manage sources, so it must never be duplicated.
+   * If is undefined, the loader will assign a random value.
    */
   id?: string;
 
   /**
-   * The source name.
+   * Resolves the required sources before the environment load.
    *
-   * Set the name if you're planning to use a loader source lifecycle to add custom behavior to the source.
-   * Avoid the use of `constructor.name` because if the code is minimized or uglified on build the constructor
-   * name changes.
+   * - Resolves immedialely if there is no required sources.
+   * - Never resolves if a required source doesn't complete.
+   * - Rejects after a required source error.
+   * - Resolves after a no required source error.
    */
-  name?: string;
-
-  /**
-   * Resolves the required to load sources before the environment load.
-   *
-   * - If there is no required to load sources the loader will resolve immedialely.
-   * - If a required to load source never completes the loader will never resolve.
-   * - The loader will reject after a required to load source error.
-   * - The loader will resolves normally after a no required to load source error.
-   */
-  requiredToLoad?: boolean;
+  isRequired?: boolean;
 
   /**
    * Loads the source in the declaration order.
    *
-   * - The sources will wait until the previous loadInOrder source completes to add the properties.
-   * - The not loadInOrder sources will add properties all at once.
-   * - If a source never completes will never set the next ordered source properties.
-   * - If a source returns an error will be ignored and will continue with the next ordered source.
+   * - Wait for another source to complete to start the load.
+   * - Unordered sources add all properties at once.
+   * - Never loads if previous ordered source doesn't complete.
+   * - Ignore errors and continues with the next ordered source.
    */
-  loadInOrder?: boolean;
+  isOrdered?: boolean;
 
   /**
-   * Adds properties to the environment using the deep merge strategy.
-   * @see {@link EnvironmentService.merge}
-   */
-  mergeProperties?: boolean;
-
-  /**
-   * Ignores the errors thrown by the source.
-   *
-   * If a required to load source throws an error the loader will rejects, but if the `ignoreError` property is set
-   * to `true` the error will be ignored as a no required to load source error.
+   * Ignores the error if the required source throws.
    */
   ignoreError?: boolean;
+
+  /**
+   * The strategy to add properties to the environment.
+   */
+  strategy?: SourceStrategy;
 
   /**
    * The path to set the properties in the environment.
    * @see {@link Path}
    * @see {@link EnvironmentService.add}
+   * @see {@link EnvironmentService.merge}
    */
   path?: Path;
 

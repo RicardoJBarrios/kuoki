@@ -1,13 +1,13 @@
-import { assignInWith } from 'lodash-es';
 import { ArrayOrSingle } from 'ts-essentials';
 import { v4 } from 'uuid';
 
-import { EnvironmentSource } from '../source';
+import { EnvironmentSource, SourceStrategy } from '../source';
+import { LoaderSource } from './loader-source.type';
 
 /**
  * @internal
  */
-export function environmentSourcesFactory(sources?: ArrayOrSingle<EnvironmentSource>): Required<EnvironmentSource>[] {
+export function environmentSourcesFactory(sources?: ArrayOrSingle<EnvironmentSource>): LoaderSource[] {
   if (sources == null) {
     return [];
   }
@@ -22,16 +22,12 @@ export function environmentSourcesFactory(sources?: ArrayOrSingle<EnvironmentSou
 /**
  * @internal
  */
-function environmentSourceFactory(source: EnvironmentSource): Required<EnvironmentSource> {
-  const defaultValues: Partial<EnvironmentSource> = {
-    id: v4(),
-    requiredToLoad: false,
-    loadInOrder: false,
-    mergeProperties: false,
-    ignoreError: false
-  };
+function environmentSourceFactory(source: EnvironmentSource): LoaderSource {
+  source.id = source.id ?? v4();
+  source.isRequired = source.isRequired ?? false;
+  source.isOrdered = source.isOrdered ?? false;
+  source.strategy = source.strategy ?? SourceStrategy.ADD;
+  source.ignoreError = source.ignoreError ?? false;
 
-  return assignInWith(source, defaultValues, <T>(sourceValue: T | undefined, defaultValue: T) =>
-    sourceValue === undefined ? defaultValue : sourceValue
-  ) as Required<EnvironmentSource>;
+  return source as LoaderSource;
 }

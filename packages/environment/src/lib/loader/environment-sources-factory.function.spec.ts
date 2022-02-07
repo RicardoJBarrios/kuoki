@@ -6,14 +6,14 @@ import { EnvironmentState } from '../store';
 import { environmentSourcesFactory } from './environment-sources-factory.function';
 
 class ExtendsEnvironmentSource extends EnvironmentSource {
-  override name = 'ExtendsEnvironmentSource';
+  override id = 'ExtendsEnvironmentSource';
   load(): ObservableInput<EnvironmentState> {
     throw new Error('Method not implemented.');
   }
 }
 
 class ImplementsEnvironmentSource implements EnvironmentSource {
-  name = 'ImplementsEnvironmentSource';
+  id = 'ImplementsEnvironmentSource';
   load(): ObservableInput<EnvironmentState> {
     throw new Error('Method not implemented.');
   }
@@ -27,11 +27,10 @@ describe('environmentSourcesFactory()', () => {
 
   it(`(source) returns the complete source form minimal abstract`, () => {
     const source = environmentSourcesFactory(new ExtendsEnvironmentSource()).shift() as Required<EnvironmentSource>;
-    expect(validate(source.id)).toBeTrue();
-    expect(source.name).toEqual('ExtendsEnvironmentSource');
-    expect(source.requiredToLoad).toBeFalse();
-    expect(source.loadInOrder).toBeFalse();
-    expect(source.mergeProperties).toBeFalse();
+    expect(source.id).toEqual('ExtendsEnvironmentSource');
+    expect(source.isRequired).toBeFalse();
+    expect(source.isOrdered).toBeFalse();
+    expect(source.strategy).toBeFalse();
     expect(source.ignoreError).toBeFalse();
     expect(source.path).toBeUndefined();
     expect(source.load).toBeFunction();
@@ -39,18 +38,17 @@ describe('environmentSourcesFactory()', () => {
 
   it(`(source) returns the complete source form custom abstract`, () => {
     const customSource = new ExtendsEnvironmentSource();
-    customSource.name = 'test';
-    customSource.requiredToLoad = true;
-    customSource.loadInOrder = true;
-    customSource.mergeProperties = true;
+    customSource.id = 'test';
+    customSource.isRequired = true;
+    customSource.isOrdered = true;
+    customSource.strategy = true;
     customSource.ignoreError = true;
     customSource.path = 'a';
     const source = environmentSourcesFactory(customSource).shift() as Required<EnvironmentSource>;
-    expect(validate(source.id)).toBeTrue();
-    expect(source.name).toEqual('test');
-    expect(source.requiredToLoad).toBeTrue();
-    expect(source.loadInOrder).toBeTrue();
-    expect(source.mergeProperties).toBeTrue();
+    expect(source.id).toEqual('test');
+    expect(source.isRequired).toBeTrue();
+    expect(source.isOrdered).toBeTrue();
+    expect(source.strategy).toBeTrue();
     expect(source.ignoreError).toBeTrue();
     expect(source.path).toEqual('a');
     expect(source.load).toBeFunction();
@@ -58,29 +56,27 @@ describe('environmentSourcesFactory()', () => {
 
   it(`(source) returns the complete source form minimal interface`, () => {
     const source = environmentSourcesFactory(new ImplementsEnvironmentSource()).shift() as Required<EnvironmentSource>;
-    expect(validate(source.id)).toBeTrue();
-    expect(source.name).toEqual('ImplementsEnvironmentSource');
-    expect(source.requiredToLoad).toBeFalse();
-    expect(source.loadInOrder).toBeFalse();
-    expect(source.mergeProperties).toBeFalse();
+    expect(source.id).toEqual('ImplementsEnvironmentSource');
+    expect(source.isRequired).toBeFalse();
+    expect(source.isOrdered).toBeFalse();
+    expect(source.strategy).toBeFalse();
     expect(source.ignoreError).toBeFalse();
     expect(source.load).toBeFunction();
   });
 
   it(`(source) returns the complete source form custom interface`, () => {
     const customSource: EnvironmentSource = new ImplementsEnvironmentSource();
-    customSource.name = 'test';
-    customSource.requiredToLoad = true;
-    customSource.loadInOrder = true;
-    customSource.mergeProperties = true;
+    customSource.id = 'test';
+    customSource.isRequired = true;
+    customSource.isOrdered = true;
+    customSource.strategy = true;
     customSource.ignoreError = true;
     customSource.path = 'a';
     const source = environmentSourcesFactory(customSource).shift() as Required<EnvironmentSource>;
-    expect(validate(source.id)).toBeTrue();
-    expect(source.name).toEqual('test');
-    expect(source.requiredToLoad).toBeTrue();
-    expect(source.loadInOrder).toBeTrue();
-    expect(source.mergeProperties).toBeTrue();
+    expect(source.id).toEqual('test');
+    expect(source.isRequired).toBeTrue();
+    expect(source.isOrdered).toBeTrue();
+    expect(source.strategy).toBeTrue();
     expect(source.ignoreError).toBeTrue();
     expect(source.path).toEqual('a');
     expect(source.load).toBeFunction();
@@ -97,35 +93,35 @@ describe('environmentSourcesFactory()', () => {
   it(`(source) returns source with .name`, () => {
     const custom = environmentSourcesFactory(new ImplementsEnvironmentSource()).shift() as Required<EnvironmentSource>;
     const original = environmentSourcesFactory(new ExtendsEnvironmentSource()).shift() as Required<EnvironmentSource>;
-    expect(custom.name).toEqual('ImplementsEnvironmentSource');
-    expect(original.name).toEqual('ExtendsEnvironmentSource');
+    expect(custom.id).toEqual('ImplementsEnvironmentSource');
+    expect(original.id).toEqual('ExtendsEnvironmentSource');
   });
 
-  it(`(source) returns source with .requiredToLoad`, () => {
+  it(`(source) returns source with .isRequired`, () => {
     const customSource: EnvironmentSource = new ImplementsEnvironmentSource();
-    customSource.requiredToLoad = true;
+    customSource.isRequired = true;
     const custom = environmentSourcesFactory(customSource).shift() as Required<EnvironmentSource>;
     const original = environmentSourcesFactory(new ExtendsEnvironmentSource()).shift() as Required<EnvironmentSource>;
-    expect(custom.requiredToLoad).toBeTrue();
-    expect(original.requiredToLoad).toBeFalse();
+    expect(custom.isRequired).toBeTrue();
+    expect(original.isRequired).toBeFalse();
   });
 
-  it(`(source) returns source with .loadInOrder`, () => {
+  it(`(source) returns source with .isOrdered`, () => {
     const customSource: EnvironmentSource = new ImplementsEnvironmentSource();
-    customSource.loadInOrder = true;
+    customSource.isOrdered = true;
     const custom = environmentSourcesFactory(customSource).shift() as Required<EnvironmentSource>;
     const original = environmentSourcesFactory(new ExtendsEnvironmentSource()).shift() as Required<EnvironmentSource>;
-    expect(custom.loadInOrder).toBeTrue();
-    expect(original.loadInOrder).toBeFalse();
+    expect(custom.isOrdered).toBeTrue();
+    expect(original.isOrdered).toBeFalse();
   });
 
-  it(`(source) returns source with .mergeProperties`, () => {
+  it(`(source) returns source with .merge`, () => {
     const customSource: EnvironmentSource = new ImplementsEnvironmentSource();
-    customSource.mergeProperties = true;
+    customSource.strategy = true;
     const custom = environmentSourcesFactory(customSource).shift() as Required<EnvironmentSource>;
     const original = environmentSourcesFactory(new ExtendsEnvironmentSource()).shift() as Required<EnvironmentSource>;
-    expect(custom.mergeProperties).toBeTrue();
-    expect(original.mergeProperties).toBeFalse();
+    expect(custom.strategy).toBeTrue();
+    expect(original.strategy).toBeFalse();
   });
 
   it(`(source) returns source with .ignoreError`, () => {
@@ -152,19 +148,17 @@ describe('environmentSourcesFactory()', () => {
       new ExtendsEnvironmentSource()
     ]);
     expect(sources).toBeArrayOfSize(2);
-    expect(validate(sources[0].id)).toBeTrue();
-    expect(sources[0].name).toEqual('ImplementsEnvironmentSource');
-    expect(sources[0].requiredToLoad).toBeFalse();
-    expect(sources[0].loadInOrder).toBeFalse();
-    expect(sources[0].mergeProperties).toBeFalse();
+    expect(sources[0].id).toEqual('ImplementsEnvironmentSource');
+    expect(sources[0].isRequired).toBeFalse();
+    expect(sources[0].isOrdered).toBeFalse();
+    expect(sources[0].strategy).toBeFalse();
     expect(sources[0].ignoreError).toBeFalse();
     expect(sources[0].path).toBeUndefined();
     expect(sources[0].load).toBeFunction();
-    expect(validate(sources[1].id)).toBeTrue();
-    expect(sources[1].name).toEqual('ExtendsEnvironmentSource');
-    expect(sources[1].requiredToLoad).toBeFalse();
-    expect(sources[1].loadInOrder).toBeFalse();
-    expect(sources[1].mergeProperties).toBeFalse();
+    expect(sources[1].id).toEqual('ExtendsEnvironmentSource');
+    expect(sources[1].isRequired).toBeFalse();
+    expect(sources[1].isOrdered).toBeFalse();
+    expect(sources[1].strategy).toBeFalse();
     expect(sources[1].ignoreError).toBeFalse();
     expect(sources[1].path).toBeUndefined();
     expect(sources[1].load).toBeFunction();

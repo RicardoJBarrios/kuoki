@@ -14,7 +14,7 @@ import {
 } from 'rxjs';
 
 import { EnvironmentService } from '../service';
-import { EnvironmentSource } from '../source';
+import { EnvironmentSource, SourceStrategy } from '../source';
 import { EnvironmentState } from '../store';
 import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
 import { EnvironmentLoader } from './environment-loader.application';
@@ -41,7 +41,6 @@ class TestLoader extends EnvironmentLoader {
 }
 
 class ObservableSource extends EnvironmentSource {
-  override name = 'ObservableSource';
   load(): Observable<EnvironmentState> {
     return of({ observable: 0 }).pipe(delay(5));
   }
@@ -50,28 +49,27 @@ class ObservableSource extends EnvironmentSource {
 const observableSource = environmentSourcesFactory(new ObservableSource());
 
 const observableOrderedSource = environmentSourcesFactory(new ObservableSource());
-observableOrderedSource[0].loadInOrder = true;
+observableOrderedSource[0].isOrdered = true;
 
 const observableRequiredOrderedSource = environmentSourcesFactory(new ObservableSource());
-observableRequiredOrderedSource[0].requiredToLoad = true;
-observableRequiredOrderedSource[0].loadInOrder = true;
+observableRequiredOrderedSource[0].isRequired = true;
+observableRequiredOrderedSource[0].isOrdered = true;
 
 const observableRequiredOrderedSource2 = environmentSourcesFactory(new ObservableSource());
-observableRequiredOrderedSource2[0].requiredToLoad = true;
-observableRequiredOrderedSource2[0].loadInOrder = true;
+observableRequiredOrderedSource2[0].isRequired = true;
+observableRequiredOrderedSource2[0].isOrdered = true;
 
 const observableMergeSource = environmentSourcesFactory(new ObservableSource());
-observableMergeSource[0].mergeProperties = true;
+observableMergeSource[0].strategy = SourceStrategy.MERGE;
 
 const observablePathSource = environmentSourcesFactory(new ObservableSource());
 observablePathSource[0].path = 'a.a';
 
 const observableMergePathSource = environmentSourcesFactory(new ObservableSource());
-observableMergePathSource[0].mergeProperties = true;
+observableMergePathSource[0].strategy = SourceStrategy.MERGE;
 observableMergePathSource[0].path = 'a.a';
 
 class PromiseSource extends EnvironmentSource {
-  override name = 'PromiseSource';
   async load(): Promise<EnvironmentState> {
     return Promise.resolve({ promise: 0 });
   }
@@ -94,9 +92,9 @@ class InfiniteSource extends EnvironmentSource {
 }
 
 const infiniteRequiredOrderedSource = environmentSourcesFactory(new InfiniteSource());
-infiniteRequiredOrderedSource[0].name = 'InfiniteRequiredOrderedSource';
-infiniteRequiredOrderedSource[0].requiredToLoad = true;
-infiniteRequiredOrderedSource[0].loadInOrder = true;
+infiniteRequiredOrderedSource[0].id = 'InfiniteRequiredOrderedSource';
+infiniteRequiredOrderedSource[0].isRequired = true;
+infiniteRequiredOrderedSource[0].isOrdered = true;
 
 class MultipleSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
@@ -110,9 +108,9 @@ class MultipleSource extends EnvironmentSource {
 const multipleSource = environmentSourcesFactory(new MultipleSource());
 
 const multipleRequiredOrderedSource = environmentSourcesFactory(new MultipleSource());
-multipleRequiredOrderedSource[0].name = 'MultipleRequiredOrderedSource';
-multipleRequiredOrderedSource[0].requiredToLoad = true;
-multipleRequiredOrderedSource[0].loadInOrder = true;
+multipleRequiredOrderedSource[0].id = 'MultipleRequiredOrderedSource';
+multipleRequiredOrderedSource[0].isRequired = true;
+multipleRequiredOrderedSource[0].isOrdered = true;
 
 class MultipleArraySource extends EnvironmentSource {
   load(): EnvironmentState[] {
@@ -121,32 +119,32 @@ class MultipleArraySource extends EnvironmentSource {
 }
 
 const multipleArrayRequiredSource = environmentSourcesFactory(new MultipleArraySource());
-multipleArrayRequiredSource[0].requiredToLoad = true;
+multipleArrayRequiredSource[0].isRequired = true;
 
 class ErrorSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
-    return throwError('').pipe(delayThrow(5));
+    return throwError(() => '').pipe(delayThrow(5));
   }
 }
 
 const errorSource = environmentSourcesFactory(new ErrorSource());
 
 const errorRequiredSource = environmentSourcesFactory(new ErrorSource());
-errorRequiredSource[0].name = 'ErrorRequiredSource';
-errorRequiredSource[0].requiredToLoad = true;
+errorRequiredSource[0].id = 'ErrorRequiredSource';
+errorRequiredSource[0].isRequired = true;
 
 const errorOrderedSource = environmentSourcesFactory(new ErrorSource());
-errorOrderedSource[0].name = 'ErrorOrderedSource';
-errorOrderedSource[0].loadInOrder = true;
+errorOrderedSource[0].id = 'ErrorOrderedSource';
+errorOrderedSource[0].isOrdered = true;
 
 const errorRequiredOrderedSource = environmentSourcesFactory(new ErrorSource());
-errorRequiredOrderedSource[0].name = 'ErrorRequiredOrderedSource';
-errorRequiredOrderedSource[0].requiredToLoad = true;
-errorRequiredOrderedSource[0].loadInOrder = true;
+errorRequiredOrderedSource[0].id = 'ErrorRequiredOrderedSource';
+errorRequiredOrderedSource[0].isRequired = true;
+errorRequiredOrderedSource[0].isOrdered = true;
 
 const errorIgnoreRequiredSource = environmentSourcesFactory(new ErrorSource());
 errorIgnoreRequiredSource[0].ignoreError = true;
-errorIgnoreRequiredSource[0].requiredToLoad = true;
+errorIgnoreRequiredSource[0].isRequired = true;
 
 class ErrorMessageSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
@@ -155,9 +153,9 @@ class ErrorMessageSource extends EnvironmentSource {
 }
 
 const errorMessageRequiredOrderedSource = environmentSourcesFactory(new ErrorMessageSource());
-errorMessageRequiredOrderedSource[0].name = 'ErrorMessageRequiredOrderedSource';
-errorMessageRequiredOrderedSource[0].requiredToLoad = true;
-errorMessageRequiredOrderedSource[0].loadInOrder = true;
+errorMessageRequiredOrderedSource[0].id = 'ErrorMessageRequiredOrderedSource';
+errorMessageRequiredOrderedSource[0].isRequired = true;
+errorMessageRequiredOrderedSource[0].isOrdered = true;
 
 class MultipleWithErrorSource extends EnvironmentSource {
   load(): Observable<EnvironmentState> {
@@ -174,7 +172,7 @@ class MultipleWithErrorSource extends EnvironmentSource {
 }
 
 const multipleWithErrorOrderedSource = environmentSourcesFactory(new MultipleWithErrorSource());
-multipleWithErrorOrderedSource[0].loadInOrder = true;
+multipleWithErrorOrderedSource[0].isOrdered = true;
 
 describe('EnvironmentLoader', () => {
   let service: EnvironmentService;
@@ -237,14 +235,14 @@ describe('EnvironmentLoader', () => {
       await expect(loader.load()).toResolve();
     });
 
-    it(`returns rejected Promise on requiredToLoad source error`, async () => {
+    it(`returns rejected Promise on isRequired source error`, async () => {
       (loader as any)['loaderSources'] = errorRequiredSource;
       await expect(loader.load()).rejects.toThrowError(
         'The Environment EnvironmentSource "ErrorRequiredSource" failed to load'
       );
     });
 
-    it(`returns rejected Promise with message on requiredToLoad source error`, async () => {
+    it(`returns rejected Promise with message on isRequired source error`, async () => {
       (loader as any)['loaderSources'] = errorMessageRequiredOrderedSource;
       await expect(loader.load()).rejects.toThrowError(
         'The Environment EnvironmentSource "ErrorMessageRequiredOrderedSource" failed to load: 111'
@@ -420,11 +418,11 @@ describe('EnvironmentLoader', () => {
       jest.useFakeTimers();
       (loader as any)['loaderSources'] = onDestroySources;
       loader.load();
-      expect(loader['requiredToLoadSubject$'].isStopped).toBeFalse();
+      expect(loader['isRequiredSubject$'].isStopped).toBeFalse();
       jest.advanceTimersByTime(5);
-      expect(loader['requiredToLoadSubject$'].isStopped).toBeFalse();
+      expect(loader['isRequiredSubject$'].isStopped).toBeFalse();
       loader.onDestroy();
-      expect(loader['requiredToLoadSubject$'].isStopped).toBeTrue();
+      expect(loader['isRequiredSubject$'].isStopped).toBeTrue();
     });
 
     it(`completes the sources subjects`, () => {
@@ -441,351 +439,6 @@ describe('EnvironmentLoader', () => {
       loader.onDestroy();
       expect((loader as any)['sourcesSubject$'].get(id1).isStopped).toBeTrue();
       expect((loader as any)['sourcesSubject$'].get(id2).isStopped).toBeTrue();
-    });
-  });
-
-  describe('EnvironmentSource', () => {
-    describe('.requiredToLoad', () => {
-      it(`returns resolved Promise immedialely if no requiredToLoad`, async () => {
-        (loader as any)['loaderSources'] = observableSource;
-        await loader.load().then(() => expect(service.add).not.toHaveBeenCalled());
-      });
-
-      it(`returns resolved Promise after all requiredToLoad completes`, async () => {
-        (loader as any)['loaderSources'] = [
-          ...observableRequiredOrderedSource,
-          ...observableRequiredOrderedSource2,
-          ...observableOrderedSource
-        ];
-        await loader.load().then(() => {
-          expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenNthCalledWith(2, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenCalledTimes(2);
-        });
-      });
-
-      it(`returns resolved Promise after multiple emits requiredToLoad completes`, async () => {
-        (loader as any)['loaderSources'] = [
-          ...observableRequiredOrderedSource,
-          ...multipleRequiredOrderedSource,
-          ...observableRequiredOrderedSource2,
-          ...observableOrderedSource
-        ];
-        await loader.load().then(() => {
-          expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenNthCalledWith(2, { multiple: 0 }, undefined);
-          expect(service.add).toHaveBeenNthCalledWith(3, { multiple: 1 }, undefined);
-          expect(service.add).toHaveBeenNthCalledWith(4, { multiple: 2 }, undefined);
-          expect(service.add).toHaveBeenNthCalledWith(5, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenCalledTimes(5);
-        });
-      });
-
-      it(`doesn't return if infinite requiredToLoad source`, async () => {
-        (loader as any)['loaderSources'] = infiniteRequiredOrderedSource;
-        let index = 0;
-        loader['onAfterSourceAdd'] = () => {
-          if (index === 9) {
-            loader.resolveLoad();
-          } else {
-            index++;
-          }
-        };
-        await loader.load().then(() => expect(service.add).toHaveBeenCalledTimes(10));
-      });
-
-      it(`returns resolved Promise after load error`, async () => {
-        (loader as any)['loaderSources'] = [
-          ...observableRequiredOrderedSource,
-          ...errorOrderedSource,
-          ...observableRequiredOrderedSource2
-        ];
-        await loader.load().then(() => {
-          expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenNthCalledWith(2, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenCalledTimes(2);
-        });
-      });
-
-      it(`returns rejected Promise after requiredToLoad load error`, async () => {
-        (loader as any)['loaderSources'] = [
-          ...observableRequiredOrderedSource,
-          ...errorRequiredOrderedSource,
-          ...observableRequiredOrderedSource2
-        ];
-        const error = new Error('The Environment EnvironmentSource "ErrorRequiredOrderedSource" failed to load');
-        await loader.load().catch((err) => {
-          expect(err).toEqual(error);
-          expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-          expect(service.add).toHaveBeenCalledTimes(1);
-        });
-      });
-    });
-
-    describe('.loadInOrder', () => {
-      it(`adds properties all at once if no loadInOrder sources`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [...observableSource, ...multipleSource, ...arraySource];
-        loader.load();
-        expect(service.add).toHaveBeenNthCalledWith(1, { array: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(2, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenNthCalledWith(3, { multiple: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(3);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(4, { multiple: 1 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(4);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(5, { multiple: 2 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(5);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(5);
-      });
-
-      it(`adds properties in order if loadInOrder and all completes`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [...observableRequiredOrderedSource, ...observableOrderedSource];
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(2, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(2);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(2);
-      });
-
-      it(`adds properties in order if loadInOrder waiting for multiple emit completes`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [
-          ...observableRequiredOrderedSource,
-          ...multipleRequiredOrderedSource,
-          ...observableOrderedSource
-        ];
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(2, { multiple: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(2);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(3, { multiple: 1 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(3);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(4, { multiple: 2 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(4);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(5, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(5);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(5);
-      });
-
-      it(`adds properties in order if loadInOrder and source never completes, but never load the next ordered source`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [...infiniteRequiredOrderedSource, ...observableOrderedSource];
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { infinite: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(2, { infinite: 1 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(2);
-        jest.advanceTimersByTime(100);
-        expect(service.add).toHaveBeenCalledTimes(22);
-        expect(service.add).not.toHaveBeenCalledWith({ observable: 0 }, undefined);
-      });
-
-      it(`adds properties mixing loadInOrder and no loadInOrder sources`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [
-          ...multipleRequiredOrderedSource,
-          ...observableOrderedSource,
-          ...observableSource,
-          ...arraySource
-        ];
-        loader.load();
-        expect(service.add).toHaveBeenNthCalledWith(1, { array: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenCalledWith({ observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledWith({ multiple: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(3);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(4, { multiple: 1 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(4);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(5, { multiple: 2 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(5);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(6, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(6);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(6);
-      });
-
-      it(`adds properties in order ignoring errors`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [...errorOrderedSource, ...observableOrderedSource];
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`adds properties in order ignoring errors and completing multiple sources on error`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = [
-          ...multipleWithErrorOrderedSource,
-          ...errorOrderedSource,
-          ...observableOrderedSource
-        ];
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { multiple: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(2, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(2);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(2);
-      });
-    });
-
-    describe('.mergeProperties', () => {
-      it(`adds properties if no mergeProperties source`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = observableSource;
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`merges properties if mergeProperties source`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = observableMergeSource;
-        loader.load();
-        expect(service.merge).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.merge).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.merge).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.merge).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('.ignoreError', () => {
-      it(`returns rejected Promise if requiredToLoad source error and no ignoreError`, async () => {
-        (loader as any)['loaderSources'] = errorRequiredSource;
-        await expect(loader.load()).toReject();
-      });
-
-      it(`returns resolved Promise if requiredToLoad source error and ignoreError`, async () => {
-        (loader as any)['loaderSources'] = errorIgnoreRequiredSource;
-        await expect(loader.load()).toResolve();
-      });
-    });
-
-    describe('.path', () => {
-      it(`adds properties without path`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = observableSource;
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`adds properties with path`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = observablePathSource;
-        loader.load();
-        expect(service.add).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, 'a.a');
-        expect(service.add).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`merges properties with mergeProperties and no path`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = observableMergeSource;
-        loader.load();
-        expect(service.merge).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.merge).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.merge).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.merge).toHaveBeenCalledTimes(1);
-      });
-
-      it(`merges properties with mergeProperties and path`, () => {
-        jest.useFakeTimers();
-        (loader as any)['loaderSources'] = observableMergePathSource;
-        loader.load();
-        expect(service.merge).not.toHaveBeenCalled();
-        jest.advanceTimersByTime(5);
-        expect(service.merge).toHaveBeenNthCalledWith(1, { observable: 0 }, 'a.a');
-        expect(service.merge).toHaveBeenCalledTimes(1);
-        jest.runAllTimers();
-        expect(service.merge).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('.load()', () => {
-      it(`returns resolved Promise from Observable`, async () => {
-        (loader as any)['loaderSources'] = observableRequiredOrderedSource;
-        await expect(loader.load()).toResolve();
-        expect(service.add).toHaveBeenNthCalledWith(1, { observable: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`returns resolved Promise from Promise`, async () => {
-        (loader as any)['loaderSources'] = promiseSource;
-        await expect(loader.load()).toResolve();
-        expect(service.add).toHaveBeenNthCalledWith(1, { promise: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`returns resolved Promise from Array`, async () => {
-        (loader as any)['loaderSources'] = arraySource;
-        await expect(loader.load()).toResolve();
-        expect(service.add).toHaveBeenNthCalledWith(1, { array: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(1);
-      });
-
-      it(`returns resolved Promise from multiple Array`, async () => {
-        (loader as any)['loaderSources'] = multipleArrayRequiredSource;
-        await expect(loader.load()).toResolve();
-        expect(service.add).toHaveBeenNthCalledWith(1, { a: 0 }, undefined);
-        expect(service.add).toHaveBeenNthCalledWith(2, { b: 0 }, undefined);
-        expect(service.add).toHaveBeenNthCalledWith(3, { c: 0 }, undefined);
-        expect(service.add).toHaveBeenCalledTimes(3);
-      });
     });
   });
 

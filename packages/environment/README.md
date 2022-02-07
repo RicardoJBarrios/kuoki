@@ -64,11 +64,11 @@ const store = {
 
 // env.json = { userName: 'JohnDoe01' }
 const fileSource = {
-  requiredToLoad: true,
+  isRequired: true,
   load: async () => fetch('env.json')
 };
 const constSource = {
-  requiredToLoad: true,
+  isRequired: true,
   load: () => [{ name: 'John Doe' }]
 };
 

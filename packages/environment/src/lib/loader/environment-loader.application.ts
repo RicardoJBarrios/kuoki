@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { isEqual } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -19,19 +18,21 @@ import {
 import { ArrayOrSingle } from 'ts-essentials';
 
 import { EnvironmentService } from '../service';
-import { EnvironmentSource } from '../source';
+import { EnvironmentSource, SourceStrategy } from '../source';
 import { EnvironmentState } from '../store';
 import { environmentSourcesFactory } from './environment-sources-factory.function';
 import { lifecycleHook } from './lifecycle-hook.function';
+import { LoaderSource } from './loader-source.type';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Loads the environment properties from the provided asynchronous sources.
  */
 export class EnvironmentLoader {
   protected readonly loadSubject$: ReplaySubject<void> = new ReplaySubject();
-  protected readonly requiredToLoadSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject(new Set());
+  protected readonly isRequiredSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject(new Set());
   protected readonly sourcesSubject$: Map<string, ReplaySubject<void>> = new Map();
-  protected readonly loaderSources: ReadonlyArray<Required<EnvironmentSource>>;
+  protected readonly loaderSources: ReadonlyArray<LoaderSource>;
   protected isLoading = false;
 
   /**
@@ -44,14 +45,14 @@ export class EnvironmentLoader {
     protected readonly sources?: ArrayOrSingle<EnvironmentSource>
   ) {
     this.loaderSources = environmentSourcesFactory(this.sources);
-    this.loaderSources.forEach((source: Required<EnvironmentSource>) => {
+    this.loaderSources.forEach((source: LoaderSource) => {
       this.sourcesSubject$.set(source.id, new ReplaySubject());
     });
   }
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
-   * @returns A promise once the `requiredToLoad` sources are loaded.
+   * @returns A promise once the `isRequired` sources are loaded.
    * @example
    * ```js
    * loader.load().then(() => {})
@@ -79,15 +80,13 @@ export class EnvironmentLoader {
   }
 
   protected watchRequiredToLoadSources(): void {
-    const requiredToLoadSources: Set<string> = new Set(
-      this.loaderSources
-        .filter((source: Required<EnvironmentSource>) => source.requiredToLoad)
-        .map((source: Required<EnvironmentSource>) => source.id)
+    const isRequiredSources: Set<string> = new Set(
+      this.loaderSources.filter((source: LoaderSource) => source.isRequired).map((source: LoaderSource) => source.id)
     );
 
-    this.requiredToLoadSubject$
+    this.isRequiredSubject$
       .pipe(
-        filter((requiredToLoadLoaded: Set<string>) => isEqual(requiredToLoadLoaded, requiredToLoadSources)),
+        filter((isRequiredLoaded: Set<string>) => isEqual(isRequiredLoaded, isRequiredSources)),
         tap({ next: () => this.resolveLoad() }),
         take(1)
       )
@@ -106,25 +105,21 @@ export class EnvironmentLoader {
   }
 
   protected loadOrderedSources(): Observable<EnvironmentState> {
-    const orderedSources: Required<EnvironmentSource>[] = this.loaderSources.filter(
-      (source: Required<EnvironmentSource>) => source.loadInOrder
-    );
+    const orderedSources: LoaderSource[] = this.loaderSources.filter((source: LoaderSource) => source.isOrdered);
     const orderedSources$: Observable<EnvironmentState>[] = this.getSources$(orderedSources);
 
     return concat(...orderedSources$);
   }
 
   protected loadUnorderedSources(): Observable<EnvironmentState> {
-    const unorderedSources: Required<EnvironmentSource>[] = this.loaderSources.filter(
-      (source: Required<EnvironmentSource>) => !source.loadInOrder
-    );
+    const unorderedSources: LoaderSource[] = this.loaderSources.filter((source: LoaderSource) => !source.isOrdered);
     const unorderedSources$: Observable<EnvironmentState>[] = this.getSources$(unorderedSources);
 
     return merge(...unorderedSources$);
   }
 
-  protected getSources$(sources: Required<EnvironmentSource>[]): Observable<EnvironmentState>[] {
-    return sources.map((source: Required<EnvironmentSource>) => {
+  protected getSources$(sources: LoaderSource[]): Observable<EnvironmentState>[] {
+    return sources.map((source: LoaderSource) => {
       return defer(() => {
         lifecycleHook(this, 'onBeforeSourceLoad', source);
 
@@ -154,27 +149,26 @@ export class EnvironmentLoader {
    * @param source The environment properties source.
    * @returns The modified source properties.
    */
-  preAddProperties(properties: EnvironmentState, source?: Required<EnvironmentSource>): EnvironmentState {
+  preAddProperties(properties: EnvironmentState, source?: LoaderSource): EnvironmentState {
     return properties;
   }
 
-  protected saveSourceValueToStore(properties: EnvironmentState, source: Required<EnvironmentSource>): void {
-    if (source.mergeProperties) {
+  protected saveSourceValueToStore(properties: EnvironmentState, source: LoaderSource): void {
+    if (source.strategy === SourceStrategy.MERGE) {
       this.service.merge(properties, source.path);
     } else {
       this.service.add(properties, source.path);
     }
   }
 
-  protected checkSourceLoadError<E>(error: E, source: Required<EnvironmentSource>): Observable<EnvironmentState> {
+  protected checkSourceLoadError<E>(error: E, source: LoaderSource): Observable<EnvironmentState> {
     const newError: Error = this.getError(error);
-    const sourceId: string = source.name ?? source.id;
     const originalMessage: string = newError.message ? `: ${newError.message}` : '';
-    newError.message = `The Environment EnvironmentSource "${sourceId}" failed to load${originalMessage}`;
+    newError.message = `The Environment EnvironmentSource "${source.id}" failed to load${originalMessage}`;
 
     lifecycleHook(this, 'onAfterSourceError', newError, source);
 
-    if (source.requiredToLoad && !source.ignoreError && this.isLoading) {
+    if (source.isRequired && !source.ignoreError && this.isLoading) {
       this.rejectLoad(newError);
     }
 
@@ -192,11 +186,11 @@ export class EnvironmentLoader {
     return newError;
   }
 
-  protected checkRequiredToLoad(source: Required<EnvironmentSource>): void {
-    if (source.requiredToLoad) {
-      const requiredToLoadLoaded: Set<string> = this.requiredToLoadSubject$.getValue().add(source.id);
+  protected checkRequiredToLoad(source: LoaderSource): void {
+    if (source.isRequired) {
+      const isRequiredLoaded: Set<string> = this.isRequiredSubject$.getValue().add(source.id);
 
-      this.requiredToLoadSubject$.next(requiredToLoadLoaded);
+      this.isRequiredSubject$.next(isRequiredLoaded);
     }
   }
 
@@ -229,14 +223,14 @@ export class EnvironmentLoader {
    * Forces the load to resolve and stops all ongoing source loads.
    */
   completeAllSources(): void {
-    this.loaderSources.forEach((source: Required<EnvironmentSource>) => this.completeSource(source));
+    this.loaderSources.forEach((source: LoaderSource) => this.completeSource(source));
   }
 
   /**
    * Completes a source load.
    * @param id The id of the source to complete.
    */
-  completeSource(source: Required<EnvironmentSource>): void {
+  completeSource(source: LoaderSource): void {
     const sourceSubject$: ReplaySubject<void> | undefined = this.sourcesSubject$.get(source.id);
 
     if (sourceSubject$ != null) {
@@ -251,7 +245,7 @@ export class EnvironmentLoader {
   onDestroy(): void {
     this.completeAllSources();
     this.loadSubject$.complete();
-    this.requiredToLoadSubject$.complete();
+    this.isRequiredSubject$.complete();
     this.sourcesSubject$.forEach((subject: ReplaySubject<void>) => subject.complete());
   }
 }

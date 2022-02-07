@@ -1,14 +1,12 @@
 # Environment Source
 
-> The source from which to get environment properties asynchronously.
+> The source from which to get environment properties.
 
-An Environment Source is a Gateway that must be implemented to obtain environment properties from different sources synchronously or asynchronously.
-How these sources are resolved or how they add the properties to the environment can be defined by the source properties,
-and an application can load one or as many sources as needed.
+An Environment Source is a Gateway that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
 
 ```js
 const fileSource = {
-  load: async () => fetch('environment.json')
+  load: async () => fetch('env.json')
 };
 ```
 
@@ -17,7 +15,7 @@ class FileSource implements EnvironmentSource {
   constructor(private http: HttpClient) {}
 
   load(): Observable<EnvironmentState> {
-    return this.http.get('environment.json');
+    return this.http.get('env.json');
   }
 }
 ```
@@ -27,164 +25,183 @@ class FileSource implements EnvironmentSource {
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
-    <li><a href="#uses-of-requiredtoload">Uses of requiredToLoad</a></li>
-    <li><a href="#uses-of-loadinorder">Uses of loadInOrder</a></li>
-    <li><a href="#uses-of-ignoreerror">Uses of ignoreError</a></li>
+    <li><a href="#isrequired">isRequired</a></li>
+    <li><a href="#isordered">isOrdered</a></li>
+    <li><a href="#ignoreerror">ignoreError</a></li>
+    <li><a href="#load">load()</a></li>
     <li><a href="#fallback-sources">Fallback sources</a></li>
-    <li><a href="#sources-for-long-lived-observables">Sources for Long-lived Observables</a></li>
   </ol>
 </details>
 
-### Uses of requiredToLoad
+### isRequired
 
-The `requiredToLoad` property can mark a source as required. The `load()` method will return after all sources are resolved.
+This property can mark a source as required, so the `EnvironmentLoader.load` method
+resolves after all required sources are completed.
 
 ```js
-const firstSource = {
-  requiredToLoad: true,
+const source1 = {
+  isRequired: true,
   load: () => of({ a: 0 }).pipe(delay(10))
 };
-const secondSource = {
-  requiredToLoad: true,
-  load: () => of({ b: 0 }).pipe(delay(20))
+const source2 = {
+  isRequired: true,
+  load: () =>
+    interval(10).pipe(
+      map((v) => ({ b: v })),
+      take(3)
+    )
 };
-loader.load(); // resolves at 20 ms
-// sets the firstSource properties at 10 ms
-// sets the secondSource properties at 20 ms
+loader.load(); // resolves at 30ms
+// sets the source1 properties at 10ms
+// sets the source2 properties at 10ms, 20ms & 30ms
 ```
 
-If there is no required to load sources the loader will resolve immedialely.
+Resolves immedialely if there is no required sources.
 
 ```js
-const noRequiredSource = { load: () => of({ a: 0 }).pipe(delay(10)) };
+const source1 = { load: () => of({ a: 0 }).pipe(delay(10)) };
 loader.load(); // resolves immedialely
-// sets the noRequiredSource properties at 10 ms
+// sets the source1 properties at 10ms
 ```
 
-If a required to load source never completes the loader will never resolve.
+Never resolves if a required source doesn't complete.
 
 ```js
-const infiniteSource = {
-  requiredToLoad: true,
+const source1 = {
+  isRequired: true,
   load: () => interval(10).pipe(map((v) => ({ a: v })))
 };
 loader.load(); // will never resolve
-// sets the infiniteSource properties every 10 ms
+// sets the source1 properties every 10ms
 ```
 
-The loader will reject after a required to load source error.
+Rejects after a required source error.
 
 ```js
-const firstSource = {
-  requiredToLoad: true,
+const source1 = {
+  isRequired: true,
   load: () => throwError(() => new Error())
 };
-const secondSource = {
-  requiredToLoad: true,
-  load: () => of({ b: 0 }).pipe(delay(20))
+const source2 = {
+  isRequired: true,
+  load: () => of({ b: 0 }).pipe(delay(10))
 };
 loader.load(); // rejects immedialely
-// sets the secondSource properties at 20 ms
+// sets the source2 properties at 10ms
 ```
 
-The loader will resolves normally after a no required to load source error.
+Resolves after a no required source error.
 
 ```js
-const firstSource = { load: () => throwError(() => new Error()) };
-const secondSource = {
-  requiredToLoad: true,
-  load: () => of({ b: 0 }).pipe(delay(20))
+const source1 = { load: () => throwError(() => new Error()) };
+const source2 = {
+  isRequired: true,
+  load: () => of({ b: 0 }).pipe(delay(10))
 };
-loader.load(); // resolves at 20 ms
-// sets the secondSource properties at 20 ms
+loader.load(); // resolves at 10ms
+// sets the source2 properties at 10ms
 ```
 
-### Uses of loadInOrder
+### isOrdered
 
-The `loadInOrder` property defined if a source must wait for another one to complete to start the loading of properties.
+The property defines if a source must wait for another source to complete to start the load.
 
 ```js
-const firstSource = {
-  loadInOrder: true,
-  load: () => of({ a: 0 }, { a: 1 }, { a: 2 }).pipe(delay(10))
+const source1 = {
+  isOrdered: true,
+  load: () =>
+    interval(10).pipe(
+      map((v) => ({ a: v })),
+      take(3)
+    )
 };
-const secondSource = {
-  loadInOrder: true,
+const source2 = {
+  isOrdered: true,
   load: () => of({ b: 0 }).pipe(delay(10))
 };
 loader.load(); // resolves immediately
-// sets the firstSource properties at 10 ms, 20 ms & 30ms
-// sets the secondSource properties at 40 ms
+// sets the source1 properties at 10ms, 20ms & 30ms
+// sets the source2 properties at 40ms
 ```
 
-The not loadInOrder sources will add properties all at once.
+Unordered sources add all properties at once.
 
 ```js
-const firstSource = { load: () => of({ a: 0 }).pipe(delay(10)) };
-const secondSource = { load: () => of({ b: 0 }).pipe(delay(10)) };
+const source1 = { load: () => of({ a: 0 }).pipe(delay(10)) };
+const source2 = { load: () => of({ b: 0 }).pipe(delay(10)) };
 loader.load(); // resolves immediately
-// sets the firstSource properties at 10 ms
-// sets the secondSource properties at 10 ms
+// sets the source1 properties at 10ms
+// sets the source2 properties at 10ms
 ```
 
-If a loadInOrder source never completes will never set the next ordered source properties.
+Never loads if previous ordered source doesn't complete.
 
 ```js
-const infiniteSource = {
-  loadInOrder: true,
+const source1 = {
+  isOrdered: true,
   load: () => interval(10).pipe(map((v) => ({ a: v })))
 };
-const secondSource = {
-  loadInOrder: true,
+const source2 = {
+  isOrdered: true,
   load: () => of({ b: 0 }).pipe(delay(10))
 };
 loader.load(); // resolves immediately
-// sets the infiniteSource properties every 10 ms
-// never sets the secondSource properties
+// sets the infiniteSource properties every 10ms
+// never sets the source2 properties
 ```
 
-If a loadInOrder source returns an error will be ignored and will continue with the next ordered source.
+Ignore errors and continues with the next ordered source.
 
 ```js
-const firstSource = {
-  loadInOrder: true,
+const source1 = {
+  isOrdered: true,
   load: () => throwError(() => new Error())
 };
-const secondSource = {
-  loadInOrder: true,
+const source2 = {
+  isOrdered: true,
   load: () => of({ b: 0 }).pipe(delay(10))
 };
 loader.load(); // resolves immediately
-// sets the secondSource properties at 10 ms
+// sets the source2 properties at 10ms
 ```
 
-### Uses of ignoreError
+### ignoreError
 
-If a required to load source throws an error the loader will rejects, but if the `ignoreError` property is set to `true` the error will be ignored as a no required to load source error.
+Ignores the error if the required source throws.
 
 ```js
-const firstSource = {
-  requiredToLoad: true,
+const source1 = {
+  isRequired: true,
   ignoreError: true,
   load: () => throwError(() => new Error())
 };
-const secondSource = {
-  requiredToLoad: true,
-  load: () => of({ b: 0 }).pipe(delay(20))
+const source2 = {
+  isRequired: true,
+  load: () => of({ b: 0 }).pipe(delay(10))
 };
-loader.load(); // resolves at 20 ms
-// sets the secondSource properties at 20 ms
+loader.load(); // resolves at 10ms
+// sets the source2 properties at 10ms
+```
+
+### load()
+
+Is responsible for getting the properties and returning them in any of the available formats, such as Promise, Observable or an iterable value.
+
+```js
+const source1 = { load: () => Promise.resolve({ a: 0 }) };
+const source2 = { load: () => of({ a: 0 }) };
+const source3 = { load: () => [{ a: 0 }] };
 ```
 
 ### Fallback sources
 
 Sometimes is needed to provide a fallback source if the first one fails. This can be done easily in the original
-properties source with the `catch` method or the `catchError` operator function.
+source with the `catch` method or the `catchError` operator function.
 This condition can be chained as many times as necessary.
 
 ```js
 const fileSource = {
-  load: async () => fetch('environment.json').catch(() => fetch('environment2.json'))
+  load: async () => fetch('env-prod.json').catch(() => fetch('env.json'))
 };
 ```
 
@@ -193,20 +210,11 @@ class FileSource implements EnvironmentSource {
   constructor(private http: HttpClient) {}
 
   load(): Observable<EnvironmentState> {
-    return this.http.get('environment.json').pipe(catchError(() => this.http.get('environment2.json')));
+    return this.http.get('env-prod.json').pipe(catchError(() => this.fallbackSource()));
+  }
+
+  private fallbackSource(): Observable<EnvironmentState> {
+    return this.http.get('env.json');
   }
 }
-```
-
-### Sources for Long-lived Observables
-
-If the application needs to load the properties from sources that emit multiple times asynchronously,
-such as a webservice or a Server Sent Event (SSE) service, ensure that `loadInOrder` is `false` or is the
-last source, because ordered sources must complete to let the next one start.
-
-```ts
-const serverSideEventSource = {
-  loadInOrder: false,
-  load: () => sse.get('https://api.com/sse')
-};
 ```
