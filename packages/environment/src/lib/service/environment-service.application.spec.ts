@@ -1,6 +1,23 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { EnvironmentState, EnvironmentStore } from '../store';
-import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
 import { EnvironmentService } from './environment-service.application';
+
+class TestEnvironmentStore {
+  private _state = new BehaviorSubject({});
+  getAll$() {
+    return this._state.asObservable();
+  }
+  getAll() {
+    return this._state.getValue();
+  }
+  update(environment: any) {
+    this._state.next(environment);
+  }
+  reset() {
+    this._state.next({});
+  }
+}
 
 describe('EnvironmentService', () => {
   let state: EnvironmentState;

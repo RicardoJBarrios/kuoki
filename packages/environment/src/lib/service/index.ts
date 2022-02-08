@@ -1,5 +1,5 @@
 /**
- * > Sets properties in the environment store.
+ * [[include:service/README.md]]
  * @module EnvironmentService
  */
 export * from './create-environment-service.function';
