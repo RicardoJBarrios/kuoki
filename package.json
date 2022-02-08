@@ -19,14 +19,14 @@
     "@commitlint/cli": "^16.0.1",
     "@commitlint/config-conventional": "^16.0.0",
     "@jscutlery/semver": "^2.17.5",
-    "@nrwl/cli": "13.7.3",
-    "@nrwl/eslint-plugin-nx": "13.7.3",
-    "@nrwl/jest": "13.7.3",
-    "@nrwl/js": "13.7.3",
-    "@nrwl/linter": "13.7.3",
-    "@nrwl/nx-cloud": "13.1.2",
-    "@nrwl/tao": "13.7.3",
-    "@nrwl/workspace": "13.7.3",
+    "@nrwl/cli": "13.8.0",
+    "@nrwl/eslint-plugin-nx": "13.8.0",
+    "@nrwl/jest": "13.8.0",
+    "@nrwl/js": "13.8.0",
+    "@nrwl/linter": "13.8.0",
+    "@nrwl/nx-cloud": "13.1.4",
+    "@nrwl/tao": "13.8.0",
+    "@nrwl/workspace": "13.8.0",
     "@sinonjs/fake-timers": "^9.1.0",
     "@types/jest": "27.0.2",
     "@types/lodash-es": "^4.17.5",
@@ -74,3 +74,4 @@
     }
   }
 }
+
