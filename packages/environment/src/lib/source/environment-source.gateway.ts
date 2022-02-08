@@ -47,8 +47,6 @@ export abstract class EnvironmentSource {
   /**
    * The path to set the properties in the environment.
    * @see {@link Path}
-   * @see {@link EnvironmentService.add}
-   * @see {@link EnvironmentService.merge}
    */
   path?: Path;
 
