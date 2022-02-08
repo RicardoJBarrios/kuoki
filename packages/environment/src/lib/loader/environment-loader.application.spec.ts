@@ -15,10 +15,24 @@ import {
 
 import { EnvironmentService } from '../service';
 import { EnvironmentSource, SourceStrategy } from '../source';
-import { EnvironmentState } from '../store';
-import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
+import { EnvironmentState, EnvironmentStore } from '../store';
 import { EnvironmentLoader } from './environment-loader.application';
 import { environmentSourcesFactory } from './environment-sources-factory.function';
+
+export class TestEnvironmentStore extends EnvironmentStore {
+  getAll$(): Observable<EnvironmentState> {
+    throw new Error('Method not implemented.');
+  }
+  getAll(): EnvironmentState {
+    throw new Error('Method not implemented.');
+  }
+  update(environment: EnvironmentState): void {
+    throw new Error('Method not implemented.');
+  }
+  reset(): void {
+    throw new Error('Method not implemented.');
+  }
+}
 
 function delayThrow<T>(due: number | Date): MonoTypeOperatorFunction<T> {
   return catchError(<E>(error: E) => timer(due).pipe(mergeMap(() => throwError(() => error))));

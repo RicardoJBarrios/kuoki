@@ -1,8 +1,25 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { EnvironmentService } from '../service';
 import { EnvironmentStore } from '../store';
-import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
 import { createEnvironmentLoader } from './create-environment-loader.function';
 import { EnvironmentLoader } from './environment-loader.application';
+
+class TestEnvironmentStore {
+  private _state = new BehaviorSubject({});
+  getAll$() {
+    return this._state.asObservable();
+  }
+  getAll() {
+    return this._state.getValue();
+  }
+  update(environment: any) {
+    this._state.next(environment);
+  }
+  reset() {
+    this._state.next({});
+  }
+}
 
 const source1 = { name: '0', load: () => [{ a: 0 }] };
 const source2 = { name: '1', load: () => [{ b: 0 }] };

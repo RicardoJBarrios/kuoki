@@ -1,5 +1,5 @@
 /**
- * > Loads the environment properties from the provided asynchronous sources.
+ * [[include:loader/README.md]]
  * @module EnvironmentLoader
  */
 export * from './create-environment-loader.function';
