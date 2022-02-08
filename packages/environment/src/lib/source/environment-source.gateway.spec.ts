@@ -17,7 +17,7 @@ import { EnvironmentLoader } from '../loader';
 import { EnvironmentService } from '../service';
 import { EnvironmentStore } from '../store';
 
-class Store {
+class TestEnvironmentStore extends EnvironmentStore {
   private _state = new BehaviorSubject({});
   getAll$() {
     return this._state.asObservable();
@@ -41,7 +41,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
   let load: jest.Mock<any, any>;
 
   beforeEach(() => {
-    store = new Store();
+    store = new TestEnvironmentStore();
     service = new EnvironmentService(store);
     clock = install();
     load = jest.fn();
