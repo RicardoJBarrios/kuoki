@@ -1,6 +1,5 @@
 /**
- * > Manages the path to an environment property.
- *
+ * [[include:path/README.md]]
  * @module Path
  */
 export * from './overwrites-path.function';
