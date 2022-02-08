@@ -3,8 +3,22 @@ import { marbles } from 'rxjs-marbles/jest';
 import { delay } from 'rxjs/operators';
 
 import { EnvironmentState, EnvironmentStore } from '../store';
-import { TestEnvironmentStore } from '../store/environment-store.gateway.spec';
 import { EnvironmentQuery } from './environment-query.application';
+
+export class TestEnvironmentStore extends EnvironmentStore {
+  getAll$(): Observable<EnvironmentState> {
+    throw new Error('Method not implemented.');
+  }
+  getAll(): EnvironmentState {
+    throw new Error('Method not implemented.');
+  }
+  update(environment: EnvironmentState): void {
+    throw new Error('Method not implemented.');
+  }
+  reset(): void {
+    throw new Error('Method not implemented.');
+  }
+}
 
 const envA1 = Object.freeze({ a: Object.freeze({ a: 0 }), b: '{{ a.a }}' });
 const envA2 = { a: { a: 0 }, b: '{{ a.a }}' };

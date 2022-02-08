@@ -1,5 +1,5 @@
 /**
- * > Gets the properties from the environment.
+ * [[include:query/README.md]]
  * @module EnvironmentQuery
  */
 export * from './create-environment-query.function';
