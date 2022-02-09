@@ -82,19 +82,6 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
       expect(store.getAll()).toEqual({ a: 0, b: 2 });
     });
 
-    it(`resolves immedialely if there is no required sources`, async () => {
-      const source1 = { load: () => of({ a: 0 }).pipe(delay(10)) };
-      loader = new EnvironmentLoader(service, [source1]);
-      loader.load().then(() => load());
-
-      await clock.tickAsync(0); // 0
-      expect(load).toHaveBeenCalledTimes(1);
-      expect(store.getAll()).toEqual({});
-
-      await clock.tickAsync(10); // 10
-      expect(store.getAll()).toEqual({ a: 0 });
-    });
-
     it(`never resolves if a required source doesn't complete`, async () => {
       const source1 = {
         isRequired: true,
