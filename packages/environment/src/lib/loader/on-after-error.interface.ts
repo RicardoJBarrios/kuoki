@@ -6,5 +6,5 @@ export interface OnAfterError {
    * Handles any additional tasks after the load is rejected.
    * @param error The load error.
    */
-  onAfterError(error: Error): void;
+  onAfterError<E extends Error>(error: E): void;
 }

@@ -1,23 +1,22 @@
-import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { EnvironmentService } from '../service';
-import { EnvironmentStore } from '../store';
+import { EnvironmentState, EnvironmentStore } from '../store';
 import { createEnvironmentLoader } from './create-environment-loader.function';
 import { EnvironmentLoader } from './environment-loader.application';
 
-class TestEnvironmentStore {
-  private _state = new BehaviorSubject({});
-  getAll$() {
-    return this._state.asObservable();
+export class TestEnvironmentStore extends EnvironmentStore {
+  getAll$(): Observable<EnvironmentState> {
+    throw new Error('Method not implemented.');
   }
-  getAll() {
-    return this._state.getValue();
+  getAll(): EnvironmentState {
+    throw new Error('Method not implemented.');
   }
-  update(environment: any) {
-    this._state.next(environment);
+  update(environment: EnvironmentState): void {
+    throw new Error('Method not implemented.');
   }
-  reset() {
-    this._state.next({});
+  reset(): void {
+    throw new Error('Method not implemented.');
   }
 }
 

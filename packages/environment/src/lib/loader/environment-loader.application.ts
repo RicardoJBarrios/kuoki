@@ -24,15 +24,20 @@ import { environmentSourcesFactory } from './environment-sources-factory.functio
 import { lifecycleHook } from './lifecycle-hook.function';
 import { LoaderSource } from './loader-source.type';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Loads the environment properties from the provided asynchronous sources.
  */
 export class EnvironmentLoader {
   protected readonly loadSubject$: ReplaySubject<void> = new ReplaySubject();
   protected readonly isRequiredSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject(new Set());
-  protected readonly sourcesSubject$: Map<string, ReplaySubject<void>> = new Map();
-  protected readonly loaderSources: ReadonlyArray<LoaderSource>;
+  protected readonly loaderSources: ReadonlyArray<LoaderSource> = environmentSourcesFactory(this.sources);
+  protected readonly sourcesSubject$: ReadonlyMap<string, ReplaySubject<void>> = this.loaderSources.reduce(
+    (map: Map<string, ReplaySubject<void>>, source: LoaderSource) => {
+      map.set(source.id, new ReplaySubject());
+      return map;
+    },
+    new Map()
+  );
   protected isLoading = false;
 
   /**
@@ -43,20 +48,11 @@ export class EnvironmentLoader {
   constructor(
     protected readonly service: EnvironmentService,
     protected readonly sources?: ArrayOrSingle<EnvironmentSource>
-  ) {
-    this.loaderSources = environmentSourcesFactory(this.sources);
-    this.loaderSources.forEach((source: LoaderSource) => {
-      this.sourcesSubject$.set(source.id, new ReplaySubject());
-    });
-  }
+  ) {}
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
-   * @returns A promise once the `isRequired` sources are loaded.
-   * @example
-   * ```js
-   * loader.load().then(() => {})
-   * ```
+   * @returns A promise once the required sources are loaded.
    */
   async load(): Promise<void> {
     lifecycleHook(this, 'onBeforeLoad');
@@ -68,11 +64,11 @@ export class EnvironmentLoader {
     return firstValueFrom(this.loadSubject$)
       .then(() => {
         lifecycleHook(this, 'onAfterLoad');
-        Promise.resolve();
+        return Promise.resolve();
       })
-      .catch(<E>(error: E) => {
+      .catch(<E extends Error>(error: E) => {
         lifecycleHook(this, 'onAfterError', error);
-        throw error;
+        return Promise.reject(error);
       })
       .finally(() => {
         this.isLoading = false;
@@ -138,7 +134,7 @@ export class EnvironmentLoader {
           lifecycleHook(this, 'onAfterSourceComplete', source);
           this.checkRequiredToLoad(source);
         }),
-        takeUntil(this.getSafeSourceSubject$(source.id))
+        takeUntil(this.sourcesSubject$.get(source.id) as ReplaySubject<void>)
       );
     });
   }
@@ -149,6 +145,7 @@ export class EnvironmentLoader {
    * @param source The environment properties source.
    * @returns The modified source properties.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   preAddProperties(properties: EnvironmentState, source?: LoaderSource): EnvironmentState {
     return properties;
   }
@@ -164,7 +161,7 @@ export class EnvironmentLoader {
   protected checkSourceLoadError<E>(error: E, source: LoaderSource): Observable<EnvironmentState> {
     const newError: Error = this.getError(error);
     const originalMessage: string = newError.message ? `: ${newError.message}` : '';
-    newError.message = `The Environment EnvironmentSource "${source.id}" failed to load${originalMessage}`;
+    newError.message = `The environment source "${source.id}" failed to load${originalMessage}`;
 
     lifecycleHook(this, 'onAfterSourceError', newError, source);
 
@@ -194,17 +191,6 @@ export class EnvironmentLoader {
     }
   }
 
-  protected getSafeSourceSubject$(id: string): ReplaySubject<void> {
-    let subject: ReplaySubject<void> | undefined = this.sourcesSubject$.get(id);
-
-    if (subject === undefined) {
-      subject = new ReplaySubject();
-      this.sourcesSubject$.set(id, subject);
-    }
-
-    return subject;
-  }
-
   /**
    * Forces the load to resolve.
    */
@@ -214,8 +200,10 @@ export class EnvironmentLoader {
 
   /**
    * Forces the load to reject.
+   * @typeParam E The error type.
+   * @param error The error to throw.
    */
-  rejectLoad<E>(error: E): void {
+  rejectLoad<E extends Error>(error: E): void {
     this.loadSubject$.error(error);
   }
 
@@ -228,7 +216,7 @@ export class EnvironmentLoader {
 
   /**
    * Completes a source load.
-   * @param id The id of the source to complete.
+   * @param source The source to complete.
    */
   completeSource(source: LoaderSource): void {
     const sourceSubject$: ReplaySubject<void> | undefined = this.sourcesSubject$.get(source.id);

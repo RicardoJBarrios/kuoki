@@ -1,4 +1,4 @@
-import { EnvironmentSource } from '../source';
+import { LoaderSource } from './loader-source.type';
 
 /**
  * A lifecycle hook that is called after a source is rejected.
@@ -9,5 +9,5 @@ export interface OnAfterSourceError {
    * @param error The source error.
    * @param source The rejected source.
    */
-  onAfterSourceError(error: Error, source: Required<EnvironmentSource>): void;
+  onAfterSourceError(error: Error, source: LoaderSource): void;
 }

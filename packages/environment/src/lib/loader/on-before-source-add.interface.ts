@@ -1,5 +1,5 @@
-import { EnvironmentSource } from '../source';
 import { EnvironmentState } from '../store';
+import { LoaderSource } from './loader-source.type';
 
 /**
  * A lifecycle hook that is called before a source properties are added to the environment.
@@ -11,5 +11,5 @@ export interface OnBeforeSourceAdd {
    * @param properties The properties returned by the source.
    * @param source The loaded source.
    */
-  onBeforeSourceAdd(properties: EnvironmentState, source: Required<EnvironmentSource>): void;
+  onBeforeSourceAdd(properties: EnvironmentState, source: LoaderSource): void;
 }
