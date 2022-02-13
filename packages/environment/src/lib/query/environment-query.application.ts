@@ -242,7 +242,7 @@ export class EnvironmentQuery {
     transpileEnvironment?: boolean,
     interpolation?: [string, string]
   ): GetProperty<T> {
-    const config: Required<EnvironmentQueryConfig> = this.config;
+    const config: Required<EnvironmentQueryConfig> = { ...this.config };
 
     if (interpolation != null) {
       config.interpolation = interpolation;
