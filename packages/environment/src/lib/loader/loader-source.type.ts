@@ -1,4 +1,3 @@
-import { Path } from '../path';
 import { EnvironmentSource } from '../source';
 
-export type LoaderSource = Required<EnvironmentSource> & { path?: Path };
+export type LoaderSource = Omit<Required<EnvironmentSource>, 'path'> & Pick<EnvironmentSource, 'path'>;
