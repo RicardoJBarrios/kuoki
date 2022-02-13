@@ -14,10 +14,6 @@ export interface GetOptions<T> extends EnvironmentQueryConfig {
    * Converts the returned value.
    * @param property The value of the property at path.
    * @returns The converted value.
-   * @example
-   * ```js
-   * { targetType: (property) => String(property) }
-   * ```
    */
   targetType?: (property: Property) => T;
   /**
