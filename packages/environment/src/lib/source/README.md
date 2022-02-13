@@ -35,9 +35,6 @@ class FileSource implements EnvironmentSource {
 
 ### isRequired
 
-This property can mark a source as required, so the `EnvironmentLoader.load` method
-resolves after all required sources are completed.
-
 ```js
 const source1 = {
   isRequired: true,
@@ -104,8 +101,6 @@ loader.load(); // resolves at 10ms
 
 ### isOrdered
 
-The property defines if a source must wait for another source to complete to start the load.
-
 ```js
 const source1 = {
   isOrdered: true,
@@ -167,8 +162,6 @@ loader.load(); // resolves immediately
 
 ### ignoreError
 
-Ignores the error if the required source throws.
-
 ```js
 const source1 = {
   isRequired: true,
@@ -184,8 +177,6 @@ loader.load(); // resolves at 10ms
 ```
 
 ### load()
-
-Is responsible for getting the properties and returning them in any of the available formats, such as Promise, Observable or an iterable value.
 
 ```js
 const source1 = { load: () => Promise.resolve({ a: 0 }) };
