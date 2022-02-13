@@ -17,12 +17,14 @@ import {
 } from 'rxjs';
 import { ArrayOrSingle } from 'ts-essentials';
 
+import { asError } from '../helpers';
 import { EnvironmentService } from '../service';
 import { EnvironmentSource, SourceStrategy } from '../source';
 import { EnvironmentState } from '../store';
 import { environmentSourcesFactory } from './environment-sources-factory.function';
 import { lifecycleHook } from './lifecycle-hook.function';
 import { LoaderSource } from './loader-source.type';
+import { sourcesSubjectFactory } from './sources-subject-factory.function';
 
 /**
  * Loads the environment properties from the provided asynchronous sources.
@@ -31,13 +33,7 @@ export class EnvironmentLoader {
   protected readonly loadSubject$: ReplaySubject<void> = new ReplaySubject();
   protected readonly isRequiredSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject(new Set());
   protected readonly loaderSources: ReadonlyArray<LoaderSource> = environmentSourcesFactory(this.sources);
-  protected readonly sourcesSubject$: ReadonlyMap<string, ReplaySubject<void>> = this.loaderSources.reduce(
-    (map: Map<string, ReplaySubject<void>>, source: LoaderSource) => {
-      map.set(source.id, new ReplaySubject());
-      return map;
-    },
-    new Map()
-  );
+  protected readonly sourcesSubject$: ReadonlyMap<string, ReplaySubject<void>>;
   protected isLoading = false;
 
   /**
@@ -48,7 +44,19 @@ export class EnvironmentLoader {
   constructor(
     protected readonly service: EnvironmentService,
     protected readonly sources?: ArrayOrSingle<EnvironmentSource>
-  ) {}
+  ) {
+    this.checkSourcesIdUniqueness();
+    this.sourcesSubject$ = sourcesSubjectFactory(this.loaderSources);
+  }
+
+  protected checkSourcesIdUniqueness(): void {
+    const ids: string[] = this.loaderSources.map((source: LoaderSource) => source.id);
+    const duplicates = ids.filter((item: string, index: number) => ids.indexOf(item) !== index);
+
+    if (duplicates.length > 0) {
+      throw new Error(`There are sources with duplicate id's: ${duplicates.join(', ')}`);
+    }
+  }
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
@@ -159,7 +167,7 @@ export class EnvironmentLoader {
   }
 
   protected checkSourceLoadError<E>(error: E, source: LoaderSource): Observable<EnvironmentState> {
-    const newError: Error = this.getError(error);
+    const newError: Error = asError(error);
     const originalMessage: string = newError.message ? `: ${newError.message}` : '';
     newError.message = `The environment source "${source.id}" failed to load${originalMessage}`;
 
@@ -170,17 +178,6 @@ export class EnvironmentLoader {
     }
 
     return of({});
-  }
-
-  protected getError<E>(error: E): Error {
-    if (error instanceof Error) {
-      return error;
-    }
-
-    const newError = new Error();
-    newError.message = String(error);
-
-    return newError;
   }
 
   protected checkRequiredToLoad(source: LoaderSource): void {

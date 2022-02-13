@@ -34,6 +34,8 @@ class TestEnvironmentStore extends EnvironmentStore {
   }
 }
 
+const hook = jest.fn();
+
 class Loader
   extends EnvironmentLoader
   implements
@@ -51,31 +53,31 @@ class Loader
     super(service, sources);
   }
   onAfterLoad(): void {
-    console.log('onAfterLoad');
+    hook('onAfterLoad');
   }
   onAfterComplete(): void {
-    console.log('onAfterComplete');
+    hook('onAfterComplete');
   }
   onAfterError<E extends Error>(error: E): void {
-    console.log('onAfterError', error);
+    hook('onAfterError', error);
   }
   onAfterSourceAdd(properties: EnvironmentState, source: LoaderSource): void {
-    console.log('onAfterSourceAdd', properties, source);
+    hook('onAfterSourceAdd', properties, source);
   }
   onAfterSourceComplete(source: LoaderSource): void {
-    console.log('onAfterSourceComplete', source);
+    hook('onAfterSourceComplete', source);
   }
   onAfterSourceError(error: Error, source: LoaderSource): void {
-    console.log('onAfterSourceError', error, source);
+    hook('onAfterSourceError', error, source);
   }
   onBeforeLoad(): void {
-    console.log('onBeforeLoad');
+    hook('onBeforeLoad');
   }
   onBeforeSourceAdd(properties: EnvironmentState, source: LoaderSource): void {
-    console.log('onBeforeSourceAdd', properties, source);
+    hook('onBeforeSourceAdd', properties, source);
   }
   onBeforeSourceLoad(source: LoaderSource): void {
-    console.log('onBeforeSourceLoad', source);
+    hook('onBeforeSourceLoad', source);
   }
 }
 
@@ -92,13 +94,23 @@ describe('EnvironmentLoader', () => {
     loader = new Loader(service);
     clock = install();
     load = jest.fn();
-    jest.spyOn(console, 'log').mockImplementation(() => null);
   });
 
   afterEach(() => {
     clock.uninstall();
     load.mockRestore();
+    hook.mockRestore();
     jest.restoreAllMocks();
+  });
+
+  it(`throws if there are sources with duplicated ids`, () => {
+    const source1 = { id: 'a', load: () => [{ a: 0 }] };
+    const source2 = { id: 'a', load: () => [{ b: 0 }] };
+    const source3 = { id: 'b', load: () => [{ a: 0 }] };
+    const source4 = { id: 'b', load: () => [{ b: 0 }] };
+    expect(() => new Loader(service, [source1, source2, source3, source4])).toThrowError(
+      new Error(`There are sources with duplicate id's: a, b`)
+    );
   });
 
   it(`.loaderSources is set on constructor with single source`, () => {
@@ -136,8 +148,8 @@ describe('EnvironmentLoader', () => {
     expect([...loader['sourcesSubject$'].keys()]).toEqual([source1.id, source2.id]);
   });
 
-  it(`.load() resolves immedialely if there is no required sources`, async () => {
-    const source1 = { load: () => of({ a: 0 }).pipe(delay(10)) };
+  it(`.load() resolves immedialely if there are no required sources`, async () => {
+    const source1 = { load: () => of({ a: 0 }).pipe(delay(5)) };
     loader = new Loader(service, [source1]);
     loader.load().then(() => load());
 
@@ -145,7 +157,7 @@ describe('EnvironmentLoader', () => {
     expect(load).toHaveBeenCalledTimes(1);
     expect(store.getAll()).toEqual({});
 
-    await clock.tickAsync(10); // 10
+    await clock.tickAsync(5); // 5
     expect(store.getAll()).toEqual({ a: 0 });
   });
 
@@ -156,38 +168,6 @@ describe('EnvironmentLoader', () => {
 
     await expect(loader.load()).rejects.toEqual(error);
   });
-
-  it(`.load() rejects without Error`, async () => {
-    const source1 = { id: 'a', isRequired: true, load: () => throwError(() => 'test') };
-    const error = new Error('The environment source "a" failed to load: test');
-    loader = new Loader(service, [source1]);
-
-    await expect(loader.load()).rejects.toEqual(error);
-  });
-
-  // it(`.load() resolves if called multiple times`, async () => {
-  //   const source1 = { isRequired: true, load: () => of({ a: 0 }).pipe(delay(10)) };
-  //   loader = new Loader(service, [source1]);
-  //   loader.load().then(() => load());
-
-  //   await clock.tickAsync(0); // 0
-  //   expect(load).not.toHaveBeenCalled();
-  //   expect(store.getAll()).toEqual({});
-
-  //   await clock.tickAsync(5); // 5
-  //   loader.load().then(() => load());
-
-  //   await clock.tickAsync(0); // 5
-  //   expect(load).not.toHaveBeenCalled();
-  //   expect(store.getAll()).toEqual({});
-
-  //   await clock.tickAsync(5); // 10
-  //   expect(load).not.toHaveBeenCalled();
-  //   expect(store.getAll()).toEqual({ a: 0 });
-
-  //   // await clock.tickAsync(10); // 10
-  //   // expect(store.getAll()).toEqual({ a: 0 });
-  // });
 
   it(`.resolveLoad() forces the load to resolve`, async () => {
     const source1 = { isRequired: true, load: () => of({ a: 0 }).pipe(delay(10)) };
@@ -274,7 +254,25 @@ describe('EnvironmentLoader', () => {
     expect(store.getAll()).toEqual({ b: 0 });
   });
 
-  it(`.onDestroy() sttops all the streams`, async () => {
+  it(`.onDestroy() is called after all sources completes`, async () => {
+    const source1 = { isRequired: true, load: () => throwError(() => new Error()) };
+    const source2 = { load: () => of({ a: 0 }).pipe(delay(10)) };
+    loader = new Loader(service, [source1, source2]);
+    jest.spyOn(loader, 'onDestroy');
+    loader.load().catch(() => load());
+
+    await clock.tickAsync(0); // 0
+    expect(loader.onDestroy).not.toHaveBeenCalled();
+    expect(load).toHaveBeenCalled();
+
+    await clock.tickAsync(5); // 5
+    expect(loader.onDestroy).not.toHaveBeenCalled();
+
+    await clock.tickAsync(5); // 10
+    expect(loader.onDestroy).toHaveBeenCalledTimes(1);
+  });
+
+  it(`.onDestroy() stops all the streams`, async () => {
     const source1 = { id: 'a', isRequired: true, isOrdered: true, load: () => of({ a: 0 }).pipe(delay(10)) };
     const source2 = { id: 'b', isRequired: true, isOrdered: true, load: () => of({ b: 0 }).pipe(delay(10)) };
     loader = new Loader(service, [source1, source2]);
@@ -323,13 +321,13 @@ describe('EnvironmentLoader', () => {
       const source = loader['loaderSources'][0];
 
       await expect(loader.load()).toResolve();
-      expect(console.log).toHaveBeenNthCalledWith(1, 'onBeforeLoad');
-      expect(console.log).toHaveBeenNthCalledWith(2, 'onBeforeSourceLoad', source);
-      expect(console.log).toHaveBeenNthCalledWith(3, 'onBeforeSourceAdd', properties, source);
-      expect(console.log).toHaveBeenNthCalledWith(4, 'onAfterSourceAdd', afterProperties, source);
-      expect(console.log).toHaveBeenNthCalledWith(5, 'onAfterSourceComplete', source);
-      expect(console.log).toHaveBeenNthCalledWith(6, 'onAfterComplete');
-      expect(console.log).toHaveBeenNthCalledWith(7, 'onAfterLoad');
+      expect(hook).toHaveBeenNthCalledWith(1, 'onBeforeLoad');
+      expect(hook).toHaveBeenNthCalledWith(2, 'onBeforeSourceLoad', source);
+      expect(hook).toHaveBeenNthCalledWith(3, 'onBeforeSourceAdd', properties, source);
+      expect(hook).toHaveBeenNthCalledWith(4, 'onAfterSourceAdd', afterProperties, source);
+      expect(hook).toHaveBeenNthCalledWith(5, 'onAfterSourceComplete', source);
+      expect(hook).toHaveBeenNthCalledWith(6, 'onAfterComplete');
+      expect(hook).toHaveBeenNthCalledWith(7, 'onAfterLoad');
     });
 
     it(`executes hooks in order if rejects`, async () => {
@@ -340,12 +338,12 @@ describe('EnvironmentLoader', () => {
       const source = loader['loaderSources'][0];
 
       await expect(loader.load()).toReject();
-      expect(console.log).toHaveBeenNthCalledWith(1, 'onBeforeLoad');
-      expect(console.log).toHaveBeenNthCalledWith(2, 'onBeforeSourceLoad', source);
-      expect(console.log).toHaveBeenNthCalledWith(3, 'onAfterSourceError', error, source);
-      expect(console.log).toHaveBeenNthCalledWith(4, 'onAfterSourceComplete', source);
-      expect(console.log).toHaveBeenNthCalledWith(5, 'onAfterComplete');
-      expect(console.log).toHaveBeenNthCalledWith(6, 'onAfterError', finalError);
+      expect(hook).toHaveBeenNthCalledWith(1, 'onBeforeLoad');
+      expect(hook).toHaveBeenNthCalledWith(2, 'onBeforeSourceLoad', source);
+      expect(hook).toHaveBeenNthCalledWith(3, 'onAfterSourceError', error, source);
+      expect(hook).toHaveBeenNthCalledWith(4, 'onAfterSourceComplete', source);
+      expect(hook).toHaveBeenNthCalledWith(5, 'onAfterComplete');
+      expect(hook).toHaveBeenNthCalledWith(6, 'onAfterError', finalError);
     });
   });
 });
