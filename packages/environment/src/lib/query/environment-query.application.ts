@@ -2,7 +2,7 @@ import { get, isEqual, isString, mergeWith } from 'lodash-es';
 import { combineLatest, firstValueFrom, MonoTypeOperatorFunction, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 
-import { AtLeastOne, filterNil } from '../helpers';
+import { asString, AtLeastOne, filterNil } from '../helpers';
 import { Path } from '../path';
 import { mergeArraysCustomizer } from '../shared';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
@@ -297,10 +297,6 @@ export class EnvironmentQuery {
       return substring;
     }
 
-    try {
-      return typeof value === 'object' ? JSON.stringify(value) : String(value);
-    } catch {
-      return String(value);
-    }
+    return asString(value);
   }
 }
