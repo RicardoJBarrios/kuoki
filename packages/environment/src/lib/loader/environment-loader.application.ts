@@ -197,11 +197,13 @@ export class EnvironmentLoader {
 
   /**
    * Forces the load to reject.
-   * @typeParam E The error type.
+   * @typeParam E The type of the error.
    * @param error The error to throw.
    */
-  rejectLoad<E extends Error>(error: E): void {
-    this.loadSubject$.error(error);
+  rejectLoad<E>(error: E): void {
+    const newError: Error = asError(error);
+
+    this.loadSubject$.error(newError);
   }
 
   /**
