@@ -2,6 +2,7 @@ import { asString } from './as-string.function';
 
 /**
  * Converts any type of error source into an Error.
+ * @typeParam E The type of the error.
  * @param error the error source.
  * @returns An error with the error source as message.
  */
@@ -10,5 +11,7 @@ export function asError<E>(error: E): Error {
     return error;
   }
 
-  return new Error(asString(error));
+  const message: string = asString(error);
+
+  return new Error(message);
 }
