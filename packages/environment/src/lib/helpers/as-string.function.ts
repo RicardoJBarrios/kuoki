@@ -1,6 +1,6 @@
 /**
  * Converts any type value to String, stringify objects.
- * @typeParam The type of the value.
+ * @typeParam T The type of the value.
  * @param value The value to convert.
  * @returns The value as string.
  */
