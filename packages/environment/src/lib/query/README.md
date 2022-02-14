@@ -40,7 +40,7 @@ class CustomEnvironmentQuery extends EnvironmentQuery {
 ```js
 // Environment = {}-{a:0}-{a:0}-{a:1}-
 query.getAll$(); // {}-{a:0}---{a:1}-
-query.getAllAsync(); // resolves {a:0} at 3ms
+query.getAllAsync(); // resolves {a:0} at 2ms
 query.getAll(); // {}
 ```
 
@@ -49,7 +49,7 @@ query.getAll(); // {}
 ```js
 // Environment = {}-{a:0}-{a:0}-{a:1,b:0}-
 query.containsAll$('a', 'b'); // false-----true-
-query.containsAllAsync('a', 'b'); // resolves true at 7ms
+query.containsAllAsync('a', 'b'); // resolves true at 6ms
 query.containsAll('a', 'b'); // false
 ```
 
@@ -58,7 +58,7 @@ query.containsAll('a', 'b'); // false
 ```js
 // Environment = {}-{a:0}-{a:0}-{b:0}-
 query.containsSome$('a', 'c'); // false-true---false-
-query.containsSomeAsync('a', 'c'); // resolves true at 3ms
+query.containsSomeAsync('a', 'c'); // resolves true at 2ms
 query.containsSome('a', 'c'); // false
 ```
 
@@ -67,24 +67,24 @@ query.containsSome('a', 'c'); // false
 ```js
 // Environment = {}-{a:0}-{a:1}-{b:0}-
 query.get$('a'); // undefined-0-1-undefined-
-query.getAsync('a'); // resolves 0 at 3ms
+query.getAsync('a'); // resolves 0 at 2ms
 query.get('a'); // undefined
 ```
 
-Gets the default value if undefined.
+Return a default value if undefined.
 
 ```js
 // Environment = {}-{a:0}-{a:1}-{b:0}-
 query.get$('a', { defaultValue: 9 }); // 9-0-1-9-
-query.getAsync('a', { defaultValue: 9 }); // resolves 9 at 1ms
+query.getAsync('a', { defaultValue: 9 }); // resolves 9 at 0ms
 query.get('a', { defaultValue: 9 }); // 9
 ```
 
-Converts the returned value.
+Convert the returned value.
 
 ```js
 // Environment = {}-{a:0}-{a:1}-{b:0}-
-query.get$('a', { targetType: String }); // 'undefined'-0-1-'undefined'-
-query.getAsync('a', { targetType: String }); // resolves 'undefined' at 1ms
+query.get$('a', { targetType: String }); // 'undefined'-'0'-'1'-'undefined'-
+query.getAsync('a', { targetType: String }); // resolves '0' at 2ms
 query.get('a', { targetType: String }); // 'undefined'
 ```
