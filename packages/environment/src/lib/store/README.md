@@ -53,6 +53,33 @@ export const environmentStore = {
 };
 ```
 
+```ts
+import { EnvironmentState, EnvironmentStore } from '@kuoki/environment';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+export class RxJSEnvironmentStore implements EnvironmentStore {
+  protected readonly state: BehaviorSubject<EnvironmentState> = new BehaviorSubject(this.initialState);
+
+  constructor(protected readonly initialState: EnvironmentState = {}) {}
+
+  getAll$(): Observable<EnvironmentState> {
+    return this.state.asObservable();
+  }
+
+  getAll(): EnvironmentState {
+    return this.state.getValue();
+  }
+
+  update(environment: EnvironmentState): void {
+    this.state.next(environment);
+  }
+
+  reset(): void {
+    this.state.next(this.initialState);
+  }
+}
+```
+
 ### Redux
 
 [Redux](https://redux.js.org/) is a predictable state container for JavaScript apps.
