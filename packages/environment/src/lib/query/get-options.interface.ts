@@ -3,7 +3,7 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
 
 /**
  * The options to get a property.
- * @typeParam T The expected property value type.
+ * @template T The expected property value type.
  */
 export interface GetOptions<T> extends EnvironmentQueryConfig {
   /**
