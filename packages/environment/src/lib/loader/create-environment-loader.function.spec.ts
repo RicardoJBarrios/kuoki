@@ -15,29 +15,31 @@ describe('createEnvironmentLoader(service, sources?)', () => {
     service = createMockInstance(EnvironmentService);
   });
 
-  afterEach(() => {});
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   it(`(service) returns an EnvironmentLoader without sources`, () => {
-    const loader: any = createEnvironmentLoader(service);
+    const loader: EnvironmentLoader = createEnvironmentLoader(service);
 
     expect(loader).toBeInstanceOf(EnvironmentLoader);
-    expect(loader.loaderSources).toEqual([]);
+    expect(loader['loaderSources']).toEqual([]);
   });
 
   it(`(service, source) returns an EnvironmentLoader with a single source`, () => {
-    const loader: any = createEnvironmentLoader(service, source1);
+    const loader: EnvironmentLoader = createEnvironmentLoader(service, source1);
 
     expect(loader).toBeInstanceOf(EnvironmentLoader);
-    expect(loader.loaderSources).toBeArrayOfSize(1);
-    expect(loader.loaderSources[0].id).toEqual('0');
+    expect(loader['loaderSources']).toBeArrayOfSize(1);
+    expect(loader['loaderSources'][0].id).toEqual('0');
   });
 
   it(`(service, source[]) returns an EnvironmentLoader with an array of sources`, () => {
-    const loader: any = createEnvironmentLoader(service, [source1, source2]);
+    const loader: EnvironmentLoader = createEnvironmentLoader(service, [source1, source2]);
 
     expect(loader).toBeInstanceOf(EnvironmentLoader);
-    expect(loader.loaderSources).toBeArrayOfSize(2);
-    expect(loader.loaderSources[0].id).toEqual('0');
-    expect(loader.loaderSources[1].id).toEqual('1');
+    expect(loader['loaderSources']).toBeArrayOfSize(2);
+    expect(loader['loaderSources'][0].id).toEqual('0');
+    expect(loader['loaderSources'][1].id).toEqual('1');
   });
 });

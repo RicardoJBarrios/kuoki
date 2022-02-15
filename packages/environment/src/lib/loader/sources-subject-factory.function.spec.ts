@@ -10,7 +10,7 @@ const source1: LoaderSource = {
   isOrdered: true,
   ignoreError: true,
   strategy: SourceStrategy.ADD,
-  load: () => [{ a: 0 }]
+  load: () => [{}]
 };
 
 const source2: LoaderSource = {
@@ -19,7 +19,7 @@ const source2: LoaderSource = {
   isOrdered: true,
   ignoreError: true,
   strategy: SourceStrategy.ADD,
-  load: () => [{ b: 0 }]
+  load: () => [{}]
 };
 
 describe('sourcesSubjectFactory(sources)', () => {
@@ -28,7 +28,8 @@ describe('sourcesSubjectFactory(sources)', () => {
   });
 
   it(`returns a map with the sources id and a ReplaySubject`, () => {
-    const map = sourcesSubjectFactory([source1, source2]);
+    const map: Map<string, ReplaySubject<void>> = sourcesSubjectFactory([source1, source2]);
+
     expect(map.size).toEqual(2);
     expect(map.get('a')).toBeInstanceOf(ReplaySubject);
     expect(map.get('b')).toBeInstanceOf(ReplaySubject);
