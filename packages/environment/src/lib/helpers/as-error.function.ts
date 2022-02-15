@@ -2,7 +2,7 @@ import { asString } from './as-string.function';
 
 /**
  * Converts any type of error source into an Error.
- * @typeParam E The type of the error.
+ * @template E The type of the error.
  * @param error the error source.
  * @returns An error with the error source as message.
  */

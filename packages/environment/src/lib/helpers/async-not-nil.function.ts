@@ -4,7 +4,7 @@ import { filterNil } from './filter-nil.operator';
 
 /**
  * Gets the first not null or undefined value as Promise from a sequence or async source.
- * @typeParam T The type of the secuence or async source value.
+ * @template T The type of the secuence or async source value.
  * @param source The secuence or async source.
  * @param due Number specifying period in miliseconds within which source must resolve the value
  * or Date specifying before when Promise should complete.
