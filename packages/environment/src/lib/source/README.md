@@ -11,6 +11,10 @@ const fileSource = {
 ```
 
 ```ts
+import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
+import { Observable } from 'rxjs';
+import { HttpClient } from '...';
+
 class FileSource implements EnvironmentSource {
   constructor(private http: HttpClient) {}
 
@@ -197,6 +201,10 @@ const fileSource = {
 ```
 
 ```ts
+import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
+import { catchError, Observable } from 'rxjs';
+import { HttpClient } from '...';
+
 class FileSource implements EnvironmentSource {
   constructor(private http: HttpClient) {}
 

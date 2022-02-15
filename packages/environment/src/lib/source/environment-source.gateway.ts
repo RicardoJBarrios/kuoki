@@ -7,7 +7,7 @@ import { SourceStrategy } from './source-strategy.enum';
 /**
  * The source from which to get environment properties.
  */
-export abstract class EnvironmentSource {
+export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = SourceStrategy> {
   /**
    * Used by the loader to manage sources, so it must never be duplicated.
    * If is undefined, the loader will assign a random value.
@@ -42,7 +42,7 @@ export abstract class EnvironmentSource {
   /**
    * The strategy to add properties to the environment.
    */
-  strategy?: SourceStrategy;
+  strategy?: STRATEGY;
 
   /**
    * The path to set the properties in the environment.
