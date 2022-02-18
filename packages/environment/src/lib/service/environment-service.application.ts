@@ -2,7 +2,6 @@ import { get, mergeWith, set } from 'lodash-es';
 
 import { mutable } from '../helpers';
 import { isPath, overwritesPath, Path, pathAsArray, pathAsString } from '../path';
-import { mergeArraysCustomizer } from '../shared';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
@@ -51,7 +50,7 @@ export class EnvironmentService {
       return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path), value };
     }
 
-    this.upsertStore(state, path, value);
+    this.upsertValue(state, path, value);
 
     return { code: EnvironmentResultCode.CREATED, path: pathAsString(path), value };
   }
@@ -78,7 +77,7 @@ export class EnvironmentService {
       return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path), value };
     }
 
-    this.upsertStore(state, path, value);
+    this.upsertValue(state, path, value);
 
     return { code: EnvironmentResultCode.UPDATED, path: pathAsString(path), value };
   }
@@ -101,7 +100,7 @@ export class EnvironmentService {
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
-    this.upsertStore(state, path, value);
+    this.upsertValue(state, path, value);
 
     return {
       code: property === undefined ? EnvironmentResultCode.CREATED : EnvironmentResultCode.UPDATED,
@@ -131,12 +130,12 @@ export class EnvironmentService {
       return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path) };
     }
 
-    this.upsertStore(state, path);
+    this.upsertValue(state, path);
 
     return { code: EnvironmentResultCode.DELETED, path: pathAsString(path) };
   }
 
-  protected upsertStore(state: EnvironmentState, path: Path, value?: Property): void {
+  protected upsertValue(state: EnvironmentState, path: Path, value?: Property): void {
     const mutableState: EnvironmentState = mutable(state);
     const newState: EnvironmentState = set(mutableState, path, value);
 
@@ -144,7 +143,7 @@ export class EnvironmentService {
   }
 
   /**
-   * Adds properties to the environment.
+   * Adds properties to the environment overwriting the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to add.
    * @param path The path of the properties to add.
@@ -153,24 +152,32 @@ export class EnvironmentService {
    * - 400 Invalid path
    */
   add(properties: EnvironmentState, path?: Path): EnvironmentResult {
-    if (path != null && !isPath(path)) {
-      return { code: EnvironmentResultCode.INVALID_PATH, value: properties, path: pathAsString(path) };
-    }
-
-    const state: EnvironmentState = mutable(this.store.getAll());
-    const newState: EnvironmentState = path != null ? set(state, path, properties) : { ...state, ...properties };
-
-    this.store.update(newState);
-
-    return {
-      code: EnvironmentResultCode.UPDATED,
-      value: properties,
-      path: path == null ? undefined : pathAsString(path)
-    };
+    return this.upsertProperties(
+      (state: EnvironmentState, newProperties: EnvironmentState) => ({ ...state, ...newProperties }),
+      properties,
+      path
+    );
   }
 
   /**
-   * Adds properties to the environment using the deep merge strategy.
+   * Adds properties to the environment preserving the existing ones.
+   * Ignores the action if is an invalid path.
+   * @param properties The properties to add.
+   * @param path The path of the properties to add.
+   * @returns The result as {@link EnvironmentResult} with the code:
+   * - 200 Properties added
+   * - 400 Invalid path
+   */
+  addPreserving(properties: EnvironmentState, path?: Path): EnvironmentResult {
+    return this.upsertProperties(
+      (state: EnvironmentState, newProperties: EnvironmentState) => ({ ...newProperties, ...state }),
+      properties,
+      path
+    );
+  }
+
+  /**
+   * Adds properties to the environment using the deep merge overwriting strategy.
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
    * @param path The path of the properties to merge.
@@ -179,13 +186,43 @@ export class EnvironmentService {
    * - 400 Invalid path
    */
   merge(properties: EnvironmentState, path?: Path): EnvironmentResult {
+    return this.upsertProperties(
+      (state: EnvironmentState, newProperties: EnvironmentState) => mergeWith(state, newProperties, mergeCustomizer),
+      properties,
+      path
+    );
+  }
+
+  /**
+   * Adds properties to the environment using the deep merge preserving strategy.
+   * Ignores the action if is an invalid path.
+   * @param properties The properties to merge.
+   * @param path The path of the properties to merge.
+   * @returns The result as {@link EnvironmentResult} with the code:
+   * - 200 Properties merged
+   * - 400 Invalid path
+   */
+  mergePreserving(properties: EnvironmentState, path?: Path): EnvironmentResult {
+    return this.upsertProperties(
+      (state: EnvironmentState, newProperties: EnvironmentState) =>
+        mergeWith(newProperties, state, reverseMergeCustomizer),
+      properties,
+      path
+    );
+  }
+
+  protected upsertProperties(
+    resolveFn: (state: EnvironmentState, newProperties: EnvironmentState) => EnvironmentState,
+    properties: EnvironmentState,
+    path?: Path
+  ): EnvironmentResult {
     if (path != null && !isPath(path)) {
       return { code: EnvironmentResultCode.INVALID_PATH, value: properties, path: pathAsString(path) };
     }
 
-    const state: EnvironmentState = mutable(this.store.getAll());
-    const property: Property = path != null ? set({}, path, properties) : properties;
-    const newState: EnvironmentState = mergeWith(state, property, mergeArraysCustomizer);
+    const mutableState: EnvironmentState = mutable(this.store.getAll());
+    const newProperties: Property = path != null ? set({}, path, properties) : { ...properties };
+    const newState: EnvironmentState = resolveFn(mutableState, newProperties);
 
     this.store.update(newState);
 
@@ -195,4 +232,20 @@ export class EnvironmentService {
       path: path == null ? undefined : pathAsString(path)
     };
   }
+}
+
+function mergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
+  if (Array.isArray(obj) && Array.isArray(source)) {
+    return [...obj, ...source];
+  }
+
+  return undefined;
+}
+
+function reverseMergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
+  if (Array.isArray(obj) && Array.isArray(source)) {
+    return [...source, ...obj];
+  }
+
+  return undefined;
 }

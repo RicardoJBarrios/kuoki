@@ -160,10 +160,18 @@ export class EnvironmentLoader<
   }
 
   protected saveSourceValueToStore(properties: EnvironmentState, source: LOADER_SOURCE): void {
-    if (source.strategy === SourceStrategy.MERGE) {
-      this.service.merge(properties, source.path);
-    } else {
-      this.service.add(properties, source.path);
+    switch (source.strategy) {
+      case SourceStrategy.ADD_PRESERVING:
+        this.service.addPreserving(properties, source.path);
+        break;
+      case SourceStrategy.MERGE:
+        this.service.merge(properties, source.path);
+        break;
+      case SourceStrategy.MERGE_PRESERVING:
+        this.service.mergePreserving(properties, source.path);
+        break;
+      default:
+        this.service.add(properties, source.path);
     }
   }
 

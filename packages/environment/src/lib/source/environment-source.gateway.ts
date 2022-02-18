@@ -27,7 +27,7 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
   /**
    * Loads the source in the declaration order.
    *
-   * - Wait for another source to complete to start the load.
+   * - Waits for another source to complete to start the load.
    * - Unordered sources add all properties at once.
    * - Never loads if previous ordered source doesn't complete.
    * - Ignore errors and continues with the next ordered source.

@@ -270,6 +270,26 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
       expect(service.add).toHaveBeenCalledTimes(1);
     });
 
+    it(`adds preserving the properties if SourceStrategy.ADD_PRESERVING`, async () => {
+      const state1: EnvironmentState = { a: 0 };
+      const source1: EnvironmentSource = {
+        strategy: SourceStrategy.ADD_PRESERVING,
+        load: () => of(state1).pipe(delay(5))
+      };
+      loader = new EnvironmentLoader(service, [source1]);
+      loader.load().then(() => load());
+
+      await clock.tickAsync(0); // 0
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.addPreserving).not.toHaveBeenCalled();
+
+      await clock.tickAsync(5); // 5
+      expect(service.addPreserving).toHaveBeenNthCalledWith(1, state1, undefined);
+
+      await clock.runAllAsync();
+      expect(service.addPreserving).toHaveBeenCalledTimes(1);
+    });
+
     it(`merges the properties if SourceStrategy.MERGE`, async () => {
       const state1: EnvironmentState = { a: 0 };
       const source1: EnvironmentSource = {
@@ -288,6 +308,26 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
 
       await clock.runAllAsync();
       expect(service.merge).toHaveBeenCalledTimes(1);
+    });
+
+    it(`merges preserving the properties if SourceStrategy.MERGE_PRESERVING`, async () => {
+      const state1: EnvironmentState = { a: 0 };
+      const source1: EnvironmentSource = {
+        strategy: SourceStrategy.MERGE_PRESERVING,
+        load: () => of(state1).pipe(delay(5))
+      };
+      loader = new EnvironmentLoader(service, [source1]);
+      loader.load().then(() => load());
+
+      await clock.tickAsync(0); // 0
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.mergePreserving).not.toHaveBeenCalled();
+
+      await clock.tickAsync(5); // 5
+      expect(service.mergePreserving).toHaveBeenNthCalledWith(1, state1, undefined);
+
+      await clock.runAllAsync();
+      expect(service.mergePreserving).toHaveBeenCalledTimes(1);
     });
   });
 
