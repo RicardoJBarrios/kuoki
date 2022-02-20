@@ -4,7 +4,6 @@ import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 
 import { asString, AtLeastOne, filterNil } from '../helpers';
 import { Path } from '../path';
-import { mergeArraysCustomizer } from '../shared';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
@@ -287,7 +286,15 @@ export class EnvironmentQuery {
 
     const state: EnvironmentState = this.store.getAll();
 
-    return mergeWith(state, properties, mergeArraysCustomizer);
+    return mergeWith(state, properties, this.mergeArrayCustomizer);
+  }
+
+  protected mergeArrayCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
+    if (Array.isArray(obj) && Array.isArray(source)) {
+      return [...obj, ...source];
+    }
+
+    return undefined;
   }
 
   protected replacer(substring: string, match: string, properties: EnvironmentState): string {
