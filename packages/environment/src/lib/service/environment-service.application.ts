@@ -1,30 +1,42 @@
 import { get, mergeWith, set } from 'lodash-es';
 
-import { mutable } from '../helpers';
-import { isPath, overwritesPath, Path, pathAsArray, pathAsString } from '../path';
+import { PropertyPathDoesntExistError } from '.';
+import { asError, mutable } from '../helpers';
+import { InvalidPathError, isPath, overwritesPath, Path, pathAsArray, pathAsString } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
+import { PropertyPathExistsError } from './property-path-exists.error';
 
 /**
  * Sets properties in the environment store.
+ * @template STORE The store used by the implementation.
+ * @template RESULT The operation result used by the implementation.
  */
-export class EnvironmentService {
+export class EnvironmentService<
+  STORE extends EnvironmentStore = EnvironmentStore,
+  RESULT extends EnvironmentResult = EnvironmentResult
+> {
   /**
    * Sets properties in the environment store.
    * @param store Stores the environment properties that the application needs.
    */
-  constructor(protected readonly store: EnvironmentStore) {}
+  constructor(protected readonly store: STORE) {}
 
   /**
    * Resets the environment to the initial state.
    * @returns The result as {@link EnvironmentResult} with the code:
-   * - 205 Store reseted.
+   * - 205 Store resetted
+   * - 460 Store error
    */
-  reset(): EnvironmentResult {
-    this.store.reset();
+  reset(): RESULT {
+    try {
+      this.store.reset();
+    } catch (error) {
+      return this.returnCode(EnvironmentResultCode.STORE_ERROR, { error });
+    }
 
-    return { code: EnvironmentResultCode.RESET };
+    return this.returnCode(EnvironmentResultCode.RESET);
   }
 
   /**
@@ -36,10 +48,11 @@ export class EnvironmentService {
    * - 201 Property created
    * - 400 Invalid path
    * - 422 Property path already exists
+   * - 460 Store error
    */
-  create(path: Path, value: Property): EnvironmentResult {
+  create(path: Path, value: Property): RESULT {
     if (!isPath(path)) {
-      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path), value };
+      return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value });
     }
 
     path = pathAsArray(path);
@@ -47,12 +60,14 @@ export class EnvironmentService {
     const property: Property | undefined = get(state, path);
 
     if (property !== undefined || overwritesPath(path, state)) {
-      return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path), value };
+      return this.returnCode(EnvironmentResultCode.UNPROCESSABLE, {
+        path,
+        value,
+        error: new PropertyPathExistsError(path)
+      });
     }
 
-    this.upsertValue(state, path, value);
-
-    return { code: EnvironmentResultCode.CREATED, path: pathAsString(path), value };
+    return this.upsertValue(state, path, value) ?? this.returnCode(EnvironmentResultCode.CREATED, { path, value });
   }
 
   /**
@@ -64,22 +79,25 @@ export class EnvironmentService {
    * - 200 Property updated
    * - 400 Invalid path
    * - 422 Property doesn't exist
+   * - 460 Store error
    */
-  update(path: Path, value: Property): EnvironmentResult {
+  update(path: Path, value: Property): RESULT {
     if (!isPath(path)) {
-      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path), value };
+      return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value });
     }
 
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
     if (property === undefined) {
-      return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path), value };
+      return this.returnCode(EnvironmentResultCode.UNPROCESSABLE, {
+        path,
+        value,
+        error: new PropertyPathDoesntExistError(path)
+      });
     }
 
-    this.upsertValue(state, path, value);
-
-    return { code: EnvironmentResultCode.UPDATED, path: pathAsString(path), value };
+    return this.upsertValue(state, path, value) ?? this.returnCode(EnvironmentResultCode.UPDATED, { path, value });
   }
 
   /**
@@ -91,22 +109,23 @@ export class EnvironmentService {
    * - 201 Property created
    * - 200 Property updated
    * - 400 Invalid path
+   * - 460 Store error
    */
-  upsert(path: Path, value: Property): EnvironmentResult {
+  upsert(path: Path, value: Property): RESULT {
     if (!isPath(path)) {
-      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path), value };
+      return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value });
     }
 
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
-    this.upsertValue(state, path, value);
-
-    return {
-      code: property === undefined ? EnvironmentResultCode.CREATED : EnvironmentResultCode.UPDATED,
-      path: pathAsString(path),
-      value
-    };
+    return (
+      this.upsertValue(state, path, value) ??
+      this.returnCode(property === undefined ? EnvironmentResultCode.CREATED : EnvironmentResultCode.UPDATED, {
+        path,
+        value
+      })
+    );
   }
 
   /**
@@ -117,29 +136,34 @@ export class EnvironmentService {
    * - 204 Property deleted
    * - 400 Invalid path
    * - 422 Property doesn't exist
+   * - 460 Store error
    */
-  delete(path: Path): EnvironmentResult {
+  delete(path: Path): RESULT {
     if (!isPath(path)) {
-      return { code: EnvironmentResultCode.INVALID_PATH, path: pathAsString(path) };
+      return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path });
     }
 
     const state: EnvironmentState = this.store.getAll();
     const property: Property | undefined = get(state, path);
 
     if (property === undefined) {
-      return { code: EnvironmentResultCode.UNPROCESSABLE, path: pathAsString(path) };
+      return this.returnCode(EnvironmentResultCode.UNPROCESSABLE, {
+        path,
+        error: new PropertyPathDoesntExistError(path)
+      });
     }
 
-    this.upsertValue(state, path);
-
-    return { code: EnvironmentResultCode.DELETED, path: pathAsString(path) };
+    return this.upsertValue(state, path) ?? this.returnCode(EnvironmentResultCode.DELETED, { path });
   }
 
-  protected upsertValue(state: EnvironmentState, path: Path, value?: Property): void {
+  protected upsertValue(state: EnvironmentState, path: Path, value?: Property): RESULT | void {
     const mutableState: EnvironmentState = mutable(state);
     const newState: EnvironmentState = set(mutableState, path, value);
-
-    this.store.update(newState);
+    try {
+      return this.store.update(newState);
+    } catch (error) {
+      return this.returnCode(EnvironmentResultCode.STORE_ERROR, { path, value, error });
+    }
   }
 
   /**
@@ -150,8 +174,9 @@ export class EnvironmentService {
    * @returns The result as {@link EnvironmentResult} with the code:
    * - 200 Properties added
    * - 400 Invalid path
+   * - 460 Store error
    */
-  add(properties: EnvironmentState, path?: Path): EnvironmentResult {
+  add(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) => ({ ...state, ...newProperties }),
       properties,
@@ -167,8 +192,9 @@ export class EnvironmentService {
    * @returns The result as {@link EnvironmentResult} with the code:
    * - 200 Properties added
    * - 400 Invalid path
+   * - 460 Store error
    */
-  addPreserving(properties: EnvironmentState, path?: Path): EnvironmentResult {
+  addPreserving(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) => ({ ...newProperties, ...state }),
       properties,
@@ -184,10 +210,12 @@ export class EnvironmentService {
    * @returns The result as {@link EnvironmentResult} with the code:
    * - 200 Properties merged
    * - 400 Invalid path
+   * - 460 Store error
    */
-  merge(properties: EnvironmentState, path?: Path): EnvironmentResult {
+  merge(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
-      (state: EnvironmentState, newProperties: EnvironmentState) => mergeWith(state, newProperties, mergeCustomizer),
+      (state: EnvironmentState, newProperties: EnvironmentState) =>
+        mergeWith(state, newProperties, this.mergeCustomizer),
       properties,
       path
     );
@@ -201,11 +229,12 @@ export class EnvironmentService {
    * @returns The result as {@link EnvironmentResult} with the code:
    * - 200 Properties merged
    * - 400 Invalid path
+   * - 460 Store error
    */
-  mergePreserving(properties: EnvironmentState, path?: Path): EnvironmentResult {
+  mergePreserving(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) =>
-        mergeWith(newProperties, state, reverseMergeCustomizer),
+        mergeWith(newProperties, state, this.reverseMergeCustomizer),
       properties,
       path
     );
@@ -215,37 +244,57 @@ export class EnvironmentService {
     resolveFn: (state: EnvironmentState, newProperties: EnvironmentState) => EnvironmentState,
     properties: EnvironmentState,
     path?: Path
-  ): EnvironmentResult {
+  ): RESULT {
     if (path != null && !isPath(path)) {
-      return { code: EnvironmentResultCode.INVALID_PATH, value: properties, path: pathAsString(path) };
+      return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value: properties });
     }
 
     const mutableState: EnvironmentState = mutable(this.store.getAll());
     const newProperties: Property = path != null ? set({}, path, properties) : { ...properties };
     const newState: EnvironmentState = resolveFn(mutableState, newProperties);
 
-    this.store.update(newState);
+    try {
+      this.store.update(newState);
+    } catch (error) {
+      return this.returnCode(EnvironmentResultCode.STORE_ERROR, { value: properties, path, error });
+    }
 
-    return {
-      code: EnvironmentResultCode.UPDATED,
-      value: properties,
-      path: path == null ? undefined : pathAsString(path)
-    };
-  }
-}
-
-function mergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
-  if (Array.isArray(obj) && Array.isArray(source)) {
-    return [...obj, ...source];
+    return this.returnCode(EnvironmentResultCode.UPDATED, { value: properties, path });
   }
 
-  return undefined;
-}
+  protected returnCode(code: RESULT['code'], optionals?: { [key: string]: unknown }): RESULT {
+    if (optionals != null) {
+      const error: unknown = get(optionals, 'error');
+      if (error != null) {
+        set(optionals, 'error', asError(error));
+      }
 
-function reverseMergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
-  if (Array.isArray(obj) && Array.isArray(source)) {
-    return [...source, ...obj];
+      const path: unknown = get(optionals, 'path');
+      if (path != null) {
+        if (isPath(path)) {
+          set(optionals, 'path', pathAsString(path));
+        } else {
+          set(optionals, 'error', new InvalidPathError(path));
+        }
+      }
+    }
+
+    return { code, ...optionals } as RESULT;
   }
 
-  return undefined;
+  protected mergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
+    if (Array.isArray(obj) && Array.isArray(source)) {
+      return [...obj, ...source];
+    }
+
+    return undefined;
+  }
+
+  protected reverseMergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {
+    if (Array.isArray(obj) && Array.isArray(source)) {
+      return [...source, ...obj];
+    }
+
+    return undefined;
+  }
 }

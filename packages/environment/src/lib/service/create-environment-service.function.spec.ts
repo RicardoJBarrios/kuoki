@@ -1,3 +1,4 @@
+import createMockInstance from 'jest-create-mock-instance';
 import { Observable } from 'rxjs';
 
 import { EnvironmentState, EnvironmentStore } from '../store';
@@ -23,7 +24,7 @@ describe('createEnvironmentService(store)', () => {
   let store: EnvironmentStore;
 
   beforeEach(() => {
-    store = new TestEnvironmentStore();
+    store = createMockInstance(TestEnvironmentStore);
   });
 
   it(`returns an EnvironmentService`, () => {

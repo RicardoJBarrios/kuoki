@@ -3,13 +3,14 @@ import { Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 
 /**
- * An {@link EnvironmentService} method result.
+ * An environment service operation result.
+ * @see {@link EnvironmentService}
  */
-export interface EnvironmentResult {
+export interface EnvironmentResult<RESULT_CODE extends EnvironmentResultCode = EnvironmentResultCode> {
   /**
    * The result code. Based on HTTP response status codes.
    */
-  code: EnvironmentResultCode;
+  code: RESULT_CODE;
   /**
    * The path used in the method.
    */
@@ -18,4 +19,8 @@ export interface EnvironmentResult {
    * The value used in the method.
    */
   value?: Property;
+  /**
+   * The error returned.
+   */
+  error?: Error;
 }
