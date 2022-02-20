@@ -6,11 +6,12 @@ import { SourceStrategy } from './source-strategy.enum';
 
 /**
  * The source from which to get environment properties.
+ * @template STRATEGY The source strategies used by the implementation.
  */
 export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = SourceStrategy> {
   /**
    * Used by the loader to manage sources, so it must never be duplicated.
-   * If is undefined, the loader will assign a random value.
+   * If not defined, the loader will assign a random UUID.
    */
   id?: string;
 

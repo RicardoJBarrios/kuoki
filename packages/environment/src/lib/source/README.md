@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '...';
 
 class FileSource implements EnvironmentSource {
-  constructor(private http: HttpClient) {}
+  constructor(protected readonly http: HttpClient) {}
 
   load(): Observable<EnvironmentState> {
     return this.http.get('env.json');
