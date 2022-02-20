@@ -66,7 +66,8 @@
   },
   "lint-staged": {
     "*.{js,json,css,scss,md,ts,html,yml}": [
-      "nx format:write --uncommitted"
+      "nx format:write --uncommitted",
+      "nx affected:lint --fix --parallel --uncommitted"
     ]
   },
   "config": {
