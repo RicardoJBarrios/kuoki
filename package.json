@@ -13,7 +13,7 @@
     "commit": "cz",
     "format:all": "nx format:write --all",
     "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)",
-    "audit:prod": "yarn audit --groups dependencies",
+    "audit:deploy": "yarn audit --groups dependencies",
     "audit:fix": "yarn-audit-fix"
   },
   "private": true,
