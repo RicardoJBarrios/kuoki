@@ -1,6 +1,6 @@
 # Environment Helpers
 
-> Helper functions
+> Helper types and functions.
 
 ## Use cases
 
