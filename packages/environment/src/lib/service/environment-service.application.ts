@@ -1,11 +1,11 @@
 import { get, mergeWith, set } from 'lodash-es';
 
-import { PropertyPathDoesntExistError } from '.';
 import { asError, mutable } from '../helpers';
 import { InvalidPathError, isPath, overwritesPath, Path, pathAsArray, pathAsString } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
+import { PropertyPathDoesntExistError } from './property-path-doesnt-exist.error';
 import { PropertyPathExistsError } from './property-path-exists.error';
 
 /**

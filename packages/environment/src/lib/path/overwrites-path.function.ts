@@ -1,7 +1,7 @@
 import { get } from 'lodash-es';
 
-import { isPath } from '.';
 import { EnvironmentState } from '../store';
+import { isPath } from './is-path.function';
 import { pathAsArray } from './path-as-array.function';
 import { Path } from './path.type';
 

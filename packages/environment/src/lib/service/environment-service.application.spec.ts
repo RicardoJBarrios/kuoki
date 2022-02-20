@@ -1,10 +1,10 @@
 import createMockInstance from 'jest-create-mock-instance';
 import { Observable } from 'rxjs';
 
-import { PropertyPathDoesntExistError } from '.';
 import { InvalidPathError } from '../path';
 import { EnvironmentState, EnvironmentStore } from '../store';
 import { EnvironmentService } from './environment-service.application';
+import { PropertyPathDoesntExistError } from './property-path-doesnt-exist.error';
 import { PropertyPathExistsError } from './property-path-exists.error';
 
 class TestEnvironmentStore implements EnvironmentStore {
