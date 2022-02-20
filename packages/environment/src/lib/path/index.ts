@@ -2,6 +2,7 @@
  * [[include:path/README.md]]
  * @module Path
  */
+export * from './invalid-path.error';
 export * from './is-path.function';
 export * from './overwrites-path.function';
 export * from './path-as-array.function';
