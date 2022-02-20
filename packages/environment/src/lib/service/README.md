@@ -48,6 +48,8 @@ service.reset(); // {code:205}
 
 ### create
 
+This method will omit the operation if the property already exists or overwrites a path with a non object value.
+
 ```js
 // EnvironmentState = {}
 service.create('a', 0); // {code:201,path:'a',value:0}
@@ -59,6 +61,8 @@ service.create('a', 1); // {code:422,path:'a',value:1}
 ```
 
 ### update
+
+This method will omit the operation if the property doesn't exist.
 
 ```js
 // EnvironmentState = {a:0}
@@ -84,6 +88,8 @@ service.upsert('2a', 0); // {code:400,path:'2a',value:0}
 
 ### delete
 
+This method will omit the operation if the property doesn't exist.
+
 ```js
 // EnvironmentState = {a:0, b:1}
 service.delete('a'); // {code:204,path:'a'}
@@ -95,6 +101,8 @@ service.delete('a'); // {code:422,path:'a'}
 ```
 
 ### add
+
+This method will add all properties overwriting the existing ones.
 
 ```js
 // EnvironmentState = {a:{a:0}}
@@ -110,6 +118,8 @@ service.add({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 
 ### addPreserving
 
+This method will add all properties preserving the existing ones.
+
 ```js
 // EnvironmentState = {a:{a:0}
 service.addPreserving({ a: 1 }); // {code:200,value:{a:1}}
@@ -123,6 +133,8 @@ service.addPreserving({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 ```
 
 ### merge
+
+This method will merge all object properties, including arrays, overwriting the existing ones.
 
 ```js
 // EnvironmentState = {a:0}
@@ -139,6 +151,8 @@ service.merge({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 ```
 
 ### mergePreserving
+
+This method will merge all object properties, including arrays, preserving the existing ones.
 
 ```js
 // EnvironmentState = {a:0}
