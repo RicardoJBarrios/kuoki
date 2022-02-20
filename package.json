@@ -9,6 +9,7 @@
     "npm": "Please use yarn instead of NPM to install dependencies"
   },
   "scripts": {
+    "nx": "nx",
     "commit": "cz",
     "format:all": "nx format:write --all",
     "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)",
@@ -51,6 +52,7 @@
     "jest-create-mock-instance": "^2.0.0",
     "jest-extended": "^1.2.0",
     "jest-html-reporters": "^3.0.4",
+    "lint-staged": "^12.3.4",
     "lodash": "^4.17.21",
     "prettier": "2.5.1",
     "rxjs-marbles": "^7.0.1",
@@ -61,6 +63,11 @@
     "typedoc-plugin-missing-exports": "^0.22.6",
     "typescript": "~4.4.3",
     "yarn-audit-fix": "^9.1.1"
+  },
+  "lint-staged": {
+    "*.{js,json,css,scss,md,ts,html,yml}": [
+      "nx format:write --uncommitted"
+    ]
   },
   "config": {
     "commitizen": {
