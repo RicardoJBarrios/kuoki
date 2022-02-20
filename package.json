@@ -14,7 +14,9 @@
     "format:all": "nx format:write --all",
     "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)",
     "audit:deploy": "yarn audit --groups dependencies",
-    "audit:fix": "yarn-audit-fix"
+    "audit:fix": "yarn-audit-fix",
+    "audit:report": "yarn audit --json | yarn yarn-audit-html --output docs/audit.html 2>/dev/null",
+    "audit:deploy:report": "yarn audit:deploy --json | yarn yarn-audit-html --output docs/audit-deploy.html 2>/dev/null"
   },
   "private": true,
   "dependencies": {
@@ -62,7 +64,8 @@
     "typedoc-plugin-markdown": "^3.11.8",
     "typedoc-plugin-missing-exports": "^0.22.6",
     "typescript": "~4.4.3",
-    "yarn-audit-fix": "^9.1.1"
+    "yarn-audit-fix": "^9.1.1",
+    "yarn-audit-html": "^3.0.1"
   },
   "lint-staged": {
     "*.{js,json,css,scss,md,ts,html,yml}": [
