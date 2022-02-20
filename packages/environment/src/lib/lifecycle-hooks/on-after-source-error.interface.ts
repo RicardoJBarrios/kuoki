@@ -1,4 +1,4 @@
-import { LoaderSource } from './loader-source.type';
+import { LoaderSource } from '../loader';
 
 /**
  * A lifecycle hook that is called after a source is rejected.

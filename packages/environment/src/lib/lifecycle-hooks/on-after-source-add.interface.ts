@@ -1,5 +1,5 @@
+import { LoaderSource } from '../loader';
 import { EnvironmentState } from '../store';
-import { LoaderSource } from './loader-source.type';
 
 /**
  * A lifecycle hook that is called after a source properties are added to the environment.
