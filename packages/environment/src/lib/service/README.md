@@ -2,7 +2,7 @@
 
 > Sets properties in the environment store.
 
-This application is the way to mutate the environment store. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods. Each method returns an EnvironmentResult to make it easy to develop these customizations.
+This application is the way to mutate the environment store. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
 
 ```js
 const service = createEnvironmentService(store);
@@ -156,15 +156,15 @@ This method will merge all object properties, including arrays, preserving the e
 
 ```js
 // EnvironmentState = {a:0}
-service.merge({ a: 1 }); // {code:200,value:{a:1}}
+service.mergePreserving({ a: 1 }); // {code:200,value:{a:1}}
 // EnvironmentState = {a:1}
-service.merge({ a: 1 }, 'a'); // {code:200,path:'a',value:{a:1}}
+service.mergePreserving({ a: 1 }, 'a'); // {code:200,path:'a',value:{a:1}}
 // EnvironmentState = {a:{a:1}}
-service.merge({ b: 1 }, 'a'); // {code:200,path:'a',value:{b:1}}
+service.mergePreserving({ b: 1 }, 'a'); // {code:200,path:'a',value:{b:1}}
 // EnvironmentState = {a:{a:1,b:1}}
-service.merge({ b: 0 }, 'a'); // {code:200,path:'a',value:{b:0}}
+service.mergePreserving({ b: 0 }, 'a'); // {code:200,path:'a',value:{b:0}}
 // EnvironmentState = {a:{a:1,b:1}}
-service.merge({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
+service.mergePreserving({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 // EnvironmentState = {a:{a:1,b:1}}
 ```
 
@@ -233,11 +233,7 @@ class CustomEnvironmentService extends EnvironmentService {
   }
 
   protected displayLog(method: string, result: EnvironmentResult): void {
-    if (result.code < 400) {
-      console.log('CustomEnvironmentService', method, result);
-    } else {
-      console.error('CustomEnvironmentService', method, result);
-    }
+    console.log('CustomEnvironmentService', method, result);
   }
 }
 ```

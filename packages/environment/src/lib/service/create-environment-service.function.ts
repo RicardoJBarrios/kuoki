@@ -2,9 +2,9 @@ import { EnvironmentStore } from '../store';
 import { EnvironmentService } from './environment-service.application';
 
 /**
- * Creates an EnvironmentService.
+ * Creates an environment service.
  * @param store The environment store.
- * @returns An EnvironmentService instance.
+ * @returns An environment service instance.
  * @see {@link EnvironmentService}
  */
 export function createEnvironmentService(store: EnvironmentStore): EnvironmentService {

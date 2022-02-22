@@ -1,7 +1,7 @@
 import createMockInstance from 'jest-create-mock-instance';
 import { Observable } from 'rxjs';
 
-import { InvalidPathError } from '../path';
+import { InvalidPathError, Path } from '../path';
 import { EnvironmentState, EnvironmentStore } from '../store';
 import { EnvironmentService } from './environment-service.application';
 import { PropertyPathDoesntExistError } from './property-path-doesnt-exist.error';
@@ -23,16 +23,16 @@ class TestEnvironmentStore implements EnvironmentStore {
 }
 
 describe('EnvironmentService', () => {
-  let state: EnvironmentState;
-  let readonlyState: Readonly<EnvironmentState>;
   let store: EnvironmentStore;
   let service: EnvironmentService;
 
   beforeEach(() => {
-    state = { a: 0, x: { y: 0 }, z: [0] };
-    readonlyState = Object.freeze({ a: 1, x: Object.freeze({ y: 0 }), z: [0] });
     store = createMockInstance(TestEnvironmentStore);
     service = new EnvironmentService(store);
+  });
+
+  beforeEach(() => {
+    jest.spyOn(store, 'getAll').mockReturnValue({});
   });
 
   afterEach(() => {
@@ -40,12 +40,15 @@ describe('EnvironmentService', () => {
   });
 
   describe('reset()', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'reset').mockImplementation(() => null);
-    });
-
     it(`returns {code:205} if the store is reset`, () => {
       expect(service.reset()).toEqual({ code: 205 });
+    });
+
+    it(`resets the environment store to the initial state`, () => {
+      expect(store.reset).not.toHaveBeenCalled();
+
+      service.reset();
+      expect(store.reset).toHaveBeenCalledTimes(1);
     });
 
     it(`returns {code:460,error} if store error`, () => {
@@ -53,59 +56,44 @@ describe('EnvironmentService', () => {
       jest.spyOn(store, 'reset').mockImplementation(() => {
         throw error;
       });
-      expect(service.reset()).toEqual({ code: 460, error });
-    });
 
-    it(`resets the environment store to the initial state`, () => {
-      expect(store.reset).not.toHaveBeenCalled();
-      service.reset();
-      expect(store.reset).toHaveBeenCalledTimes(1);
+      expect(service.reset()).toEqual({ code: 460, error });
     });
   });
 
   describe('create(path,value)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
-
     it(`returns {code:201,path,value} if property created`, () => {
-      const path = 'b.b';
+      const path: Path = 'a';
       const value = 0;
+
       expect(service.create(path, value)).toEqual({ code: 201, path, value });
     });
 
     it(`updates the environment store if property created`, () => {
-      const path = 'b.b';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.create(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0 }, b: { b: 0 }, z: [0] });
+      service.create('a', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`returns {code:201,path,value} if path doesn't exist`, () => {
-      const path = 'x.z';
-      const value = 0;
-      expect(service.create(path, value)).toEqual({ code: 201, path, value });
+    it(`updates the environment store if property created with complex path`, () => {
+      service.create('a.a', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`updates the environment store if path doesn't exist`, () => {
-      const path = 'x.z';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.create(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0, z: 0 }, z: [0] });
+    it(`updates the environment store if property created in complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.create('a.b', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0, b: 0 } });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'x.z';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.create(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, x: { y: 0, z: 0 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({}));
+
+      service.create('a', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
@@ -113,86 +101,97 @@ describe('EnvironmentService', () => {
       const path = '2z';
       const value = 0;
       const error = new InvalidPathError(path);
+
       expect(service.create(path, value)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.create(path, value);
+    it(`ignores the operation if invalid path`, () => {
+      service.create('2z', 0);
       expect(store.update).not.toHaveBeenCalled();
     });
 
     it(`returns {code:422,path,value,error} if property already exists`, () => {
-      const path = 'x';
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+      const path = 'a';
       const value = 1;
       const error = new PropertyPathExistsError(path);
-      expect(service.create(path, value)).toEqual({ code: 422, path, value, error });
-    });
 
-    it(`ignores the action if property already exists`, () => {
-      const path = 'x';
-      const value = 1;
-      expect(store.update).not.toHaveBeenCalled();
-      service.create(path, value);
-      expect(store.update).not.toHaveBeenCalled();
+      expect(service.create(path, value)).toEqual({ code: 422, path, value, error });
     });
 
     it(`returns {code:422,path,value,error} if path already exists`, () => {
-      const path = 'x.y.z.a';
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+      const path = 'a.a.b';
       const value = 1;
       const error = new PropertyPathExistsError(path);
+
       expect(service.create(path, value)).toEqual({ code: 422, path, value, error });
     });
 
-    it(`ignores the action if path already exists`, () => {
-      const path = 'x.y.z.a';
-      const value = 1;
+    it(`ignores the operation if property already exists`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+
+      service.create('a', 1);
       expect(store.update).not.toHaveBeenCalled();
-      service.create(path, value);
+    });
+
+    it(`ignores the operation if path already exists`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.create('a.a.b', 1);
       expect(store.update).not.toHaveBeenCalled();
     });
 
     it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.z';
-      const value = 1;
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = 1;
+
       expect(service.create(path, value)).toEqual({ code: 460, path, value, error });
     });
   });
 
   describe('update(path,value)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
-
     it(`returns {code:200,path,value} if property updated`, () => {
-      const path = 'x.y';
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+      const path = 'a';
       const value = 1;
+
       expect(service.update(path, value)).toEqual({ code: 200, path, value });
     });
 
     it(`updates the environment store if property updated`, () => {
-      const path = 'x.y';
-      const value = 1;
-      expect(store.update).not.toHaveBeenCalled();
-      service.update(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 1 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+
+      service.update('a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property updated with complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.update('a.a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 1 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property updated in complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.update('a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'x.y';
-      const value = 1;
-      expect(store.update).not.toHaveBeenCalled();
-      service.update(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, x: { y: 1 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({ a: 0 }));
+
+      service.update('a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
@@ -200,86 +199,105 @@ describe('EnvironmentService', () => {
       const path = '2z';
       const value = 0;
       const error = new InvalidPathError(path);
+
       expect(service.update(path, value)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.update(path, value);
+    it(`ignores the operation if invalid path`, () => {
+      service.update('2z', 0);
       expect(store.update).not.toHaveBeenCalled();
     });
 
-    it(`returns {code:422,path,value,error} if property doesn't exist`, () => {
-      const path = 'b';
+    it(`returns {code:422,path,value,error} if path doesn't exist`, () => {
+      const path = 'a';
       const value = 1;
       const error = new PropertyPathDoesntExistError(path);
+
       expect(service.update(path, value)).toEqual({ code: 422, path, value, error });
     });
 
-    it(`ignores the action if property doesn't exist`, () => {
-      const path = 'b';
-      const value = 1;
-      expect(store.update).not.toHaveBeenCalled();
-      service.update(path, value);
+    it(`ignores the operation if path doesn't exist`, () => {
+      service.update('a', 1);
       expect(store.update).not.toHaveBeenCalled();
     });
 
     it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.y';
-      const value = 1;
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = 1;
+
       expect(service.update(path, value)).toEqual({ code: 460, path, value, error });
     });
   });
 
   describe('upsert(path,value)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
-
-    it(`returns {code:200,path,value} if property updated`, () => {
-      const path = 'x.y';
-      const value = 1;
-      expect(service.upsert(path, value)).toEqual({ code: 200, path, value });
-    });
-
-    it(`updates the environment store if property updated`, () => {
-      const path = 'x.y';
-      const value = 1;
-      expect(store.update).not.toHaveBeenCalled();
-      service.upsert(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 1 }, z: [0] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
     it(`returns {code:201,path,value} if property created`, () => {
-      const path = 'b.b';
+      const path = 'a';
       const value = 0;
       expect(service.upsert(path, value)).toEqual({ code: 201, path, value });
     });
 
     it(`updates the environment store if property created`, () => {
-      const path = 'b.b';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.upsert(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0 }, b: { b: 0 }, z: [0] });
+      service.upsert('a', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property created with complex path`, () => {
+      service.upsert('a.a', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property created in complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.upsert('a.b', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0, b: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`returns {code:200,path,value} if property updated`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+      const path = 'a';
+      const value = 1;
+
+      expect(service.upsert(path, value)).toEqual({ code: 200, path, value });
+    });
+
+    it(`updates the environment store if property updated`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+
+      service.upsert('a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property updated with complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.upsert('a.a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 1 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property updated in complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.upsert('a', 1);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'x.y';
-      const value = 1;
-      expect(store.update).not.toHaveBeenCalled();
-      service.upsert(path, value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, x: { y: 1 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({}));
+
+      service.upsert('a', 0);
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
@@ -287,437 +305,427 @@ describe('EnvironmentService', () => {
       const path = '2z';
       const value = 0;
       const error = new InvalidPathError(path);
+
       expect(service.upsert(path, value)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = 0;
-      expect(store.update).not.toHaveBeenCalled();
-      service.upsert(path, value);
+    it(`ignores the operation if invalid path`, () => {
+      service.upsert('2z', 0);
       expect(store.update).not.toHaveBeenCalled();
     });
 
     it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.y';
-      const value = 1;
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = 1;
+
       expect(service.upsert(path, value)).toEqual({ code: 460, path, value, error });
     });
   });
 
   describe('delete(path)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
-
     it(`returns {code:204,path} if property deleted`, () => {
-      const path = 'x.y';
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+      const path = 'a';
+
       expect(service.delete(path)).toEqual({ code: 204, path });
     });
 
     it(`updates the environment store if property deleted`, () => {
-      const path = 'x.y';
-      expect(store.update).not.toHaveBeenCalled();
-      service.delete(path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: {}, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
+
+      service.delete('a');
+      expect(store.update).toHaveBeenNthCalledWith(1, {});
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property deleted with complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.delete('a.a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: {} });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property deleted in complex path`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.delete('a');
+      expect(store.update).toHaveBeenNthCalledWith(1, {});
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'x.y';
-      expect(store.update).not.toHaveBeenCalled();
-      service.delete(path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, x: {}, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({ a: 0 }));
+
+      service.delete('a');
+      expect(store.update).toHaveBeenNthCalledWith(1, {});
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`returns {code:400,path,error} if invalid path`, () => {
       const path = '2z';
       const error = new InvalidPathError(path);
+
       expect(service.delete(path)).toEqual({ code: 400, path, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      expect(store.update).not.toHaveBeenCalled();
-      service.delete(path);
+    it(`ignores the operation if invalid path`, () => {
+      service.delete('2z');
       expect(store.update).not.toHaveBeenCalled();
     });
 
-    it(`returns {code:422,path,error} if property doesn't exist`, () => {
-      const path = 'b';
+    it(`returns {code:422,path,error} if path doesn't exist`, () => {
+      const path = 'a';
       const error = new PropertyPathDoesntExistError(path);
+
       expect(service.delete(path)).toEqual({ code: 422, path, error });
     });
 
-    it(`ignores the action if property doesn't exist`, () => {
-      const path = 'b';
-      expect(store.update).not.toHaveBeenCalled();
-      service.delete(path);
+    it(`ignores the operation if path doesn't exist`, () => {
+      service.delete('a');
       expect(store.update).not.toHaveBeenCalled();
     });
 
     it(`returns {code:460,path,error} if store error`, () => {
-      const path = 'x.y';
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+
       expect(service.delete(path)).toEqual({ code: 460, path, error });
     });
   });
 
   describe('add(properties,path?)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
-
     it(`returns {code:200,value} if property added`, () => {
-      const value = { b: 0 };
+      const value = { a: 0 };
+
       expect(service.add(value)).toEqual({ code: 200, value });
     });
 
     it(`updates the environment store if property added`, () => {
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.add(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: 0, x: { y: 0 }, z: [0] });
+      service.add({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`returns {code:200,value,path} if property added with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
+      const value = { a: 0 };
+      const path = 'a';
+
       expect(service.add(value, path)).toEqual({ code: 200, value, path });
     });
 
     it(`updates the environment store if property added with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.add(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: { b: 0 }, x: { y: 0 }, z: [0] });
+      service.add({ a: 0 }, 'a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property added with complex path`, () => {
+      service.add({ a: 0 }, 'a.a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: { a: 0 } } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store overwriting existing values`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.add({ a: { b: 1 }, b: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { b: 1 }, b: 0 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store overwriting existing arrays`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: [0] } });
+
+      service.add({ a: { a: [1] } });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: [1] } });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.add(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, b: { b: 0 }, x: { y: 0 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({}));
+
+      service.add({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`updates the environment store overwriting existing object properties`, () => {
-      const path = 'x';
-      const value = { z: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.add(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { z: 0 }, z: [0] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`updates the environment store overwriting existing Array properties`, () => {
-      const value = { z: [1] };
-      expect(store.update).not.toHaveBeenCalled();
-      service.add(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0 }, z: [1] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`returns {code:400,path,value,error} if invalid path`, () => {
+    it(`returns {code:400,value,path,error} if invalid path`, () => {
       const path = '2z';
-      const value = { b: 0 };
+      const value = { a: 0 };
       const error = new InvalidPathError(path);
+
       expect(service.add(value, path)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.add(value, path);
+    it(`ignores the operation if invalid path`, () => {
+      service.add({ a: 0 }, '2z');
       expect(store.update).not.toHaveBeenCalled();
     });
 
-    it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.y';
-      const value = { b: 0 };
+    it(`returns {code:460,value,error,path?} if store error`, () => {
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = { a: 0 };
+
+      expect(service.add(value)).toEqual({ code: 460, value, error });
       expect(service.add(value, path)).toEqual({ code: 460, path, value, error });
     });
   });
 
   describe('addPreserving(properties,path?)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
+    it(`returns {code:200,value} if property added preserving`, () => {
+      const value = { a: 0 };
 
-    it(`returns {code:200,value} if property added`, () => {
-      const value = { b: 0 };
       expect(service.addPreserving(value)).toEqual({ code: 200, value });
     });
 
-    it(`updates the environment store if property added`, () => {
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.addPreserving(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: 0, x: { y: 0 }, z: [0] });
+    it(`updates the environment store if property added preserving`, () => {
+      service.addPreserving({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`returns {code:200,value,path} if property added with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
+    it(`returns {code:200,value,path} if property added preserving with path`, () => {
+      const value = { a: 0 };
+      const path = 'a';
+
       expect(service.addPreserving(value, path)).toEqual({ code: 200, value, path });
     });
 
-    it(`updates the environment store if property added with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.addPreserving(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: { b: 0 }, x: { y: 0 }, z: [0] });
+    it(`updates the environment store if property added preserving with path`, () => {
+      service.addPreserving({ a: 0 }, 'a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property added preserving with complex path`, () => {
+      service.addPreserving({ a: 0 }, 'a.a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: { a: 0 } } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store preserving existing values`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
+
+      service.addPreserving({ a: { b: 1 }, b: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 }, b: 0 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store preserving existing arrays`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: [0] } });
+
+      service.addPreserving({ a: { a: [1] } });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: [0] } });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.addPreserving(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, b: { b: 0 }, x: { y: 0 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({}));
+
+      service.addPreserving({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`updates the environment store preserving existing object properties`, () => {
-      const value = { b: 0, x: { z: 0 } };
-      expect(store.update).not.toHaveBeenCalled();
-      service.addPreserving(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: 0, x: { y: 0 }, z: [0] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`updates the environment store preserving existing Array properties`, () => {
-      const value = { z: [1] };
-      expect(store.update).not.toHaveBeenCalled();
-      service.addPreserving(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0 }, z: [0] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`returns {code:400,path,value,error} if invalid path`, () => {
+    it(`returns {code:400,value,path,error} if invalid path`, () => {
       const path = '2z';
-      const value = { b: 0 };
+      const value = { a: 0 };
       const error = new InvalidPathError(path);
+
       expect(service.addPreserving(value, path)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.addPreserving(value, path);
+    it(`ignores the operation if invalid path`, () => {
+      service.addPreserving({ a: 0 }, '2z');
       expect(store.update).not.toHaveBeenCalled();
     });
 
-    it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.y';
-      const value = { b: 0 };
+    it(`returns {code:460,value,error,path?} if store error`, () => {
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = { a: 0 };
+
+      expect(service.addPreserving(value)).toEqual({ code: 460, value, error });
       expect(service.addPreserving(value, path)).toEqual({ code: 460, path, value, error });
     });
   });
 
   describe('merge(properties,path?)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
-
     it(`returns {code:200,value} if property merged`, () => {
-      const value = { b: 0 };
+      const value = { a: 0 };
+
       expect(service.merge(value)).toEqual({ code: 200, value });
     });
 
     it(`updates the environment store if property merged`, () => {
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.merge(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: 0, x: { y: 0 }, z: [0] });
+      service.merge({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`returns {code:200,value,path} if property merged with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
+      const value = { a: 0 };
+      const path = 'a';
+
       expect(service.merge(value, path)).toEqual({ code: 200, value, path });
     });
 
     it(`updates the environment store if property merged with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.merge(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: { b: 0 }, x: { y: 0 }, z: [0] });
+      service.merge({ a: 0 }, 'a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property merged with complex path`, () => {
+      service.merge({ a: 0 }, 'a.a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: { a: 0 } } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store merging and overwriting existing values`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 }, b: 0 });
+
+      service.merge({ a: { b: 1 }, b: 1 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0, b: 1 }, b: 1 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store merging existing arrays`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: [0] } });
+
+      service.merge({ a: { a: [1] } });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: [0, 1] } });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.merge(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, b: { b: 0 }, x: { y: 0 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({}));
+
+      service.merge({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`updates the environment store merging existing object properties`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'x';
-      const value = { z: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.merge(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, x: { y: 0, z: 0 }, z: [0] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`updates the environment store merging existing Array properties`, () => {
-      const value = { z: [1] };
-      expect(store.update).not.toHaveBeenCalled();
-      service.merge(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0 }, z: [0, 1] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`returns {code:400,path,value,error} if invalid path`, () => {
+    it(`returns {code:400,value,path,error} if invalid path`, () => {
       const path = '2z';
-      const value = { b: 0 };
+      const value = { a: 0 };
       const error = new InvalidPathError(path);
+
       expect(service.merge(value, path)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.merge(value, path);
+    it(`ignores the operation if invalid path`, () => {
+      service.merge({ a: 0 }, '2z');
       expect(store.update).not.toHaveBeenCalled();
     });
 
-    it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.y';
-      const value = { b: 0 };
+    it(`returns {code:460,value,error,path?} if store error`, () => {
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = { a: 0 };
+
+      expect(service.merge(value)).toEqual({ code: 460, value, error });
       expect(service.merge(value, path)).toEqual({ code: 460, path, value, error });
     });
   });
 
   describe('mergePreserving(properties,path?)', () => {
-    beforeEach(() => {
-      jest.spyOn(store, 'getAll').mockReturnValue(state);
-      jest.spyOn(store, 'update').mockImplementation(() => null);
-    });
+    it(`returns {code:200,value} if property merged preserving`, () => {
+      const value = { a: 0 };
 
-    it(`returns {code:200,value} if property merged`, () => {
-      const value = { b: 0 };
       expect(service.mergePreserving(value)).toEqual({ code: 200, value });
     });
 
-    it(`updates the environment store if property merged`, () => {
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.mergePreserving(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: 0, x: { y: 0 }, z: [0] });
+    it(`updates the environment store if property merged preserving`, () => {
+      service.mergePreserving({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`returns {code:200,value,path} if property merged with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
+    it(`returns {code:200,value,path} if property merged preserving with path`, () => {
+      const value = { a: 0 };
+      const path = 'a';
+
       expect(service.mergePreserving(value, path)).toEqual({ code: 200, value, path });
     });
 
-    it(`updates the environment store if property merged with path`, () => {
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.mergePreserving(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, b: { b: 0 }, x: { y: 0 }, z: [0] });
+    it(`updates the environment store if property merged preserving with path`, () => {
+      service.mergePreserving({ a: 0 }, 'a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0 } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store if property merged preserving with complex path`, () => {
+      service.mergePreserving({ a: 0 }, 'a.a');
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: { a: 0 } } });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store merging and preserving existing values`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 }, b: 0 });
+
+      service.mergePreserving({ a: { b: 1 }, b: 1 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: 0, b: 1 }, b: 0 });
+      expect(store.update).toHaveBeenCalledTimes(1);
+    });
+
+    it(`updates the environment store merging existing arrays`, () => {
+      jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: [0] } });
+
+      service.mergePreserving({ a: { a: [1] } });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: { a: [0, 1] } });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
     it(`updates the environment store if immutable environment`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'b';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.mergePreserving(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, b: { b: 0 }, x: { y: 0 }, z: [0] });
+      jest.spyOn(store, 'getAll').mockReturnValue(Object.freeze({}));
+
+      service.mergePreserving({ a: 0 });
+      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0 });
       expect(store.update).toHaveBeenCalledTimes(1);
     });
 
-    it(`updates the environment store merging existing object properties preserving existing ones`, () => {
-      jest.spyOn(store, 'getAll').mockReturnValue(readonlyState);
-      const path = 'x';
-      const value = { y: 1, z: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.mergePreserving(value, path);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 1, x: { y: 0, z: 0 }, z: [0] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`updates the environment store merging existing Array properties`, () => {
-      const value = { z: [1] };
-      expect(store.update).not.toHaveBeenCalled();
-      service.mergePreserving(value);
-      expect(store.update).toHaveBeenNthCalledWith(1, { a: 0, x: { y: 0 }, z: [0, 1] });
-      expect(store.update).toHaveBeenCalledTimes(1);
-    });
-
-    it(`returns {code:400,path,value,error} if invalid path`, () => {
+    it(`returns {code:400,value,path,error} if invalid path`, () => {
       const path = '2z';
-      const value = { b: 0 };
+      const value = { a: 0 };
       const error = new InvalidPathError(path);
+
       expect(service.mergePreserving(value, path)).toEqual({ code: 400, path, value, error });
     });
 
-    it(`ignores the action if invalid path`, () => {
-      const path = '2z';
-      const value = { b: 0 };
-      expect(store.update).not.toHaveBeenCalled();
-      service.mergePreserving(value, path);
+    it(`ignores the operation if invalid path`, () => {
+      service.mergePreserving({ a: 0 }, '2z');
       expect(store.update).not.toHaveBeenCalled();
     });
 
-    it(`returns {code:460,path,value,error} if store error`, () => {
-      const path = 'x.y';
-      const value = { b: 0 };
+    it(`returns {code:460,value,error,path?} if store error`, () => {
       const error = new Error('store error');
       jest.spyOn(store, 'update').mockImplementation(() => {
         throw error;
       });
+      const path = 'a';
+      const value = { a: 0 };
+
+      expect(service.mergePreserving(value)).toEqual({ code: 460, value, error });
       expect(service.mergePreserving(value, path)).toEqual({ code: 460, path, value, error });
     });
   });

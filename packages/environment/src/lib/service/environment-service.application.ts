@@ -25,9 +25,10 @@ export class EnvironmentService<
 
   /**
    * Resets the environment to the initial state.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 205 Store resetted
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   reset(): RESULT {
     try {
@@ -44,11 +45,12 @@ export class EnvironmentService<
    * Ignores the action if property path already exists or is an invalid path.
    * @param path The path of the property to create.
    * @param value The value of the property.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 201 Property created
    * - 400 Invalid path
    * - 422 Property path already exists
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   create(path: Path, value: Property): RESULT {
     if (!isPath(path)) {
@@ -75,11 +77,12 @@ export class EnvironmentService<
    * Ignores the action if property doesn't exist or is an invalid path.
    * @param path The path of the property to update.
    * @param value The value of the property.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 200 Property updated
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   update(path: Path, value: Property): RESULT {
     if (!isPath(path)) {
@@ -105,11 +108,12 @@ export class EnvironmentService<
    * Ignores the action if is an invalid path.
    * @param path The path of the property to upsert.
    * @param value The value of the property.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 201 Property created
    * - 200 Property updated
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   upsert(path: Path, value: Property): RESULT {
     if (!isPath(path)) {
@@ -132,11 +136,12 @@ export class EnvironmentService<
    * Deletes a property from the environment.
    * Ignores the action if property doesn't exist or is an invalid path.
    * @param path The path of the property to delete.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 204 Property deleted
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   delete(path: Path): RESULT {
     if (!isPath(path)) {
@@ -171,10 +176,11 @@ export class EnvironmentService<
    * Ignores the action if is an invalid path.
    * @param properties The properties to add.
    * @param path The path of the properties to add.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   add(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
@@ -189,10 +195,11 @@ export class EnvironmentService<
    * Ignores the action if is an invalid path.
    * @param properties The properties to add.
    * @param path The path of the properties to add.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   addPreserving(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
@@ -207,10 +214,11 @@ export class EnvironmentService<
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
    * @param path The path of the properties to merge.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   merge(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
@@ -226,10 +234,11 @@ export class EnvironmentService<
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
    * @param path The path of the properties to merge.
-   * @returns The result as {@link EnvironmentResult} with the code:
+   * @returns The operation result with the code:
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentResult}
    */
   mergePreserving(properties: EnvironmentState, path?: Path): RESULT {
     return this.upsertProperties(
