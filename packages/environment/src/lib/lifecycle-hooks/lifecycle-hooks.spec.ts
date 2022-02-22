@@ -1,6 +1,5 @@
 import { install, InstalledClock } from '@sinonjs/fake-timers';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { of, throwError } from 'rxjs';
 import { ArrayOrSingle } from 'ts-essentials';
 
 import {
@@ -89,7 +88,7 @@ describe('LifecycleHooks integration with EnvironmentLoader', () => {
   it(`executes hooks in order if resolves`, async () => {
     const properties: EnvironmentState = { a: 0 };
     const afterProperties: EnvironmentState = { b: 0 };
-    const source1: EnvironmentSource = { load: () => of(properties) };
+    const source1: EnvironmentSource = { load: () => [properties] };
     loader = new Loader(service, [source1]);
     loader.preAddProperties = () => afterProperties;
     const source: LoaderSource = loader['loaderSources'][0];
@@ -107,7 +106,13 @@ describe('LifecycleHooks integration with EnvironmentLoader', () => {
   it(`executes hooks in order if rejects`, async () => {
     const error: Error = new Error('test');
     const finalError: Error = new Error('The environment source "a" failed to load: test');
-    const source1: EnvironmentSource = { id: 'a', isRequired: true, load: () => throwError(() => error) };
+    const source1: EnvironmentSource = {
+      id: 'a',
+      isRequired: true,
+      load: () => {
+        throw error;
+      }
+    };
     loader = new Loader(service, [source1]);
     const source: LoaderSource = loader['loaderSources'][0];
 
