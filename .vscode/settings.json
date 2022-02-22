@@ -24,6 +24,5 @@
   "typescriptHero.imports.grouping": ["Plains", "Modules", "Workspace"],
   "sonarlint.analyzerProperties": {
     "sonar.typescript.exclusions": "**/*.spec.ts"
-  },
-  "prettier.trailingComma": "none"
+  }
 }
