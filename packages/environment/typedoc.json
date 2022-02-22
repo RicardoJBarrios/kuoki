@@ -2,6 +2,7 @@
   "out": "../../docs/environment",
   "entryPoints": [
     "./src/lib/helpers/index.ts",
+    "./src/lib/lifecycle-hooks/index.ts",
     "./src/lib/loader/index.ts",
     "./src/lib/path/index.ts",
     "./src/lib/query/index.ts",
