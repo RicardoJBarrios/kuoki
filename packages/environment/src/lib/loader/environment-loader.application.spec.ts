@@ -4,7 +4,7 @@ import { delay, of, throwError } from 'rxjs';
 import { validate } from 'uuid';
 
 import { EnvironmentService } from '../service';
-import { EnvironmentSource } from '../source';
+import { EnvironmentSource, InvalidEnvironmentSourceError } from '../source';
 import { EnvironmentState } from '../store';
 import { EnvironmentLoader } from './environment-loader.application';
 
@@ -25,6 +25,13 @@ describe('EnvironmentLoader', () => {
     clock.uninstall();
     load.mockRestore();
     jest.restoreAllMocks();
+  });
+
+  it(`throws if an environmnet source is invalid`, () => {
+    const source1: any = { load: 0 };
+    const error: Error = new InvalidEnvironmentSourceError(source1);
+
+    expect(() => new EnvironmentLoader(service, [source1])).toThrowError(error);
   });
 
   it(`throws if there are sources with duplicated ids`, () => {

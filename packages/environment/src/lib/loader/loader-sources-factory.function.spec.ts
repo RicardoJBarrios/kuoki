@@ -1,6 +1,7 @@
 import { validate } from 'uuid';
 
-import { EnvironmentSource, SourceStrategy } from '../source';
+import { EnvironmentSource, InvalidEnvironmentSourceError, SourceStrategy } from '../source';
+import { DuplicatedSourcesError } from './duplicated-sources.error';
 import { LoaderSource } from './loader-source.type';
 import { loaderSourcesFactory } from './loader-sources-factory.function';
 
@@ -57,5 +58,22 @@ describe('loaderSourcesFactory(sources?)', () => {
     expect(source.strategy).toEqual(strategy);
     expect(source.path).toEqual(path);
     expect(source.load).toEqual(source1.load);
+  });
+
+  it(`throws if an environmnet source is invalid`, () => {
+    const source1: any = { load: 0 };
+    const error: Error = new InvalidEnvironmentSourceError(source1);
+
+    expect(() => loaderSourcesFactory(source1)).toThrowError(error);
+  });
+
+  it(`throws if there are sources with duplicated ids`, () => {
+    const source1: EnvironmentSource = { id: 'a', load: () => [{}] };
+    const source2: EnvironmentSource = { id: 'a', load: () => [{}] };
+    const source3: EnvironmentSource = { id: 'b', load: () => [{}] };
+    const source4: EnvironmentSource = { id: 'b', load: () => [{}] };
+    const error: Error = new DuplicatedSourcesError(['a', 'b']);
+
+    expect(() => loaderSourcesFactory([source1, source2, source3, source4])).toThrowError(error);
   });
 });

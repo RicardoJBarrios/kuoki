@@ -37,27 +37,19 @@ export class EnvironmentLoader<
   protected readonly loadSubject$: ReplaySubject<void> = new ReplaySubject();
   protected readonly isRequiredSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject(new Set());
   protected readonly loaderSources: ReadonlyArray<LOADER_SOURCE> = loaderSourcesFactory(this.sources);
-  protected readonly sourcesSubject$: ReadonlyMap<string, ReplaySubject<void>>;
+  protected readonly sourcesSubject$: ReadonlyMap<string, ReplaySubject<void>> = sourcesSubjectFactory(
+    this.loaderSources
+  );
   protected isLoading = false;
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
    * @param service Sets properties in the environment store.
    * @param sources The environment properties sources to get the application properties asynchronously.
+   * @throws If an environmnet source is invalid.
+   * @throws If there are sources with duplicated ids.
    */
-  constructor(protected readonly service: SERVICE, protected readonly sources?: ArrayOrSingle<SOURCE>) {
-    this.checkSourcesIdUniqueness();
-    this.sourcesSubject$ = sourcesSubjectFactory(this.loaderSources);
-  }
-
-  protected checkSourcesIdUniqueness(): void {
-    const ids: string[] = this.loaderSources.map((source: LOADER_SOURCE) => source.id);
-    const duplicates = ids.filter((item: string, index: number) => ids.indexOf(item) !== index);
-
-    if (duplicates.length > 0) {
-      throw new Error(`There are sources with duplicate id's: ${duplicates.join(', ')}`);
-    }
-  }
+  constructor(protected readonly service: SERVICE, protected readonly sources?: ArrayOrSingle<SOURCE>) {}
 
   /**
    * Loads the environment properties from the provided asynchronous sources.
