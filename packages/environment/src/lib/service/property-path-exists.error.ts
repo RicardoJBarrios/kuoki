@@ -6,7 +6,7 @@ import { Path, pathAsString } from '../path';
 export class PropertyPathExistsError extends Error {
   /**
    * Creates a property path exists error.
-   * @param path the property path.
+   * @param path The property path.
    */
   constructor(path: Path) {
     super(`Property path "${pathAsString(path)}" already exists in the environment`);
