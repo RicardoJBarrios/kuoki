@@ -25,6 +25,10 @@ describe('asString(value)', () => {
     expect(asString({ a: 0 })).toEqual('{"a":0}');
   });
 
+  it(`returns string from Object with method`, () => {
+    expect(asString({ a: () => ({ a: 0 }) })).toEqual('{"a":"() => ({ a: 0 })"}');
+  });
+
   it(`returns string from Array of Objects`, () => {
     expect(asString([{ a: 0 }])).toEqual('[{"a":0}]');
   });
