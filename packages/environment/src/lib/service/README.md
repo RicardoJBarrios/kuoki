@@ -5,14 +5,22 @@
 This application is the way to mutate the environment store. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
 
 ```js
+import { createEnvironmentService } from '@kuoki/environment';
+import { store } from '...';
+
 const service = createEnvironmentService(store);
 ```
 
 ```js
+import { EnvironmentService } from '@kuoki/environment';
+import { store } from '...';
+
 const service = new EnvironmentService(store);
 ```
 
 ```ts
+import { EnvironmentService, EnvironmentStore } from '@kuoki/environment';
+
 class CustomEnvironmentService extends EnvironmentService {
   constructor(protected override readonly store: EnvironmentStore) {
     super(store);

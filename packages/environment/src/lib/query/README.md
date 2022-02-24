@@ -6,6 +6,7 @@ This application is the way to get the environment values. The base implementati
 
 ```js
 import { createEnvironmentQuery } from '@kuoki/environment';
+import { store } from '...';
 
 const query = createEnvironmentQuery(store);
 const query = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
@@ -13,6 +14,7 @@ const query = createEnvironmentQuery(store, { transpileEnvironment: true, interp
 
 ```js
 import { EnvironmentQuery } from '@kuoki/environment';
+import { store } from '...';
 
 const query = new EnvironmentQuery(store);
 const query = new EnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
