@@ -7,12 +7,12 @@ import { LoaderSource } from './loader-source.type';
 
 /**
  * Converts a set of sources to loader sources.
- * @template SOURCE an EnvironmentSource or extension.
- * @template LOADER_SOURCE a LoaderSource or extension.
+ * @template SOURCE The source used by the implementation.
+ * @template LOADER_SOURCE The loader source used by the implementation.
  * @param sources the list of sources to convert.
  * @returns A set of loader sources.
- * @throws If an environmnet source is invalid.
- * @throws If there are sources with duplicated ids.
+ * @throws InvalidSourceError if an environmnet source is invalid.
+ * @throws DuplicatedSourcesError If there are sources with duplicated ids.
  */
 export function loaderSourcesFactory<
   SOURCE extends EnvironmentSource = EnvironmentSource,

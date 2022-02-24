@@ -1,7 +1,7 @@
 import { ReplaySubject } from 'rxjs';
 
+import { LoaderSource } from '../loader-source';
 import { SourceStrategy } from '../source';
-import { LoaderSource } from './loader-source.type';
 import { sourcesSubjectFactory } from './sources-subject-factory.function';
 
 const source1: LoaderSource = {

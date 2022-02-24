@@ -1,22 +1,25 @@
 import { v4 } from 'uuid';
 
-import { EnvironmentSource, InvalidEnvironmentSourceError, isEnvironmentSource, SourceStrategy } from '../source';
+import { EnvironmentSource, InvalidSourceError, isEnvironmentSource, SourceStrategy } from '../source';
 import { LoaderSource } from './loader-source.type';
 
 /**
  * Converts a source to loader source.
- * @template SOURCE an EnvironmentSource or extension.
- * @template LOADER_SOURCE a LoaderSource or extension.
+ * @template SOURCE The source used by the implementation.
+ * @template LOADER_SOURCE The loader source used by the implementation.
  * @param source the source to convert.
  * @returns A loader sources.
- * @throws If an environmnet source is invalid.
+ * @throws InvalidSourceError if an environmnet source is invalid.
+ * @see {@link EnvironmentSource}
+ * @see {@link LoaderSource}
+ * @see {@link InvalidSourceError}
  */
 export function loaderSourceFactory<
   SOURCE extends EnvironmentSource = EnvironmentSource,
   LOADER_SOURCE extends LoaderSource = LoaderSource
 >(source: SOURCE): LOADER_SOURCE {
   if (!isEnvironmentSource(source)) {
-    throw new InvalidEnvironmentSourceError(source);
+    throw new InvalidSourceError(source);
   }
 
   source.id = source.id ?? v4();
