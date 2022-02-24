@@ -80,7 +80,7 @@ query.getAsync('a', { defaultValue: 9 }); // resolves 9 at 0ms
 query.get('a', { defaultValue: 9 }); // 9
 ```
 
-Convert the returned value.
+Convert the returned value to a target type.
 
 ```js
 // Environment = {}-{a:0}-{a:1}-{b:0}-

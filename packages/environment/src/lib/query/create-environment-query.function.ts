@@ -3,10 +3,12 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { EnvironmentQuery } from './environment-query.application';
 
 /**
- * Creates an EnvironmentQuery.
+ * Creates an environment query.
  * @param store The environment store.
- * @param config Configuration parameters for the EnvironmentQuery.
- * @returns An EnvironmentQuery instance.
+ * @param config Configuration parameters for the environment query.
+ * @returns An environment query instance.
+ * @see {@link EnvironmentStore}
+ * @see {@link EnvironmentQueryConfig}
  * @see {@link EnvironmentQuery}
  */
 export function createEnvironmentQuery(store: EnvironmentStore, config?: EnvironmentQueryConfig): EnvironmentQuery {

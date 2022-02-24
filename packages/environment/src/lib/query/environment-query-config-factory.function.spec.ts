@@ -11,13 +11,13 @@ describe('environmentConfigFactory(config?)', () => {
     expect(environmentQueryConfigFactory({})).toEqual(defaultEnvironmentConfig);
   });
 
-  it(`({ interpolation }) returns custom interpolation`, () => {
+  it(`({interpolation}) returns custom interpolation`, () => {
     expect(environmentQueryConfigFactory({ interpolation: ['(', ')'] })).toEqual(
       expect.objectContaining({ interpolation: ['(', ')'] })
     );
   });
 
-  it(`({ transpileEnvironment }) returns custom value`, () => {
+  it(`({transpileEnvironment}) returns custom value`, () => {
     expect(environmentQueryConfigFactory({ transpileEnvironment: true })).toEqual(
       expect.objectContaining({ transpileEnvironment: true })
     );

@@ -1,3 +1,4 @@
+import createMockInstance from 'jest-create-mock-instance';
 import { Observable } from 'rxjs';
 
 import { EnvironmentState, EnvironmentStore } from '../store';
@@ -12,30 +13,28 @@ export class TestEnvironmentStore extends EnvironmentStore {
   getAll(): EnvironmentState {
     throw new Error('Method not implemented.');
   }
-  update(environment: EnvironmentState): void {
-    throw new Error('Method not implemented.');
-  }
-  reset(): void {
-    throw new Error('Method not implemented.');
-  }
+  update(environment: EnvironmentState): void {}
+  reset(): void {}
 }
 
 describe('createEnvironmentQuery(store, config?)', () => {
   let store: EnvironmentStore;
 
   beforeEach(() => {
-    store = new TestEnvironmentStore();
+    store = createMockInstance(TestEnvironmentStore);
   });
 
   it(`(store) returns an EnvironmentQuery`, () => {
     const query: any = createEnvironmentQuery(store);
+
     expect(query).toBeInstanceOf(EnvironmentQuery);
     expect(query.config).toEqual({ interpolation: ['{{', '}}'], transpileEnvironment: false });
   });
 
-  it(`(store, config) returns an EnvironmentQuery with custom config`, () => {
+  it(`(store,config) returns an EnvironmentQuery with custom config`, () => {
     const config: EnvironmentQueryConfig = { interpolation: ['(', ')'], transpileEnvironment: true };
     const query: any = createEnvironmentQuery(store, config);
+
     expect(query).toBeInstanceOf(EnvironmentQuery);
     expect(query.config).toEqual(config);
   });
