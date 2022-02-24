@@ -1,6 +1,6 @@
 # Kuoki
 
-> Libraries to help with frontend development
+> Libraries to help with frontend development.
 
 | Library                                         | Description                                           |
 | ----------------------------------------------- | ----------------------------------------------------- |

@@ -1,6 +1,6 @@
 # Environment
 
-> A Reactive Environment Management for JS Applications
+> A Reactive Environment Management for JS Applications.
 
 [![Documentation](https://img.shields.io/badge/docs-wip-orange?style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/) [![Quality Gate Status](https://img.shields.io/sonar/quality_gate/kuoki-environment?logo=sonar&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/overview?id=kuoki-environment) [![Coverage](https://img.shields.io/sonar/coverage/kuoki-environment/master?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/coverage/) [![npm](https://img.shields.io/npm/v/@kuoki/environment?style=flat-square)](https://www.npmjs.com/package/@kuoki/environment) [![GitHub](https://img.shields.io/github/license/ricardojbarrios/kuoki?style=flat-square)](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md) [![GitHub issues environment](https://img.shields.io/github/issues/ricardojbarrios/kuoki/environment?label=issues&style=flat-square)](https://github.com/RicardoJBarrios/kuoki/labels/environment)
 
