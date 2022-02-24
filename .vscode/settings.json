@@ -24,5 +24,9 @@
   "typescriptHero.imports.grouping": ["Plains", "Modules", "Workspace"],
   "sonarlint.analyzerProperties": {
     "sonar.typescript.exclusions": "**/*.spec.ts"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "kuoki-srv",
+    "projectKey": "kuoki-environment"
   }
 }
