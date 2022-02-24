@@ -68,9 +68,11 @@
     "yarn-audit-html": "^3.0.1"
   },
   "lint-staged": {
-    "*.{js,json,css,scss,md,ts,html,yml}": [
-      "nx format:write --uncommitted",
-      "nx affected:lint --fix --parallel --uncommitted"
+    "*": [
+      "nx format:write --files"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "nx affected:lint --fix --files"
     ]
   },
   "config": {
