@@ -9,7 +9,7 @@ import { createEnvironmentQuery } from '@kuoki/environment';
 import { store } from '...';
 
 const query = createEnvironmentQuery(store);
-const query = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
+const query2 = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
 ```
 
 ```js
@@ -17,7 +17,7 @@ import { EnvironmentQuery } from '@kuoki/environment';
 import { store } from '...';
 
 const query = new EnvironmentQuery(store);
-const query = new EnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
+const query2 = new EnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
 ```
 
 ```ts
@@ -138,9 +138,15 @@ query.get('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); //
 The `transpileEnvironment` and `interpolation` properties can be configured at query application level when instantiated, but the local options have preference over the application ones.
 
 ```js
+// Environment = {a:'Hello [[name]]', name:'John'}-
+query2.get$('a', { transpile: {} }); // 'Hello John'-
+query2.getAsync('a', { transpile: {} }); // resolves 'Hello John' at 0ms
+query2.get('a', { transpile: {} }); // 'Hello John'
+```
+
+```js
 // Environment = {a:'Hello //name//', name:'John'}-
-const query = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['//', '//'] });
-query.get$('a', { transpile: {} }); // 'Hello John'-
-query.getAsync('a', { transpile: {} }); // resolves 'Hello John' at 0ms
-query.get('a', { transpile: {} }); // 'Hello John'
+query2.get$('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] }); // 'Hello Sara'-
+query2.getAsync('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] }); // resolves 'Hello Sara' at 0ms
+query2.get('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] }); // 'Hello Sara'
 ```
