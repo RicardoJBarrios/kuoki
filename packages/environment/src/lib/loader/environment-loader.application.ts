@@ -18,12 +18,11 @@ import {
 import { ArrayOrSingle } from 'ts-essentials';
 
 import { asError } from '../helpers';
+import { lifecycleHook } from '../lifecycle-hooks';
+import { LoaderSource, loaderSourcesFactory } from '../loader-source';
 import { EnvironmentService } from '../service';
 import { EnvironmentSource, SourceStrategy } from '../source';
 import { EnvironmentState } from '../store';
-import { lifecycleHook } from './lifecycle-hook.function';
-import { LoaderSource } from './loader-source.type';
-import { loaderSourcesFactory } from './loader-sources-factory.function';
 import { sourcesSubjectFactory } from './sources-subject-factory.function';
 
 /**
@@ -46,8 +45,8 @@ export class EnvironmentLoader<
    * Loads the environment properties from the provided asynchronous sources.
    * @param service Sets properties in the environment store.
    * @param sources The environment properties sources to get the application properties asynchronously.
-   * @throws If an environmnet source is invalid.
-   * @throws If there are sources with duplicated ids.
+   * @throws InvalidSourceError if an environmnet source is invalid.
+   * @throws DuplicatedSourcesError If there are sources with duplicated ids.
    */
   constructor(protected readonly service: SERVICE, protected readonly sources?: ArrayOrSingle<SOURCE>) {}
 
@@ -146,7 +145,6 @@ export class EnvironmentLoader<
    * @param source The environment properties source.
    * @returns The modified source properties.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   preAddProperties(properties: EnvironmentState, source?: LOADER_SOURCE): EnvironmentState {
     return properties;
   }

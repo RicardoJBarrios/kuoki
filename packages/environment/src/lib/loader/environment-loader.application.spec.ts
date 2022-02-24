@@ -4,7 +4,7 @@ import { delay, of, throwError } from 'rxjs';
 import { validate } from 'uuid';
 
 import { EnvironmentService } from '../service';
-import { EnvironmentSource, InvalidEnvironmentSourceError } from '../source';
+import { EnvironmentSource, InvalidSourceError } from '../source';
 import { EnvironmentState } from '../store';
 import { EnvironmentLoader } from './environment-loader.application';
 
@@ -29,7 +29,7 @@ describe('EnvironmentLoader', () => {
 
   it(`throws if an environmnet source is invalid`, () => {
     const source1: any = { load: 0 };
-    const error: Error = new InvalidEnvironmentSourceError(source1);
+    const error: Error = new InvalidSourceError(source1);
 
     expect(() => new EnvironmentLoader(service, [source1])).toThrowError(error);
   });
