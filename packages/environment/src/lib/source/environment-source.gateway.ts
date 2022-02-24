@@ -6,7 +6,8 @@ import { SourceStrategy } from './source-strategy.enum';
 
 /**
  * The source from which to get environment properties.
- * @template STRATEGY The source strategies used by the implementation.
+ * @template STRATEGY The source strategy used by the implementation.
+ * @see {@link SourceStrategy}
  */
 export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = SourceStrategy> {
   /**
@@ -42,6 +43,7 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
 
   /**
    * The strategy to add properties to the environment.
+   * @see {@link SourceStrategy}
    */
   strategy?: STRATEGY;
 
@@ -53,6 +55,7 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
 
   /**
    * Asynchronously loads the environment properties from the source.
+   * @see {@link EnvironmentState}
    */
   abstract load(): ObservableInput<EnvironmentState>;
 }
