@@ -5,16 +5,22 @@
 This application is the way to get the environment values. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
 
 ```js
+import { createEnvironmentQuery } from '@kuoki/environment';
+
 const query = createEnvironmentQuery(store);
 const query = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
 ```
 
 ```js
+import { EnvironmentQuery } from '@kuoki/environment';
+
 const query = new EnvironmentQuery(store);
 const query = new EnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
 ```
 
 ```ts
+import { EnvironmentQuery, EnvironmentQueryConfig, EnvironmentStore } from '@kuoki/environment';
+
 class CustomEnvironmentQuery extends EnvironmentQuery {
   constructor(
     protected override readonly store: EnvironmentStore,
