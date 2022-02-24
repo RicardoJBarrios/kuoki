@@ -6,10 +6,12 @@ This application is the way to get the environment values. The base implementati
 
 ```js
 const query = createEnvironmentQuery(store);
+const query = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
 ```
 
 ```js
 const query = new EnvironmentQuery(store);
+const query = new EnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
 ```
 
 ```ts
@@ -71,7 +73,7 @@ query.getAsync('a'); // resolves 0 at 2ms
 query.get('a'); // undefined
 ```
 
-Return a default value if undefined.
+Returns a default value if undefined.
 
 ```js
 // Environment = {}-{a:0}-{a:1}-{b:0}-
@@ -80,11 +82,57 @@ query.getAsync('a', { defaultValue: 9 }); // resolves 9 at 0ms
 query.get('a', { defaultValue: 9 }); // 9
 ```
 
-Convert the returned value to a target type.
+Converts the returned value to a target type.
 
 ```js
 // Environment = {}-{a:0}-{a:1}-{b:0}-
 query.get$('a', { targetType: String }); // 'undefined'-'0'-'1'-'undefined'-
 query.getAsync('a', { targetType: String }); // resolves '0' at 2ms
 query.get('a', { targetType: String }); // 'undefined'
+```
+
+Transpiles the resturned value.
+
+```js
+// Environment = {a:'Hello {{name}}'}-
+query.get$('a', { transpile: { name: 'John' } }); // 'Hello John'-
+query.getAsync('a', { transpile: { name: 'John' } }); // resolves 'Hello John' at 0ms
+query.get('a', { transpile: { name: 'John' } }); // 'Hello John'
+```
+
+Transpiles using the environment values.
+
+```js
+// Environment = {a:'Hello {{name}}', name:'John'}-
+query.get$('a', { transpile: {}, transpileEnvironment: true }); // 'Hello John'-
+query.getAsync('a', { transpile: {}, transpileEnvironment: true }); // resolves 'Hello John' at 0ms
+query.get('a', { transpile: {}, transpileEnvironment: true }); // 'Hello John'
+```
+
+When transpiles, the local properties has preferences over environment.
+
+```js
+// Environment = {a:'Hello {{name}}', name:'John'}-
+query.get$('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true }); // 'Hello Thomas'-
+query.getAsync('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true }); // resolves 'Hello Thomas' at 0ms
+query.get('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true }); // 'Hello Thomas'
+```
+
+Can change the interpolation characters.
+
+```js
+// Environment = {a:'Hello //name//'}-
+query.get$('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); // 'Hello John'-
+query.getAsync('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); // resolves 'Hello John' at 0ms
+query.get('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); // 'Hello John'
+```
+
+The `transpileEnvironment` and `interpolation` properties can be configured at query application level when instantiated, but the local options have preference over the application ones.
+
+```js
+// Environment = {a:'Hello //name//', name:'John'}-
+const query = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['//', '//'] });
+query.get$('a', { transpile: {} }); // 'Hello John'-
+query.getAsync('a', { transpile: {} }); // resolves 'Hello John' at 0ms
+query.get('a', { transpile: {} }); // 'Hello John'
 ```
