@@ -1,11 +1,9 @@
 import createMockInstance from 'jest-create-mock-instance';
 import { Observable } from 'rxjs';
 
-import { InvalidPathError, Path } from '../path';
+import { InvalidPathError, Path, PathDoesntExistError, PathExistsError } from '../path';
 import { EnvironmentState, EnvironmentStore } from '../store';
 import { EnvironmentService } from './environment-service.application';
-import { PropertyPathDoesntExistError } from './property-path-doesnt-exist.error';
-import { PropertyPathExistsError } from './property-path-exists.error';
 
 class TestEnvironmentStore implements EnvironmentStore {
   getAll$(): Observable<EnvironmentState> {
@@ -14,12 +12,8 @@ class TestEnvironmentStore implements EnvironmentStore {
   getAll(): EnvironmentState {
     throw new Error('Method not implemented.');
   }
-  update(environment: EnvironmentState): void {
-    throw new Error('Method not implemented.');
-  }
-  reset(): void {
-    throw new Error('Method not implemented.');
-  }
+  update(environment: EnvironmentState): void {}
+  reset(): void {}
 }
 
 describe('EnvironmentService', () => {
@@ -114,7 +108,7 @@ describe('EnvironmentService', () => {
       jest.spyOn(store, 'getAll').mockReturnValue({ a: 0 });
       const path = 'a';
       const value = 1;
-      const error = new PropertyPathExistsError(path);
+      const error = new PathExistsError(path);
 
       expect(service.create(path, value)).toEqual({ code: 422, path, value, error });
     });
@@ -123,7 +117,7 @@ describe('EnvironmentService', () => {
       jest.spyOn(store, 'getAll').mockReturnValue({ a: { a: 0 } });
       const path = 'a.a.b';
       const value = 1;
-      const error = new PropertyPathExistsError(path);
+      const error = new PathExistsError(path);
 
       expect(service.create(path, value)).toEqual({ code: 422, path, value, error });
     });
@@ -211,7 +205,7 @@ describe('EnvironmentService', () => {
     it(`returns {code:422,path,value,error} if path doesn't exist`, () => {
       const path = 'a';
       const value = 1;
-      const error = new PropertyPathDoesntExistError(path);
+      const error = new PathDoesntExistError(path);
 
       expect(service.update(path, value)).toEqual({ code: 422, path, value, error });
     });
@@ -380,7 +374,7 @@ describe('EnvironmentService', () => {
 
     it(`returns {code:422,path,error} if path doesn't exist`, () => {
       const path = 'a';
-      const error = new PropertyPathDoesntExistError(path);
+      const error = new PathDoesntExistError(path);
 
       expect(service.delete(path)).toEqual({ code: 422, path, error });
     });

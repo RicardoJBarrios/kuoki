@@ -1,17 +1,26 @@
 import { get, mergeWith, set } from 'lodash-es';
 
 import { asError, mutable } from '../helpers';
-import { InvalidPathError, isPath, overwritesPath, Path, pathAsArray, pathAsString } from '../path';
+import {
+  InvalidPathError,
+  isPath,
+  overwritesPath,
+  Path,
+  pathAsArray,
+  pathAsString,
+  PathDoesntExistError,
+  PathExistsError
+} from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
-import { PropertyPathDoesntExistError } from './property-path-doesnt-exist.error';
-import { PropertyPathExistsError } from './property-path-exists.error';
 
 /**
  * Sets properties in the environment store.
  * @template STORE The store used by the implementation.
  * @template RESULT The operation result used by the implementation.
+ * @see {@link EnvironmentStore}
+ * @see {@link EnvironmentResult}
  */
 export class EnvironmentService<
   STORE extends EnvironmentStore = EnvironmentStore,
@@ -19,7 +28,8 @@ export class EnvironmentService<
 > {
   /**
    * Sets properties in the environment store.
-   * @param store Stores the environment properties that the application needs.
+   * @param store The store used by the implementation.
+   * @see {@link EnvironmentStore}
    */
   constructor(protected readonly store: STORE) {}
 
@@ -50,6 +60,8 @@ export class EnvironmentService<
    * - 400 Invalid path
    * - 422 Property path already exists
    * - 460 Store error
+   * @see {@link Path}
+   * @see {@link Property}
    * @see {@link EnvironmentResult}
    */
   create(path: Path, value: Property): RESULT {
@@ -65,7 +77,7 @@ export class EnvironmentService<
       return this.returnCode(EnvironmentResultCode.UNPROCESSABLE, {
         path,
         value,
-        error: new PropertyPathExistsError(path)
+        error: new PathExistsError(path)
       });
     }
 
@@ -82,6 +94,8 @@ export class EnvironmentService<
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * - 460 Store error
+   * @see {@link Path}
+   * @see {@link Property}
    * @see {@link EnvironmentResult}
    */
   update(path: Path, value: Property): RESULT {
@@ -96,7 +110,7 @@ export class EnvironmentService<
       return this.returnCode(EnvironmentResultCode.UNPROCESSABLE, {
         path,
         value,
-        error: new PropertyPathDoesntExistError(path)
+        error: new PathDoesntExistError(path)
       });
     }
 
@@ -113,6 +127,8 @@ export class EnvironmentService<
    * - 200 Property updated
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link Path}
+   * @see {@link Property}
    * @see {@link EnvironmentResult}
    */
   upsert(path: Path, value: Property): RESULT {
@@ -141,6 +157,7 @@ export class EnvironmentService<
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * - 460 Store error
+   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   delete(path: Path): RESULT {
@@ -154,7 +171,7 @@ export class EnvironmentService<
     if (property === undefined) {
       return this.returnCode(EnvironmentResultCode.UNPROCESSABLE, {
         path,
-        error: new PropertyPathDoesntExistError(path)
+        error: new PathDoesntExistError(path)
       });
     }
 
@@ -180,6 +197,8 @@ export class EnvironmentService<
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentState}
+   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   add(properties: EnvironmentState, path?: Path): RESULT {
@@ -199,6 +218,8 @@ export class EnvironmentService<
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentState}
+   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   addPreserving(properties: EnvironmentState, path?: Path): RESULT {
@@ -210,7 +231,7 @@ export class EnvironmentService<
   }
 
   /**
-   * Adds properties to the environment using the deep merge overwriting strategy.
+   * Adds properties to the environment merging the values and overwriting the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
    * @param path The path of the properties to merge.
@@ -218,6 +239,8 @@ export class EnvironmentService<
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentState}
+   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   merge(properties: EnvironmentState, path?: Path): RESULT {
@@ -230,7 +253,7 @@ export class EnvironmentService<
   }
 
   /**
-   * Adds properties to the environment using the deep merge preserving strategy.
+   * Adds properties to the environment merging the values and preserving the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
    * @param path The path of the properties to merge.
@@ -238,6 +261,8 @@ export class EnvironmentService<
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
+   * @see {@link EnvironmentState}
+   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   mergePreserving(properties: EnvironmentState, path?: Path): RESULT {

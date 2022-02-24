@@ -4,11 +4,13 @@ import { EnvironmentResultCode } from './environment-result-code.enum';
 
 /**
  * An environment service operation result.
- * @see {@link EnvironmentService}
+ * @template RESULT_CODE The sresult code used by the implementation.
+ * @see {@link EnvironmentResultCode}
  */
 export interface EnvironmentResult<RESULT_CODE extends EnvironmentResultCode = EnvironmentResultCode> {
   /**
    * The result code. Based on HTTP response status codes.
+   * @see {@link EnvironmentResultCode}
    */
   code: RESULT_CODE;
   /**
@@ -17,6 +19,7 @@ export interface EnvironmentResult<RESULT_CODE extends EnvironmentResultCode = E
   path?: Path;
   /**
    * The value used in the method.
+   * @see {@link Property}
    */
   value?: Property;
   /**
