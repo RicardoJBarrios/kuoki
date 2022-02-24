@@ -9,18 +9,22 @@ export abstract class EnvironmentStore {
   /**
    * Gets all properties from the environment store.
    * @returns The environment properties as Observable.
+   * @see {@link Observable}
+   * @see {@link EnvironmentState}
    */
   abstract getAll$(): Observable<EnvironmentState>;
 
   /**
    * Gets all properties from the environment store.
    * @returns The environment properties.
+   * @see {@link EnvironmentState}
    */
   abstract getAll(): EnvironmentState;
 
   /**
    * Updates the environment store.
    * @param environment The new environment properties.
+   * @see {@link EnvironmentState}
    */
   abstract update(environment: EnvironmentState): void;
 
