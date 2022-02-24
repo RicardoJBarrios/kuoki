@@ -13,7 +13,8 @@ import {
   OnBeforeSourceAdd,
   OnBeforeSourceLoad
 } from '../lifecycle-hooks';
-import { EnvironmentLoader, LoaderSource } from '../loader';
+import { EnvironmentLoader } from '../loader';
+import { LoaderSource } from '../loader-source';
 import { EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
 import { EnvironmentState } from '../store';

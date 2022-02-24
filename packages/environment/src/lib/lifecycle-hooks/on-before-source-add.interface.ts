@@ -1,4 +1,4 @@
-import { LoaderSource } from '../loader';
+import { LoaderSource } from '../loader-source';
 import { EnvironmentState } from '../store';
 
 /**

@@ -1,4 +1,4 @@
-import { LoaderSource } from '../loader';
+import { LoaderSource } from '../loader-source';
 
 /**
  * A lifecycle hook that is called before a source starts to load the properties.

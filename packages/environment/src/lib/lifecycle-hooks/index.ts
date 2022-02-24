@@ -2,6 +2,7 @@
  * [[include:lifecycle-hooks/README.md]]
  * @module LifecycleHooks
  */
+export * from './lifecycle-hook.function';
 export * from './on-after-complete.interface';
 export * from './on-after-error.interface';
 export * from './on-after-load.interface';
