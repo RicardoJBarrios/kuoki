@@ -6,7 +6,7 @@ import { createEnvironmentQuery } from './create-environment-query.function';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { EnvironmentQuery } from './environment-query.application';
 
-export class TestEnvironmentStore extends EnvironmentStore {
+class TestEnvironmentStore extends EnvironmentStore {
   getAll$(): Observable<EnvironmentState> {
     throw new Error('Method not implemented.');
   }

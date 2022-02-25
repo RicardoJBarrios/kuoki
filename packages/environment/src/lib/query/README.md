@@ -2,7 +2,7 @@
 
 > Gets the properties from the environment.
 
-This application is the way to get the environment values. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
+The environment query application is the way to get the environment values. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
 
 ```js
 import { createEnvironmentQuery } from '@kuoki/environment';
@@ -112,27 +112,36 @@ Transpiles using the environment values.
 
 ```js
 // Environment = {a:'Hello {{name}}', name:'John'}-
-query.get$('a', { transpile: {}, transpileEnvironment: true }); // 'Hello John'-
-query.getAsync('a', { transpile: {}, transpileEnvironment: true }); // resolves 'Hello John' at 0ms
-query.get('a', { transpile: {}, transpileEnvironment: true }); // 'Hello John'
+query.get$('a', { transpile: {}, transpileEnvironment: true });
+// 'Hello John'-
+query.getAsync('a', { transpile: {}, transpileEnvironment: true });
+// resolves 'Hello John' at 0ms
+query.get('a', { transpile: {}, transpileEnvironment: true });
+// 'Hello John'
 ```
 
 When transpiles, the local properties has preferences over environment.
 
 ```js
 // Environment = {a:'Hello {{name}}', name:'John'}-
-query.get$('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true }); // 'Hello Thomas'-
-query.getAsync('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true }); // resolves 'Hello Thomas' at 0ms
-query.get('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true }); // 'Hello Thomas'
+query.get$('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true });
+// 'Hello Thomas'-
+query.getAsync('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true });
+// resolves 'Hello Thomas' at 0ms
+query.get('a', { transpile: { name: 'Thomas' }, transpileEnvironment: true });
+// 'Hello Thomas'
 ```
 
 Can change the interpolation characters.
 
 ```js
 // Environment = {a:'Hello //name//'}-
-query.get$('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); // 'Hello John'-
-query.getAsync('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); // resolves 'Hello John' at 0ms
-query.get('a', { transpile: { name: 'John', interpolation: ['//', '//'] } }); // 'Hello John'
+query.get$('a', { transpile: { name: 'John', interpolation: ['//', '//'] } });
+// 'Hello John'-
+query.getAsync('a', { transpile: { name: 'John', interpolation: ['//', '//'] } });
+// resolves 'Hello John' at 0ms
+query.get('a', { transpile: { name: 'John', interpolation: ['//', '//'] } });
+// 'Hello John'
 ```
 
 The `transpileEnvironment` and `interpolation` properties can be configured at query application level when instantiated, but the local options have preference over the application ones.
@@ -146,7 +155,10 @@ query2.get('a', { transpile: {} }); // 'Hello John'
 
 ```js
 // Environment = {a:'Hello //name//', name:'John'}-
-query2.get$('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] }); // 'Hello Sara'-
-query2.getAsync('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] }); // resolves 'Hello Sara' at 0ms
-query2.get('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] }); // 'Hello Sara'
+query2.get$('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] });
+// 'Hello Sara'-
+query2.getAsync('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] });
+// resolves 'Hello Sara' at 0ms
+query2.get('a', { transpile: { name: 'Sara' }, interpolation: ['//', '//'] });
+// 'Hello Sara'
 ```

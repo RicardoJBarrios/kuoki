@@ -6,7 +6,7 @@ import { delay } from 'rxjs/operators';
 import { EnvironmentState, EnvironmentStore } from '../store';
 import { EnvironmentQuery } from './environment-query.application';
 
-export class TestEnvironmentStore extends EnvironmentStore {
+class TestEnvironmentStore extends EnvironmentStore {
   getAll$(): Observable<EnvironmentState> {
     throw new Error('Method not implemented.');
   }
