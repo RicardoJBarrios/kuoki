@@ -21,6 +21,7 @@ describe('overwritesPath(path,environment)', () => {
 
     expect(overwritesPath('z', environment)).toBeFalse();
     expect(overwritesPath('b.b', environment)).toBeFalse();
+    expect(overwritesPath('a.b.c', environment)).toBeFalse();
   });
 
   it(`returns false if all values in path are objects or nil`, () => {
