@@ -1,6 +1,6 @@
 import { validate } from 'uuid';
 
-import { EnvironmentSource, SourceStrategy } from '../source';
+import { EnvironmentSource, InvalidSourceError, SourceStrategy } from '../source';
 import { loaderSourceFactory } from './loader-source-factory.function';
 import { LoaderSource } from './loader-source.type';
 
@@ -35,5 +35,12 @@ describe('loaderSourceFactory(source)', () => {
     expect(source.strategy).toEqual(strategy);
     expect(source.path).toEqual(path);
     expect(source.load).toEqual(source1.load);
+  });
+
+  it(`throws if an environmnet source is invalid`, () => {
+    const source1: any = { load: 0 };
+    const error: Error = new InvalidSourceError(source1);
+
+    expect(() => loaderSourceFactory(source1)).toThrowError(error);
   });
 });
