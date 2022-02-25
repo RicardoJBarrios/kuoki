@@ -2,19 +2,38 @@
 
 > Stores the environment properties that the application needs.
 
-An Environment Store is a Gateway that must be implemented to manage the environment state. Can be integrated into any state manager already using the application or create your own.
+An environment store is a gateway that must be implemented to manage the environment state. Can be integrated into any state manager already using the application or create your own.
 
 ## Use cases
+
+Below are examples of the expected behavior and some implementation examples.
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
+    <li><a href="#getall">getAll$</a></li>
+    <li><a href="#getall-1">getAll</a></li>
     <li><a href="#update">update</a></li>
+    <li><a href="#reset">reset</a></li>
     <li><a href="#rxjs">RxJS</a></li>
     <li><a href="#redux">Redux</a></li>
     <li><a href="#akita">Akita</a></li>
   </ol>
 </details>
+
+### getAll$
+
+```js
+// EnvironmentState = {a:0}-{a:0}-{a:0,b:0}-
+store.getAll$(); // {a:0}-{a:0}-{a:0,b:0}-
+```
+
+### getAll
+
+```js
+// EnvironmentState = {a:0}
+store.getAll(); // {a:0}
+```
 
 ### update
 
@@ -23,17 +42,25 @@ as the service will manage the entire environment in the implementation,
 and a partial update can cause inconsistencies.
 
 ```js
-// Overwrite
+// CORRECT: Overwrite
 // EnvironmentState = {a:0}
 store.update({ b: 0 });
 // EnvironmentState = {b:0}
 ```
 
 ```js
-// Partial Update
+// WRONG: Partial Update
 // EnvironmentState = {a:0}
 store.update({ b: 0 });
 // EnvironmentState = {a:0,b:0}
+```
+
+### reset
+
+```js
+// EnvironmentState = {a:0}
+store.reset();
+// EnvironmentState = {}
 ```
 
 ### RxJS
