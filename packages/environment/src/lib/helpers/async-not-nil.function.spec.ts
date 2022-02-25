@@ -2,7 +2,7 @@ import { asyncScheduler, scheduled } from 'rxjs';
 
 import { asyncNotNil } from './async-not-nil.function';
 
-describe('asyncNotNil(source, due?)', () => {
+describe('asyncNotNil(source,due?)', () => {
   it(`returns resolved Promise with the first non nil value from Observable`, async () => {
     const source = () => scheduled([null, undefined, 0, 1, 2], asyncScheduler);
     await expect(asyncNotNil(source())).resolves.toEqual(0);
