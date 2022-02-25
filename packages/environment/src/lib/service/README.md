@@ -2,7 +2,7 @@
 
 > Sets properties in the environment store.
 
-This application is the way to mutate the environment store. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
+The environment service application is the way to mutate the environment store. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
 
 ```js
 import { createEnvironmentService } from '@kuoki/environment';
