@@ -10,15 +10,8 @@ import { Path } from './path.type';
  * @param path The path to check.
  * @param state The environment state to check.
  * @returns `true` if the path overwrites a value in the environment, otherwise `false`.
- * @example
- * ```js
- * // EnvironmentState = { a: { a: {}, b: 0 } }
- * overwritesPath('a.b'); // true
- * overwritesPath('a.b.a'); // true
- * overwritesPath('a'); // false
- * overwritesPath('a.a'); // false
- * overwritesPath('a.a.a'); // false
- * ```
+ * @see {@link Path}
+ * @see {@link EnvironmentState}
  */
 export function overwritesPath(path: Path, state: EnvironmentState): boolean {
   if (!isPath(path)) {
