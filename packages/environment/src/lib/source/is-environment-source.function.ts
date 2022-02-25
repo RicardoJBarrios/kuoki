@@ -10,14 +10,15 @@ import { SourceStrategy } from './source-strategy.enum';
  * @see {@link EnvironmentSource}
  */
 export function isEnvironmentSource(value: any): value is EnvironmentSource {
-  return (
-    value != null &&
-    typeof value.load === 'function' &&
-    ifDefined(value.id, typeof value.id === 'string') &&
-    ifDefined(value.isRequired, typeof value.isRequired === 'boolean') &&
-    ifDefined(value.isOrdered, typeof value.isOrdered === 'boolean') &&
-    ifDefined(value.ignoreError, typeof value.ignoreError === 'boolean') &&
-    ifDefined(value.strategy, Object.values(SourceStrategy).includes(value.strategy)) &&
-    ifDefined(value.path, isPath(value.path))
-  );
+  const checks: boolean[] = [
+    typeof value?.load === 'function',
+    ifDefined(value?.id, typeof value?.id === 'string'),
+    ifDefined(value?.isRequired, typeof value?.isRequired === 'boolean'),
+    ifDefined(value?.isOrdered, typeof value?.isOrdered === 'boolean'),
+    ifDefined(value?.ignoreError, typeof value?.ignoreError === 'boolean'),
+    ifDefined(value?.strategy, Object.values(SourceStrategy).includes(value?.strategy)),
+    ifDefined(value?.path, isPath(value?.path))
+  ];
+
+  return checks.every((check: boolean) => check);
 }

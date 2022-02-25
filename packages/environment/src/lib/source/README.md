@@ -2,7 +2,7 @@
 
 > The source from which to get environment properties.
 
-An Environment Source is a Gateway that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
+An environment source is a gateway that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
 
 ```js
 const fileSource = {
@@ -26,12 +26,15 @@ class FileSource implements EnvironmentSource {
 
 ## Use cases
 
+Below are examples of the expected behavior with the default loader implementation.
+
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
     <li><a href="#isrequired">isRequired</a></li>
     <li><a href="#isordered">isOrdered</a></li>
     <li><a href="#ignoreerror">ignoreError</a></li>
+    <li><a href="#path">path</a></li>
     <li><a href="#load">load()</a></li>
     <li><a href="#fallback-sources">Fallback sources</a></li>
   </ol>
@@ -178,6 +181,14 @@ const source2 = {
 };
 loader.load(); // resolves at 10ms
 // sets the source2 properties at 10ms
+```
+
+### path
+
+```js
+const source1 = { path: 'a'; load: () => [{ a: 0 }] };
+loader.load(); // resolves at 0ms
+// sets the source1 properties at 0ms with {a:{a:0}}
 ```
 
 ### load()
