@@ -7,6 +7,7 @@ import { LoaderSource } from '../loader-source';
  * @template LOADER_SOURCE The loader source used by the implementation.
  * @param sources The list of loader sources.
  * @returns The Map of subjects attached to loader sources.
+ * @see {@link LoaderSource}
  */
 export function sourcesSubjectFactory<LOADER_SOURCE extends LoaderSource = LoaderSource>(
   sources: ReadonlyArray<LOADER_SOURCE>

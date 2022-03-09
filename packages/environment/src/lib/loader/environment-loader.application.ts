@@ -27,6 +27,9 @@ import { sourcesSubjectFactory } from './sources-subject-factory.function';
 
 /**
  * Loads the environment properties from the provided asynchronous sources.
+ * @see {@link EnvironmentService}
+ * @see {@link EnvironmentSource}
+ * @see {@link LoaderSource}
  */
 export class EnvironmentLoader<
   SERVICE extends EnvironmentService = EnvironmentService,
@@ -47,6 +50,11 @@ export class EnvironmentLoader<
    * @param sources The environment properties sources to get the application properties asynchronously.
    * @throws InvalidSourceError if an environmnet source is invalid.
    * @throws DuplicatedSourcesError If there are sources with duplicated ids.
+   * @see {@link EnvironmentService}
+   * @see {@link EnvironmentSource}
+   * @see {@link LoaderSource}
+   * @see {@link InvalidSourceError}
+   * @see {@link DuplicatedSourcesError}
    */
   constructor(protected readonly service: SERVICE, protected readonly sources?: ArrayOrSingle<SOURCE>) {}
 

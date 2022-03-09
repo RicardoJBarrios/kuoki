@@ -9,7 +9,6 @@ import { EnvironmentLoader } from './environment-loader.application';
  * @param service The environment service.
  * @param sources The sources to get environment properties.
  * @returns An EnvironmentLoader instance.
- * @see {@link EnvironmentLoader}
  */
 export function createEnvironmentLoader(
   service: EnvironmentService,
