@@ -2,12 +2,14 @@
 
 ## Use cases
 
+Below are examples of the expected behavior with the default loader implementation.
+
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
     <li><a href="#add-logs-to-the-loader">Add logs to the loader</a></li>
-    <li><a href="#throws-an-error-if-concurrent-load">Throws an error if concurrent load</a></li>
     <li><a href="#resolve-when-setting-a-subset-of-properties">Resolve when setting a subset of properties</a></li>
+    <li><a href="#stop-loading-after-load-error">Stop loading after load error</a></li>
   </ol>
 </details>
 
@@ -27,7 +29,10 @@ class Loader
     OnBeforeSourceAdd,
     OnBeforeSourceLoad
 {
-  constructor(protected override service: EnvironmentService, protected override sources?: any) {
+  constructor(
+    protected override service: EnvironmentService,
+    protected override sources?: ArrayOrSingle<LoaderSource>
+  ) {
     super(service, sources);
   }
   onAfterLoad(): void {
@@ -60,14 +65,41 @@ class Loader
 }
 ```
 
-### Throws an error if concurrent load
-
-```ts
-
-```
-
 ### Resolve when setting a subset of properties
 
 ```ts
+class Loader extends EnvironmentLoader implements OnAfterSourceAdd {
+  constructor(
+    protected override service: EnvironmentService,
+    protected override sources?: ArrayOrSingle<LoaderSource>,
+    protected readonly query: EnvironmentQuery
+  ) {
+    super(service, sources);
+  }
 
+  onAfterSourceAdd(): void {
+    const requiredProperties: Path[] = ['user.name', 'baseURL'];
+
+    if (this.query.containsAll(...requiredProperties)) {
+      this.resolveLoad();
+    }
+  }
+}
+```
+
+### Stop loading after load error
+
+```ts
+class Loader extends EnvironmentLoader implements OnAfterError {
+  constructor(
+    protected override service: EnvironmentService,
+    protected override sources?: ArrayOrSingle<LoaderSource>
+  ) {
+    super(service, sources);
+  }
+
+  onAfterError(): void {
+    this.onDestroy();
+  }
+}
 ```
