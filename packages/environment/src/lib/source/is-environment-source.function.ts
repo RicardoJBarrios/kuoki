@@ -7,7 +7,6 @@ import { SourceStrategy } from './source-strategy.enum';
  * Checks if the value is a valid environment source.
  * @param value The value to check.
  * @returns `true` if the value is a valid environment source, otherwise `false`.
- * @see {@link EnvironmentSource}
  */
 export function isEnvironmentSource(value: any): value is EnvironmentSource {
   const checks: boolean[] = [

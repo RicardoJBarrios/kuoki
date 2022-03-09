@@ -49,13 +49,11 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
 
   /**
    * The path to set the properties in the environment.
-   * @see {@link Path}
    */
   path?: Path;
 
   /**
    * Asynchronously loads the environment properties from the source.
-   * @see {@link EnvironmentState}
    */
   abstract load(): ObservableInput<EnvironmentState>;
 }
