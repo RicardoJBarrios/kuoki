@@ -19,7 +19,6 @@ export interface EnvironmentResult<RESULT_CODE extends EnvironmentResultCode = E
   path?: Path;
   /**
    * The value used in the method.
-   * @see {@link Property}
    */
   value?: Property;
   /**

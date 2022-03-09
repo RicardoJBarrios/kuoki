@@ -60,8 +60,6 @@ export class EnvironmentService<
    * - 400 Invalid path
    * - 422 Property path already exists
    * - 460 Store error
-   * @see {@link Path}
-   * @see {@link Property}
    * @see {@link EnvironmentResult}
    */
   create(path: Path, value: Property): RESULT {
@@ -94,8 +92,6 @@ export class EnvironmentService<
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * - 460 Store error
-   * @see {@link Path}
-   * @see {@link Property}
    * @see {@link EnvironmentResult}
    */
   update(path: Path, value: Property): RESULT {
@@ -127,8 +123,6 @@ export class EnvironmentService<
    * - 200 Property updated
    * - 400 Invalid path
    * - 460 Store error
-   * @see {@link Path}
-   * @see {@link Property}
    * @see {@link EnvironmentResult}
    */
   upsert(path: Path, value: Property): RESULT {
@@ -157,7 +151,6 @@ export class EnvironmentService<
    * - 400 Invalid path
    * - 422 Property doesn't exist
    * - 460 Store error
-   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   delete(path: Path): RESULT {
@@ -197,8 +190,6 @@ export class EnvironmentService<
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
-   * @see {@link EnvironmentState}
-   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   add(properties: EnvironmentState, path?: Path): RESULT {
@@ -218,8 +209,6 @@ export class EnvironmentService<
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
-   * @see {@link EnvironmentState}
-   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   addPreserving(properties: EnvironmentState, path?: Path): RESULT {
@@ -239,8 +228,6 @@ export class EnvironmentService<
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
-   * @see {@link EnvironmentState}
-   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   merge(properties: EnvironmentState, path?: Path): RESULT {
@@ -261,8 +248,6 @@ export class EnvironmentService<
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
-   * @see {@link EnvironmentState}
-   * @see {@link Path}
    * @see {@link EnvironmentResult}
    */
   mergePreserving(properties: EnvironmentState, path?: Path): RESULT {
