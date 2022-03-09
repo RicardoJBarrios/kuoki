@@ -122,27 +122,7 @@
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a>
-<a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a>
-<a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a>
-<a name='L71'></a><a href='#L71'>71</a>
-<a name='L72'></a><a href='#L72'>72</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -153,11 +133,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,65 +185,53 @@
 &nbsp;
 import { Path } from '../path';
 import { EnvironmentState } from '../store';
+import { SourceStrategy } from './source-strategy.enum';
 &nbsp;
 /**
- * The source from which to get environment properties asynchronously.
+ * The source from which to get environment properties.
+ * @template STRATEGY The source strategy used by the implementation.
+ * @see {@link SourceStrategy}
  */
-export abstract class EnvironmentSource {
+export abstract class EnvironmentSource&lt;STRATEGY extends SourceStrategy = SourceStrategy&gt; {
   /**
-   * The internal id.
-   *
-   * This id is used by the loader to manage sources, so it must never be duplicated.
-   * If left undefined, the loader will assign a random id.
+   * Used by the loader to manage sources, so it must never be duplicated.
+   * If not defined, the loader will assign a random UUID.
    */
   id?: string;
 &nbsp;
   /**
-   * The source name.
+   * Resolves the required sources before the environment load.
    *
-   * Set the name if you're planning to use a loader source lifecycle to add custom behavior to the source.
-   * Avoid the use of `constructor.name` because if the code is minimized or uglified on build the constructor
-   * name changes.
+   * - Resolves immedialely if there is no required sources.
+   * - Never resolves if a required source doesn't complete.
+   * - Rejects after a required source error.
+   * - Resolves after a no required source error.
    */
-  name?: string;
-&nbsp;
-  /**
-   * Resolves the required to load sources before the environment load.
-   *
-   * - If there is no required to load sources the loader will resolve immedialely.
-   * - If a required to load source never completes the loader will never resolve.
-   * - The loader will reject after a required to load source error.
-   * - The loader will resolves normally after a no required to load source error.
-   */
-  requiredToLoad?: boolean;
+  isRequired?: boolean;
 &nbsp;
   /**
    * Loads the source in the declaration order.
    *
-   * - The sources will wait until the previous loadInOrder source completes to add the properties.
-   * - The not loadInOrder sources will add properties all at once.
-   * - If a source never completes will never set the next ordered source properties.
-   * - If a source returns an error will be ignored and will continue with the next ordered source.
+   * - Waits for another source to complete to start the load.
+   * - Unordered sources add all properties at once.
+   * - Never loads if previous ordered source doesn't complete.
+   * - Ignore errors and continues with the next ordered source.
    */
-  loadInOrder?: boolean;
+  isOrdered?: boolean;
 &nbsp;
   /**
-   * Adds properties to the environment using the deep merge strategy.
-   * @see {@link EnvironmentService.merge}
-   */
-  mergeProperties?: boolean;
-&nbsp;
-  /**
-   * Ignores the errors thrown by the source.
-   *
-   * If a required to load source throws an error the loader will rejects, but if the `ignoreError` property is set
-   * to `true` the error will be ignored as a no required to load source error.
+   * Ignores the error if the required source throws.
    */
   ignoreError?: boolean;
 &nbsp;
   /**
+   * The strategy to add properties to the environment.
+   * @see {@link SourceStrategy}
+   */
+  strategy?: STRATEGY;
+&nbsp;
+  /**
    * The path to set the properties in the environment.
-   * @see {@link Path}
    */
   path?: Path;
 &nbsp;
@@ -283,7 +247,7 @@ export abstract class EnvironmentSource {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Mon Jan 31 2022 23:50:29 GMT+0000 (Coordinated Universal Time)
+                at Wed Mar 09 2022 22:14:49 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
