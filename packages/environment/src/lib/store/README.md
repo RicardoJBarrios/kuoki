@@ -24,8 +24,8 @@ Below are examples of the expected behavior and some implementation examples.
 ### getAll$
 
 ```js
-// EnvironmentState = {a:0}-{a:0}-{a:0,b:0}-
-store.getAll$(); // {a:0}-{a:0}-{a:0,b:0}-
+// EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
+store.getAll$(); // ^{a:0}-{a:0}-{a:0,b:0}-
 ```
 
 ### getAll
