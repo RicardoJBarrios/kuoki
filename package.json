@@ -17,6 +17,7 @@
     "format:all": "nx format:write --all",
     "lint:all": "nx run-many --all --target=lint",
     "nx": "nx",
+    "prepare": "husky install",
     "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)"
   },
   "private": true,
@@ -97,4 +98,3 @@
     }
   }
 }
-
