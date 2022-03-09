@@ -7,7 +7,6 @@ export class PathDoesntExistError extends Error {
   /**
    * Creates a path doesn't exist error.
    * @param path The path.
-   * @see {@link Path}
    */
   constructor(path: Path) {
     super(`The path "${pathAsString(path)}" doesn't exist in the environment`);

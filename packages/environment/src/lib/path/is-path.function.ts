@@ -8,7 +8,6 @@ import { Path } from './path.type';
  * `$`, `_`, and digits `0-9`, but may not start with a digit.
  * @param value The value to check.
  * @returns `true` if the value is a valid path, otherwise `false`.
- * @see {@link Path}
  */
 export function isPath(value: unknown): value is Path {
   return isValidComplexKey(value) || isValidArrayKey(value);

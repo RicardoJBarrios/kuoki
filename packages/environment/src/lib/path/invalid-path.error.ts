@@ -2,6 +2,7 @@ import { asString } from '../helpers';
 
 /**
  * Creates an invalid path error.
+ * @see {@link isPath}
  */
 export class InvalidPathError extends Error {
   /**
