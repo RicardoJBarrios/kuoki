@@ -23,7 +23,7 @@
   "typescriptHero.imports.multiLineTrailingComma": false,
   "typescriptHero.imports.grouping": ["Plains", "Modules", "Workspace"],
   "sonarlint.analyzerProperties": {
-    "sonar.typescript.exclusions": "**/*.spec.ts"
+    "sonar.typescript.exclusions": "**/*.spec.ts,**/test-setup.ts"
   },
   "sonarlint.connectedMode.project": {
     "connectionId": "kuoki-srv",
