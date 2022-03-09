@@ -370,12 +370,12 @@ describe('EnvironmentQuery', () => {
       expect(query.get('b', { transpile })).toEqual('0');
     });
 
-    it(`{transpile,transpileEnvironment} returns transpiled with transpileEnvironment`, () => {
+    it(`{transpile,config:{transpileEnvironment}} returns transpiled with transpileEnvironment`, () => {
       const transpile = {};
       const transpileEnvironment = true;
 
       expect(query.get('b', { transpile })).toEqual('{{a.a}}');
-      expect(query.get('b', { transpile, transpileEnvironment })).toEqual('0');
+      expect(query.get('b', { transpile, config: { transpileEnvironment } })).toEqual('0');
     });
 
     it(`{transpile} returns transpiled with config.interpolation`, () => {
@@ -387,17 +387,17 @@ describe('EnvironmentQuery', () => {
       expect(query.get('b', { transpile })).toEqual('0');
     });
 
-    it(`{transpile,interpolation} returns transpiled with interpolation`, () => {
+    it(`{transpile,config:{interpolation}} returns transpiled with interpolation`, () => {
       const env = { b: '[< a.a >]' };
       jest.spyOn(store, 'getAll').mockReturnValue(env);
       const transpile = { a: { a: 0 } };
       const interpolation: [string, string] = ['[<', '>]'];
 
       expect(query.get('b', { transpile })).toEqual('[< a.a >]');
-      expect(query.get('b', { transpile, interpolation })).toEqual('0');
+      expect(query.get('b', { transpile, config: { interpolation } })).toEqual('0');
     });
 
-    it(`{transpile,interpolation,transpileEnvironment} returns transpiled with interpolation and transpileEnvironment`, () => {
+    it(`{transpile,config:{interpolation,transpileEnvironment}} returns transpiled with interpolation and transpileEnvironment`, () => {
       const env = { a: { a: 0 }, b: '[< a.a >]' };
       jest.spyOn(store, 'getAll').mockReturnValue(env);
       const transpile = {};
@@ -405,7 +405,7 @@ describe('EnvironmentQuery', () => {
       const transpileEnvironment = true;
 
       expect(query.get('b', { transpile })).toEqual('[< a.a >]');
-      expect(query.get('b', { transpile, interpolation, transpileEnvironment })).toEqual('0');
+      expect(query.get('b', { transpile, config: { interpolation, transpileEnvironment } })).toEqual('0');
     });
   });
 });

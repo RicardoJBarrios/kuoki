@@ -1,3 +1,5 @@
+import { DeepRequired } from 'ts-essentials';
+
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
 
 /**
@@ -8,9 +10,9 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
  */
 export function environmentQueryConfigFactory<CONFIG extends EnvironmentQueryConfig = EnvironmentQueryConfig>(
   config?: EnvironmentQueryConfig
-): Required<CONFIG> {
+): DeepRequired<CONFIG> {
   return {
     interpolation: config?.interpolation ?? ['{{', '}}'],
     transpileEnvironment: config?.transpileEnvironment ?? false
-  } as Required<CONFIG>;
+  } as DeepRequired<CONFIG>;
 }
