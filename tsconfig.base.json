@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@kuoki/environment": ["packages/environment/src/index.ts"]
+      "@kuoki/environment": ["packages/environment/src/index.ts"],
+      "@kuoki/environment-angular": ["packages/environment-angular/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

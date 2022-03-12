@@ -2,7 +2,7 @@
   "name": "kuoki",
   "version": "0.0.0",
   "license": "MIT",
-  "description": "Libraries to help with frontend development",
+  "description": "Libraries to help with JavasScript frontend development",
   "engines": {
     "node": "^12.22.0 || ^14.17.0 || >=16.0.0",
     "yarn": ">=1.22.4 <2",
@@ -18,16 +18,33 @@
     "lint:all": "nx run-many --all --target=lint",
     "nx": "nx",
     "prepare": "husky install",
-    "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)"
+    "update:nx": "nx migrate latest && yarn && (test -f migrations.json && (nx migrate --run-migrations && rm migrations.json) || 2>/dev/null)",
+    "postinstall": "ngcc --properties es2015 browser module main"
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "~13.2.0",
+    "@angular/common": "~13.2.0",
+    "@angular/compiler": "~13.2.0",
+    "@angular/core": "~13.2.0",
+    "@angular/forms": "~13.2.0",
+    "@angular/platform-browser": "~13.2.0",
+    "@angular/platform-browser-dynamic": "~13.2.0",
+    "@angular/router": "~13.2.0",
     "lodash-es": "^4.17.21",
     "rxjs": "~7.4.0",
     "tslib": "^2.0.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~13.2.0",
+    "@angular-eslint/eslint-plugin": "~13.0.1",
+    "@angular-eslint/eslint-plugin-template": "~13.0.1",
+    "@angular-eslint/template-parser": "~13.0.1",
+    "@angular/cli": "~13.2.0",
+    "@angular/compiler-cli": "~13.2.0",
+    "@angular/language-service": "~13.2.0",
     "@commitlint/cli": "^16.0.1",
     "@commitlint/config-conventional": "^16.0.0",
     "@jscutlery/semver": "^2.17.5",
@@ -57,8 +74,14 @@
     "jest-create-mock-instance": "^2.0.0",
     "jest-extended": "^1.2.0",
     "jest-html-reporters": "^3.0.4",
+    "jest-preset-angular": "11.1.1",
     "lint-staged": "^12.3.4",
     "lodash": "^4.17.21",
+    "ng-packagr": "^13.0.0",
+    "postcss": "^8.4.5",
+    "postcss-import": "^14.0.2",
+    "postcss-preset-env": "^6.7.0",
+    "postcss-url": "^10.1.1",
     "prettier": "2.5.1",
     "rxjs-marbles": "^7.0.1",
     "ts-essentials": "^9.1.0",
@@ -93,7 +116,8 @@
         "always",
         [
           "kuoki",
-          "environment"
+          "environment",
+          "environment-angular"
         ]
       ]
     }
