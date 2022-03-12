@@ -1,0 +1,30 @@
+{
+  "name": "@kuoki/environment-angular",
+  "version": "0.0.1",
+  "description": "An Asynchronous Environment Manager for Angular Applications",
+  "keywords": [
+    "kuoki",
+    "environment",
+    "reactive",
+    "Angular"
+  ],
+  "homepage": "https://ricardojbarrios.github.io/kuoki/environment-angular/",
+  "bugs": {
+    "url": "https://github.com/RicardoJBarrios/kuoki/labels/environment-angular"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RicardoJBarrios/kuoki.git",
+    "directory": "packages/environment-angular"
+  },
+  "peerDependencies": {
+    "@angular/common": "^13.2.0",
+    "@angular/core": "^13.2.0",
+    "@kuoki/environment": ">=0.2.1"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "private": false
+}

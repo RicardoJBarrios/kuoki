@@ -1,0 +1,58 @@
+{
+  "projectType": "library",
+  "root": "packages/environment-angular",
+  "sourceRoot": "packages/environment-angular/src",
+  "prefix": "kuoki",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/environment-angular"],
+      "options": {
+        "project": "packages/environment-angular/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/environment-angular/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/environment-angular/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["docs/environment-angular/coverage/lcov-report"],
+      "options": {
+        "jestConfig": "packages/environment-angular/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/environment-angular/src/**/*.ts", "packages/environment-angular/src/**/*.html"]
+      }
+    },
+    "docs": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "npx typedoc --options packages/environment-angular/typedoc.json",
+          "nx test environment-angular --code-coverage --skip-nx-cache"
+        ],
+        "parallel": false
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "commitMessageFormat": "chore(${projectName}): release version ${version}",
+        "tagPrefix": "${projectName}-",
+        "push": true
+      }
+    }
+  },
+  "tags": []
+}
