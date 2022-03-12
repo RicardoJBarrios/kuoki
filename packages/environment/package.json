@@ -1,8 +1,9 @@
 {
   "name": "@kuoki/environment",
   "version": "0.2.1",
-  "description": "A Reactive Environment Management for JavaScript and TypeScript Applications",
+  "description": "An Asynchronous Environment Manager for JavaScript and TypeScript Applications",
   "keywords": [
+    "kuoki",
     "environment",
     "reactive",
     "RxJS",
