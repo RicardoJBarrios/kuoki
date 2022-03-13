@@ -21,7 +21,9 @@
   "peerDependencies": {
     "@angular/common": "^13.2.0",
     "@angular/core": "^13.2.0",
-    "@kuoki/environment": ">=0.2.1"
+    "@kuoki/environment": ">=0.2.1",
+    "rxjs": ">=7.0.0",
+    "ts-essentials": ">=9.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
