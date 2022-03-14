@@ -9,7 +9,7 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
  * @see {@link EnvironmentQueryConfig}
  */
 export function environmentQueryConfigFactory<CONFIG extends EnvironmentQueryConfig = EnvironmentQueryConfig>(
-  config?: EnvironmentQueryConfig
+  config?: EnvironmentQueryConfig | null
 ): DeepRequired<CONFIG> {
   return {
     interpolation: config?.interpolation ?? ['{{', '}}'],

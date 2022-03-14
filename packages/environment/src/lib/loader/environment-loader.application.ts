@@ -56,7 +56,7 @@ export class EnvironmentLoader<
    * @see {@link InvalidSourceError}
    * @see {@link DuplicatedSourcesError}
    */
-  constructor(protected readonly service: SERVICE, protected readonly sources?: ArrayOrSingle<SOURCE>) {}
+  constructor(protected readonly service: SERVICE, protected readonly sources?: ArrayOrSingle<SOURCE> | null) {}
 
   /**
    * Loads the environment properties from the provided asynchronous sources.

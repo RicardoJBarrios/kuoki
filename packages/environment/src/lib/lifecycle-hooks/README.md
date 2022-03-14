@@ -69,6 +69,8 @@ class Loader
 
 ```ts
 class Loader extends EnvironmentLoader implements OnAfterSourceAdd {
+  requiredProperties: Path[] = ['user.name', 'baseURL'];
+
   constructor(
     protected override service: EnvironmentService,
     protected override sources?: ArrayOrSingle<LoaderSource>,
@@ -78,9 +80,7 @@ class Loader extends EnvironmentLoader implements OnAfterSourceAdd {
   }
 
   onAfterSourceAdd(): void {
-    const requiredProperties: Path[] = ['user.name', 'baseURL'];
-
-    if (this.query.containsAll(...requiredProperties)) {
+    if (this.query.containsAll(...this.requiredProperties)) {
       this.resolveLoad();
     }
   }
@@ -103,3 +103,5 @@ class Loader extends EnvironmentLoader implements OnAfterError {
   }
 }
 ```
+
+### Use LocalStorage

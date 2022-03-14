@@ -11,6 +11,10 @@ describe('loaderSourcesFactory(sources?)', () => {
     expect(loaderSourcesFactory(undefined)).toEqual([]);
   });
 
+  it(`(null) returns empty array`, () => {
+    expect(loaderSourcesFactory(null)).toEqual([]);
+  });
+
   it(`(source) returns an array with one loader source`, () => {
     const source1: EnvironmentSource = { load: () => [{}] };
     const sources: LoaderSource[] = loaderSourcesFactory(source1);

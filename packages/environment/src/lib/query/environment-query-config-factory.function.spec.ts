@@ -7,6 +7,10 @@ describe('environmentConfigFactory(config?)', () => {
     expect(environmentQueryConfigFactory()).toEqual(defaultEnvironmentConfig);
   });
 
+  it(`(null) returns all the default values`, () => {
+    expect(environmentQueryConfigFactory(null)).toEqual(defaultEnvironmentConfig);
+  });
+
   it(`({}) returns all the default values`, () => {
     expect(environmentQueryConfigFactory({})).toEqual(defaultEnvironmentConfig);
   });

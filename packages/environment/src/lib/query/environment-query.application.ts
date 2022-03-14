@@ -35,7 +35,7 @@ export class EnvironmentQuery<
    * @see {@link EnvironmentStore}
    * @see {@link EnvironmentQueryConfig}
    */
-  constructor(protected readonly store: STORE, protected readonly queryConfig?: CONFIG) {}
+  constructor(protected readonly store: STORE, protected readonly queryConfig?: CONFIG | null) {}
 
   /**
    * Gets all the environment properties.

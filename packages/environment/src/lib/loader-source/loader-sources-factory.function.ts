@@ -21,7 +21,7 @@ import { LoaderSource } from './loader-source.type';
 export function loaderSourcesFactory<
   SOURCE extends EnvironmentSource = EnvironmentSource,
   LOADER_SOURCE extends LoaderSource = LoaderSource
->(sources?: ArrayOrSingle<SOURCE>): LOADER_SOURCE[] {
+>(sources?: ArrayOrSingle<SOURCE> | null): LOADER_SOURCE[] {
   if (sources == null) {
     return [];
   }

@@ -37,6 +37,7 @@ Below are examples of the expected behavior with the default loader implementati
     <li><a href="#path">path</a></li>
     <li><a href="#load">load()</a></li>
     <li><a href="#fallback-sources">Fallback sources</a></li>
+    <li><a href="#use-values-from-other-sources">Use values from other sources</a></li>
   </ol>
 </details>
 
@@ -207,7 +208,10 @@ This condition can be chained as many times as necessary.
 
 ```js
 const fileSource = {
-  load: async () => fetch('env-prod.json').catch(() => fetch('env.json'))
+  load: async () =>
+    fetch('env-prod.json')
+      .then((response) => response.json())
+      .catch(() => fetch('env.json').then((response) => response.json()))
 };
 ```
 
@@ -227,4 +231,24 @@ class FileSource implements EnvironmentSource {
     return this.http.get('env.json');
   }
 }
+```
+
+### Use values from other sources
+
+```js
+// env.json = { basePath: 'https://myapi.com/api' }
+const source1 = {
+  isOrdered: true,
+  load: async () => fetch('env.json').then((response) => response.json())
+};
+const source2 = {
+  isOrdered: true,
+  load: async () => {
+    const basePath = await asyncNotNil(query.get$('basePath'));
+    return fetch(`${basePath}/resource`).then((response) => response.json());
+  }
+};
+loader.load(); // resolves after source 2 load
+// sets the infiniteSource properties every 10ms
+// never sets the source2 properties
 ```
