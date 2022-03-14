@@ -8,8 +8,12 @@ import { ENVIRONMENT_SOURCES } from '../source';
 @Injectable()
 export class DefaultEnvironmentLoader extends EnvironmentLoader {
   constructor(
-    @Inject(ENVIRONMENT_SERVICE) protected override readonly service: EnvironmentService,
-    @Optional() @Inject(ENVIRONMENT_SOURCES) protected override readonly sources?: ArrayOrSingle<EnvironmentSource>
+    @Inject(ENVIRONMENT_SERVICE)
+    protected override readonly service: EnvironmentService,
+
+    @Optional()
+    @Inject(ENVIRONMENT_SOURCES)
+    protected override readonly sources?: ArrayOrSingle<EnvironmentSource> | null
   ) {
     super(service, sources);
   }

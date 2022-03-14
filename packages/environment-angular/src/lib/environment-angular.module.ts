@@ -1,22 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
-import {
-  EnvironmentLoader,
-  EnvironmentQuery,
-  environmentQueryConfigFactory,
-  EnvironmentService,
-  EnvironmentStore
-} from '@kuoki/environment';
+import { APP_INITIALIZER, ModuleWithProviders, NgModule, Provider } from '@angular/core';
+import { EnvironmentLoader, EnvironmentQuery, EnvironmentService, EnvironmentStore } from '@kuoki/environment';
 
-import { EnvironmentAngularChildConfig, EnvironmentAngularConfig, getProvider } from './helpers';
+import { configProviderFactory, EnvironmentAngularChildConfig, EnvironmentAngularConfig } from './helpers';
 import { DefaultEnvironmentLoader } from './loader';
 import { DefaultEnvironmentQuery, ENVIRONMENT_QUERY_CONFIG } from './query';
 import { DefaultEnvironmentService } from './service';
 import { ENVIRONMENT_SOURCES } from './source';
-import { DefaultEnvironmentStore } from './store';
+import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_VALUE } from './store';
 
-function environmentAngularModuleLoad(loader: EnvironmentLoader): () => Promise<void> {
+function environmentAngularModuleLoadBeforeInit(loader: EnvironmentLoader): () => Promise<void> {
   return () => loader.load();
+}
+
+function getLoadProvider(loadBeforeInit = true): Provider {
+  return loadBeforeInit
+    ? {
+        provide: APP_INITIALIZER,
+        useFactory: environmentAngularModuleLoadBeforeInit,
+        deps: [EnvironmentLoader],
+        multi: true
+      }
+    : [];
 }
 
 @NgModule({ imports: [CommonModule] })
@@ -25,24 +30,45 @@ export class EnvironmentAngularModule {
     return {
       ngModule: EnvironmentAngularModule,
       providers: [
-        getProvider(EnvironmentStore, config?.store, DefaultEnvironmentStore),
-        getProvider(EnvironmentService, config?.service, DefaultEnvironmentService, [EnvironmentStore]),
-        getProvider(ENVIRONMENT_QUERY_CONFIG, config?.queryConfig, environmentQueryConfigFactory()),
-        getProvider(EnvironmentQuery, config?.query, DefaultEnvironmentQuery, [
-          EnvironmentStore,
-          ENVIRONMENT_QUERY_CONFIG
-        ]),
-        getProvider(ENVIRONMENT_SOURCES, config?.sources, []),
-        getProvider(EnvironmentLoader, config?.loader, DefaultEnvironmentLoader, [
-          EnvironmentService,
-          ENVIRONMENT_SOURCES
-        ]),
-        {
-          provide: APP_INITIALIZER,
-          useFactory: environmentAngularModuleLoad,
-          deps: [EnvironmentLoader],
-          multi: true
-        }
+        configProviderFactory({
+          provide: ENVIRONMENT_INITIAL_VALUE,
+          configValue: config?.initialValue,
+          defaultValue: {}
+        }),
+        configProviderFactory({
+          provide: EnvironmentStore,
+          configValue: config?.store,
+          defaultValue: DefaultEnvironmentStore
+        }),
+        configProviderFactory({
+          provide: EnvironmentService,
+          configValue: config?.service,
+          defaultValue: DefaultEnvironmentService,
+          deps: [EnvironmentStore]
+        }),
+        configProviderFactory({
+          provide: ENVIRONMENT_QUERY_CONFIG,
+          configValue: config?.queryConfig,
+          defaultValue: {}
+        }),
+        configProviderFactory({
+          provide: EnvironmentQuery,
+          configValue: config?.query,
+          defaultValue: DefaultEnvironmentQuery,
+          deps: [EnvironmentStore, ENVIRONMENT_QUERY_CONFIG]
+        }),
+        configProviderFactory({
+          provide: ENVIRONMENT_SOURCES,
+          configValue: config?.sources,
+          defaultValue: []
+        }),
+        configProviderFactory({
+          provide: EnvironmentLoader,
+          configValue: config?.loader,
+          defaultValue: DefaultEnvironmentLoader,
+          deps: [EnvironmentService, ENVIRONMENT_SOURCES]
+        }),
+        getLoadProvider(config?.loadBeforeInit)
       ]
     };
   }
@@ -51,11 +77,17 @@ export class EnvironmentAngularModule {
     return {
       ngModule: EnvironmentAngularModule,
       providers: [
-        getProvider(ENVIRONMENT_SOURCES, config?.sources, []),
-        getProvider(EnvironmentLoader, config?.loader, DefaultEnvironmentLoader, [
-          EnvironmentService,
-          ENVIRONMENT_SOURCES
-        ])
+        configProviderFactory({
+          provide: ENVIRONMENT_SOURCES,
+          configValue: config?.sources,
+          defaultValue: []
+        }),
+        configProviderFactory({
+          provide: EnvironmentLoader,
+          configValue: config?.loader,
+          defaultValue: DefaultEnvironmentLoader,
+          deps: [EnvironmentService, ENVIRONMENT_SOURCES]
+        })
       ]
     };
   }

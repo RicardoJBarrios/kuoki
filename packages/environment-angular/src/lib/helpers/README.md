@@ -1,3 +1,3 @@
-# Environment Angular Helpers
+# Angular Environment Helpers
 
 > Helper types and functions.

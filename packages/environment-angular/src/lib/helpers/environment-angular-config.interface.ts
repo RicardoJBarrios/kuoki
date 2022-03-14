@@ -4,6 +4,7 @@ import {
   EnvironmentQueryConfig,
   EnvironmentService,
   EnvironmentSource,
+  EnvironmentState,
   EnvironmentStore
 } from '@kuoki/environment';
 import { ArrayOrSingle } from 'ts-essentials';
@@ -14,6 +15,10 @@ import { ProviderValue } from './provider-value.type';
  * Customizes the environment behavior and services.
  */
 export interface EnvironmentAngularConfig {
+  /**
+   * The environment initial value.
+   */
+  initialValue?: EnvironmentState;
   /**
    * The implementation for the environment store.
    */
@@ -38,6 +43,10 @@ export interface EnvironmentAngularConfig {
    * The enviroment sources to load.
    */
   sources?: ArrayOrSingle<ProviderValue<EnvironmentSource>>;
+  /**
+   * Load the required environment sources before application initialization. Default is `true`.
+   */
+  loadBeforeInit?: boolean;
 }
 
 /**

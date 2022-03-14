@@ -7,8 +7,12 @@ import { ENVIRONMENT_QUERY_CONFIG } from './environment-query-config.token';
 @Injectable()
 export class DefaultEnvironmentQuery extends EnvironmentQuery {
   constructor(
-    @Inject(ENVIRONMENT_STORE) protected override readonly store: EnvironmentStore,
-    @Optional() @Inject(ENVIRONMENT_QUERY_CONFIG) protected override readonly queryConfig?: EnvironmentQueryConfig
+    @Inject(ENVIRONMENT_STORE)
+    protected override readonly store: EnvironmentStore,
+
+    @Optional()
+    @Inject(ENVIRONMENT_QUERY_CONFIG)
+    protected override readonly queryConfig?: EnvironmentQueryConfig | null
   ) {
     super(store, queryConfig);
   }
