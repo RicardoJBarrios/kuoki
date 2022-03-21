@@ -1,3 +1,4 @@
+export * from './lib/guards/index';
 export * from './lib/helpers/index';
 export * from './lib/loader/index';
 export * from './lib/query/index';

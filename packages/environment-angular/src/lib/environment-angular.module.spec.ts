@@ -203,8 +203,24 @@ describe('EnvironmentAngularModule', () => {
     });
   });
 
+  describe('forChild()', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [EnvironmentAngularModule.forRoot(), EnvironmentAngularModule.forChild()]
+      });
+    });
+
+    it('provides custom ENVIRONMENT_SOURCES', () => {
+      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual([]);
+    });
+
+    it('provides DefaultEnvironmentLoader', () => {
+      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
+    });
+  });
+
   describe('forChild({loader,sources})', () => {
-    const sources = [{ load: () => [{ a: 0 }] }];
+    const sources = [{ id: 'a', load: () => [{ a: 0 }] }];
 
     beforeEach(() => {
       TestBed.configureTestingModule({
