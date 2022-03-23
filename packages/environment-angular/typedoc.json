@@ -1,6 +1,16 @@
 {
   "out": "../../docs/environment-angular",
-  "entryPoints": ["./src/index.ts"],
+  "entryPoints": [
+    "./src/lib/module/index.ts",
+    "./src/lib/store/index.ts",
+    "./src/lib/source/index.ts",
+    "./src/lib/service/index.ts",
+    "./src/lib/query/index.ts",
+    "./src/lib/loader/index.ts",
+    "./src/lib/helpers/index.ts",
+    "./src/lib/guards/index.ts",
+    "./src/lib/decorators/index.ts"
+  ],
   "includes": "./src/lib",
   "tsconfig": "./tsconfig.lib.json",
   "exclude": "**/*+(index|.spec|.e2e).ts",

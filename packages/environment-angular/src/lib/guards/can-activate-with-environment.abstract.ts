@@ -16,7 +16,7 @@ export abstract class CanActivateWithEnvironment implements CanActivate {
   /**
    * The time to wait until properties are resolved.
    */
-  protected readonly dueTime: number = 5000;
+  protected readonly dueTime?: number;
   /**
    * The path to manage properties on route Data.
    */
@@ -44,7 +44,7 @@ export abstract class CanActivateWithEnvironment implements CanActivate {
     return properties != null && Array.isArray(properties) && properties.length > 0;
   }
 
-  protected getDueTime(route: ActivatedRouteSnapshot): number {
+  protected getDueTime(route: ActivatedRouteSnapshot): number | undefined {
     const due: unknown = get(route, `data.${this.dataPath}.dueTime`);
 
     return typeof due === 'number' ? due : this.dueTime;

@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import { EnvironmentQuery } from '@kuoki/environment';
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator/jest';
 import { set } from 'lodash-es';
-import { delay, of } from 'rxjs';
+import { delay, of, Subscription } from 'rxjs';
 
 import { CanActivateWithEnvironmentReactiveGuard } from './can-activate-with-environment-reactive.guard';
 
@@ -13,10 +13,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   let router: SpyObject<Router>;
   let service: any;
   let route: ActivatedRouteSnapshot;
-  let resolved: jest.Mock<any, any>;
-  let timeout: number;
-  let beforeTimeout: number;
-  let afterTimeout: number;
+  let sub: Subscription;
 
   const createService = createServiceFactory({
     service: CanActivateWithEnvironmentReactiveGuard,
@@ -29,138 +26,173 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     router = spectator.inject(Router);
     service = spectator.service;
     route = expect.any(ActivatedRouteSnapshot);
-    resolved = jest.fn();
-    timeout = service.dueTime;
-    beforeTimeout = timeout - 1;
-    afterTimeout = timeout + 1;
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
-    resolved.mockRestore();
+    sub.unsubscribe();
   });
 
-  it(`canActivate(route) emits true if properties exists and no timeout`, fakeAsync(() => {
+  it(`canActivate(route) emits true if properties exists and no timeout`, (done) => {
     service.properties = ['a'];
-    query.containsAll$.andReturn(of(true).pipe(delay(beforeTimeout)));
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
+    query.containsAll$.andReturn(of(true));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, true);
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(true);
+      done();
+    });
+  });
+
+  it(`canActivate(route) emits true if properties exists before timeout`, (done) => {
+    service.properties = ['a'];
+    service.dueTime = 5;
+    query.containsAll$.andReturn(of(true));
+
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(true);
+      done();
+    });
+  });
+
+  it(`canActivate(route) never emits if properties doesn't exists and no timeout`, fakeAsync(() => {
+    const mockFn = jest.fn();
+    service.properties = ['a'];
+    query.containsAll$.andReturn(of(false));
+
+    sub = spectator.service.canActivate(route).subscribe(() => mockFn());
+
+    tick(1000);
+    expect(mockFn).not.toHaveBeenCalled();
   }));
 
-  it(`canActivate(route) emits false if timeout and no urlOnError`, fakeAsync(() => {
+  it(`canActivate(route) emits false if properties exists, timeout and no urlOnError`, (done) => {
     service.properties = ['a'];
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
+    service.dueTime = 5;
+    query.containsAll$.andReturn(of(true).pipe(delay(10)));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, false);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(false);
+      done();
+    });
+  });
 
-  it(`canActivate(route) emits UrlTree if timeout and string urlOnError`, fakeAsync(() => {
+  it(`canActivate(route) emits false if properties doesn't exist, timeout and no urlOnError`, (done) => {
+    service.properties = ['a'];
+    service.dueTime = 5;
+    query.containsAll$.andReturn(of(false));
+
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(false);
+      done();
+    });
+  });
+
+  it(`canActivate(route) emits UrlTree if properties doesn't exists, timeout and string urlOnError`, (done) => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
+    service.dueTime = 5;
     service.urlOnError = 'path/to';
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
+    query.containsAll$.andReturn(of(false));
     router.parseUrl.mockReturnValue(urlTree);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, urlTree);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(urlTree);
+      done();
+    });
+  });
 
-  it(`canActivate(route) emits UrlTree if timeout and UrlTree urlOnError`, fakeAsync(() => {
+  it(`canActivate(route) emits UrlTree if properties doesn't exists, timeout and UrlTree urlOnError`, (done) => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
+    service.dueTime = 5;
     service.urlOnError = urlTree;
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
-    router.parseUrl.mockReturnValue(urlTree);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
+    query.containsAll$.andReturn(of(false));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, urlTree);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(urlTree);
+      done();
+    });
+  });
 
-  it(`canActivate(route) uses properties from route.data`, fakeAsync(() => {
+  it(`canActivate(route) uses properties from route.data`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true).pipe(delay(beforeTimeout)));
+    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true));
     set(route, 'data.canActivateWithEnvironment.properties', ['b']);
-    spectator.service.canActivate(route).subscribe();
 
-    tick(beforeTimeout);
-    expect(query.containsAll$).toHaveBeenNthCalledWith(1, 'b');
-  }));
+    sub = spectator.service.canActivate(route).subscribe(() => {
+      expect(query.containsAll$).toHaveBeenNthCalledWith(1, 'b');
+      done();
+    });
+  });
 
-  it(`canActivate(route) emits true if route.data properties is not an array`, fakeAsync(() => {
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
+  it(`canActivate(route) emits true if route.data properties is not an array`, (done) => {
+    service.properties = ['a'];
+    query.containsAll$.andReturn(of(true));
     set(route, 'data.canActivateWithEnvironment.properties', null);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, true);
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(true);
+      done();
+    });
+  });
 
-    set(route, 'data.canActivateWithEnvironment.properties', undefined);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
-
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(2, true);
-
-    set(route, 'data.canActivateWithEnvironment.properties', 0);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
-
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(3, true);
-  }));
-
-  it(`canActivate(route) emits true if route.data properties is empty array`, fakeAsync(() => {
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
+  it(`canActivate(route) emits true if route.data properties is empty array`, (done) => {
+    service.properties = ['a'];
+    query.containsAll$.andReturn(of(true));
     set(route, 'data.canActivateWithEnvironment.properties', []);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, true);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(true);
+      done();
+    });
+  });
 
-  it(`canActivate(route) emits false if route.data properties constains invalid path`, fakeAsync(() => {
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
-    set(route, 'data.canActivateWithEnvironment.properties', ['2a']);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
+  it(`canActivate(route) uses dueTime from route.dueTime`, (done) => {
+    service.properties = ['a'];
+    query.containsAll$.andReturn(of(true).pipe(delay(10)));
+    set(route, 'data.canActivateWithEnvironment.dueTime', 5);
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, false);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(false);
+      done();
+    });
+  });
 
-  it(`canActivate(route) uses urlOnError from route.data`, fakeAsync(() => {
+  it(`canActivate(route) ignores route.dueTime if isn't a number`, (done) => {
+    service.properties = ['a'];
+    query.containsAll$.andReturn(of(true).pipe(delay(10)));
+    set(route, 'data.canActivateWithEnvironment.dueTime', '5');
+
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(true);
+      done();
+    });
+  });
+
+  it(`canActivate(route) uses urlOnError from route.data`, (done) => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
+    service.dueTime = 5;
     set(route, 'data.canActivateWithEnvironment.urlOnError', 'path/to');
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
+    query.containsAll$.andReturn(of(false));
     router.parseUrl.mockReturnValue(urlTree);
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, urlTree);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toEqual(urlTree);
+      done();
+    });
+  });
 
-  it(`canActivate(route) emits false if route.data urlOnError is not string or UrlTree`, fakeAsync(() => {
+  it(`canActivate(route) emits false if route.data urlOnError is not string or UrlTree`, (done) => {
+    const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
+    service.dueTime = 5;
     set(route, 'data.canActivateWithEnvironment.urlOnError', 0);
-    query.containsAll$.andReturn(of(true).pipe(delay(afterTimeout)));
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
+    query.containsAll$.andReturn(of(false));
 
-    tick(timeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, false);
-  }));
-
-  it(`canActivate(route) uses dueTime from route.data`, fakeAsync(() => {
-    service.properties = ['a'];
-    const customTimeout = timeout - 10;
-    set(route, 'data.canActivateWithEnvironment.dueTime', customTimeout);
-    query.containsAll$.andReturn(of(true).pipe(delay(beforeTimeout)));
-    spectator.service.canActivate(route).subscribe((v) => resolved(v));
-
-    tick(customTimeout);
-    expect(resolved).toHaveBeenNthCalledWith(1, false);
-  }));
+    sub = spectator.service.canActivate(route).subscribe((v) => {
+      expect(v).toBeFalse();
+      done();
+    });
+  });
 });

@@ -1,2 +1,5 @@
+/**
+ * [[include:service/README.md]]
+ * @module EnvironmentService
+ */
 export * from './environment-service.application';
-export * from './environment-service.token';

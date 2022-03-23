@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import { EnvironmentQuery } from '@kuoki/environment';
-import { delay, filter, Observable, of, race } from 'rxjs';
+import { delay, filter, merge, Observable, of } from 'rxjs';
 
 import { CanActivateWithEnvironment } from './can-activate-with-environment.abstract';
 
@@ -18,14 +18,19 @@ export class CanActivateWithEnvironmentReactiveGuard extends CanActivateWithEnvi
       return of(true);
     }
 
-    const dueTime: number = this.getDueTime(route);
+    const dueTime: number | undefined = this.getDueTime(route);
     const urlTree: UrlTree | undefined = this.getUrlTree(route);
 
     const containsAll$: Observable<boolean> = this.query
       .containsAll$(...properties)
-      .pipe(filter((contains: boolean) => contains === true));
-    const timeout$: Observable<boolean | UrlTree> = of(urlTree ?? false).pipe(delay(dueTime));
+      .pipe(filter((value: boolean) => value === true));
 
-    return race([containsAll$, timeout$]);
+    if (dueTime != null) {
+      const timeout$: Observable<boolean | UrlTree> = of(urlTree ?? false).pipe(delay(dueTime));
+
+      return merge(timeout$, containsAll$);
+    }
+
+    return containsAll$;
   }
 }

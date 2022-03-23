@@ -92,12 +92,6 @@ describe('CanActivateWithEnvironmentGuard', () => {
     expect(spectator.service.canActivate(route)).toBeTrue();
   });
 
-  it(`canActivate(route) returns false if route.data properties constains invalid path`, () => {
-    query.containsAll.andReturn(false);
-    set(route, 'data.canActivateWithEnvironment.properties', ['2a']);
-    expect(spectator.service.canActivate(route)).toBeFalse();
-  });
-
   it(`canActivate(route) uses urlOnError from route.data`, () => {
     service.properties = ['a'];
     service.urlOnError = 'path/to';

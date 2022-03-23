@@ -14,7 +14,7 @@ import { ProviderValue } from './provider-value.type';
 /**
  * Customizes the environment behavior and services.
  */
-export interface EnvironmentAngularConfig {
+export interface EnvironmentModuleConfig {
   /**
    * The environment initial value.
    */
@@ -52,4 +52,4 @@ export interface EnvironmentAngularConfig {
 /**
  * Customizes the environment behavior and services for child modules.
  */
-export type EnvironmentAngularChildConfig = Pick<EnvironmentAngularConfig, 'loader' | 'sources'>;
+export type EnvironmentAngularChildConfig = Pick<EnvironmentModuleConfig, 'loader' | 'sources'>;
