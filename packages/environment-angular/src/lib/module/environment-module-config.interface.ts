@@ -9,16 +9,16 @@ import {
 } from '@kuoki/environment';
 import { ArrayOrSingle } from 'ts-essentials';
 
-import { ProviderValue } from './provider-value.type';
+import { ProviderValue } from '../helpers';
 
 /**
  * Customizes the environment behavior and services.
  */
 export interface EnvironmentModuleConfig {
   /**
-   * The environment initial value.
+   * The environment initial state value.
    */
-  initialValue?: EnvironmentState;
+  initialState?: EnvironmentState;
   /**
    * The implementation for the environment store.
    */

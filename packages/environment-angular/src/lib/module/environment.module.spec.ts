@@ -16,7 +16,7 @@ import { DefaultEnvironmentLoader } from '../loader';
 import { DefaultEnvironmentQuery, ENVIRONMENT_QUERY_CONFIG } from '../query';
 import { DefaultEnvironmentService } from '../service';
 import { ENVIRONMENT_SOURCES } from '../source';
-import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_VALUE } from '../store';
+import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_STATE } from '../store';
 import { EnvironmentModule } from './environment.module';
 
 @Injectable()
@@ -89,7 +89,7 @@ describe('EnvironmentModule', () => {
     });
 
     it('provides ENVIRONMENT_INITIAL_VALUE as {}', () => {
-      expect(TestBed.inject(ENVIRONMENT_INITIAL_VALUE)).toEqual({});
+      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
     });
 
     it('provides DefaultEnvironmentStore', () => {
@@ -121,8 +121,8 @@ describe('EnvironmentModule', () => {
     });
   });
 
-  describe('forRoot({initialValue,store,service,queryConfig,query,sources,loader})', () => {
-    const initialValue = { a: 0 };
+  describe('forRoot({initialState,store,service,queryConfig,query,sources,loader})', () => {
+    const initialState = { a: 0 };
     const sources = [{ load: () => [{ b: 0 }] }];
     const queryConfig = { transpileEnvironment: true };
 
@@ -130,7 +130,7 @@ describe('EnvironmentModule', () => {
       TestBed.configureTestingModule({
         imports: [
           EnvironmentModule.forRoot({
-            initialValue,
+            initialState: initialState,
             store: CustomEnvironmentStore,
             service: CustomEnvironmentService,
             queryConfig,
@@ -143,7 +143,7 @@ describe('EnvironmentModule', () => {
     });
 
     it('provides custom ENVIRONMENT_INITIAL_VALUE', () => {
-      expect(TestBed.inject(ENVIRONMENT_INITIAL_VALUE)).toEqual(initialValue);
+      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual(initialState);
     });
 
     it('provides custom EnvironmentStore', () => {
@@ -265,7 +265,7 @@ describe('EnvironmentModule', () => {
       TestBed.configureTestingModule({
         imports: [EnvironmentModule],
         providers: [
-          { provide: ENVIRONMENT_INITIAL_VALUE, useValue: {} },
+          { provide: ENVIRONMENT_INITIAL_STATE, useValue: {} },
           { provide: EnvironmentStore, useClass: CustomEnvironmentStore },
           { provide: EnvironmentService, useClass: CustomEnvironmentService },
           { provide: ENVIRONMENT_QUERY_CONFIG, useValue: {} },
@@ -281,7 +281,7 @@ describe('EnvironmentModule', () => {
     });
 
     it('uses provided services', () => {
-      expect(TestBed.inject(ENVIRONMENT_INITIAL_VALUE)).toEqual({});
+      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
       expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(CustomEnvironmentStore);
       expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(CustomEnvironmentService);
       expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual({});
@@ -305,7 +305,7 @@ describe('EnvironmentModule', () => {
     });
 
     it('uses provided services', () => {
-      expect(TestBed.inject(ENVIRONMENT_INITIAL_VALUE)).toEqual({});
+      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
       expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(CustomEnvironmentStore);
       expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(DefaultEnvironmentService);
       expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual({});

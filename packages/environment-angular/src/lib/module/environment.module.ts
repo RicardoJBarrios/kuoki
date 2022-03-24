@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { APP_INITIALIZER, Inject, Injector, ModuleWithProviders, NgModule } from '@angular/core';
 import { EnvironmentLoader, EnvironmentQuery, EnvironmentService, EnvironmentStore } from '@kuoki/environment';
 
-import { configProviderFactory, EnvironmentAngularChildConfig, EnvironmentModuleConfig } from '../helpers';
+import { configProviderFactory } from '../helpers';
 import { DefaultEnvironmentLoader } from '../loader';
 import { DefaultEnvironmentQuery, ENVIRONMENT_QUERY_CONFIG } from '../query';
 import { DefaultEnvironmentService } from '../service';
 import { ENVIRONMENT_SOURCES } from '../source';
-import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_VALUE } from '../store';
+import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_STATE } from '../store';
+import { EnvironmentAngularChildConfig, EnvironmentModuleConfig } from './environment-module-config.interface';
 
 function loadBeforeInitFactory(loader: EnvironmentLoader): () => Promise<void> {
   return () => loader.load();
@@ -40,8 +41,8 @@ export class EnvironmentModule {
       ngModule: EnvironmentModule,
       providers: [
         configProviderFactory({
-          provide: ENVIRONMENT_INITIAL_VALUE,
-          configValue: config?.initialValue,
+          provide: ENVIRONMENT_INITIAL_STATE,
+          configValue: config?.initialState,
           defaultValue: {}
         }),
         configProviderFactory({
