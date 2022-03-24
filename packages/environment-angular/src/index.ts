@@ -1,5 +1,5 @@
 /**
- * @module Environment
+ * @module EnvironmentAngular
  */
 export * from './lib/decorators/index';
 export * from './lib/guards/index';
