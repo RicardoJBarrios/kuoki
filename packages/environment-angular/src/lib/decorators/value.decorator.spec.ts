@@ -28,7 +28,7 @@ describe('@Value(path,options?)', () => {
 
   const createService = createServiceFactory({
     service: TetsService,
-    imports: [EnvironmentModule.forRoot({ initialValue: { a: fromEnv } })]
+    imports: [EnvironmentModule.forRoot({ initialState: { a: fromEnv } })]
   });
 
   beforeEach(() => {
