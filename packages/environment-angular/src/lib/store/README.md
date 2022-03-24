@@ -39,7 +39,6 @@ The default value provided by `EnvironmentModule.forRoot()` is `{}`, but can be 
 
 ```ts
 import { EnvironmentModule } from '@kuoki/environment-angular';
-import { CustomEnvironmentStore } from './custom-environment.store.ts';
 
 EnvironmentModule.forRoot({ initialState: { a: 0 } });
 ```
