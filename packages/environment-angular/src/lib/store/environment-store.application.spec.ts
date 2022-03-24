@@ -2,7 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { marbles } from 'rxjs-marbles/jest';
 import { TestObservableLike } from 'rxjs-marbles/types';
 
-import { ENVIRONMENT_INITIAL_VALUE } from './environment-initial-value.token';
+import { ENVIRONMENT_INITIAL_STATE } from './environment-initial-state.token';
 import { DefaultEnvironmentStore } from './environment-store.application';
 
 const aValue = { a: 0 };
@@ -12,7 +12,7 @@ describe('DefaultEnvironmentStore', () => {
   let spectator: SpectatorService<DefaultEnvironmentStore>;
 
   describe('with default initial value', () => {
-    const initialValue = {};
+    const initialState = {};
     const createService = createServiceFactory(DefaultEnvironmentStore);
 
     beforeEach(() => {
@@ -20,7 +20,7 @@ describe('DefaultEnvironmentStore', () => {
     });
 
     it(`is created with default initial value`, () => {
-      expect(spectator.service['calculatedInitialState']).toEqual(initialValue);
+      expect(spectator.service['initialState']).toEqual(initialState);
     });
 
     it(
@@ -35,11 +35,11 @@ describe('DefaultEnvironmentStore', () => {
     );
 
     it(`getAll() returns the environment properties`, () => {
-      expect(spectator.service.getAll()).toEqual(initialValue);
+      expect(spectator.service.getAll()).toEqual(initialState);
     });
 
     it(`update() mutates the environment`, () => {
-      expect(spectator.service.getAll()).toEqual(initialValue);
+      expect(spectator.service.getAll()).toEqual(initialState);
       spectator.service.update(aValue);
       expect(spectator.service.getAll()).toEqual(aValue);
       spectator.service.update(bValue);
@@ -50,15 +50,15 @@ describe('DefaultEnvironmentStore', () => {
       spectator.service.update(bValue);
       expect(spectator.service.getAll()).toEqual(bValue);
       spectator.service.reset();
-      expect(spectator.service.getAll()).toEqual(initialValue);
+      expect(spectator.service.getAll()).toEqual(initialState);
     });
   });
 
   describe('with custom initial value', () => {
-    const initialValue = aValue;
+    const initialState = aValue;
     const createService = createServiceFactory({
       service: DefaultEnvironmentStore,
-      providers: [{ provide: ENVIRONMENT_INITIAL_VALUE, useValue: initialValue }]
+      providers: [{ provide: ENVIRONMENT_INITIAL_STATE, useValue: initialState }]
     });
 
     beforeEach(() => {
@@ -66,14 +66,14 @@ describe('DefaultEnvironmentStore', () => {
     });
 
     it(`is created with custom initial value`, () => {
-      expect(spectator.service['calculatedInitialState']).toEqual(initialValue);
+      expect(spectator.service['initialState']).toEqual(initialState);
     });
 
     it(`reset() resets the environment to the initial value`, () => {
       spectator.service.update(bValue);
       expect(spectator.service.getAll()).toEqual(bValue);
       spectator.service.reset();
-      expect(spectator.service.getAll()).toEqual(initialValue);
+      expect(spectator.service.getAll()).toEqual(initialState);
     });
   });
 });
