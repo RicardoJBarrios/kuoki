@@ -95,9 +95,9 @@ EnvironmentModule.forChild({ sources: [Source1, Source2] });
 ### Load the static environment of Angular
 
 ```ts
-import { Injectable } from '@angular/core';
+import { Injectable, Provider } from '@angular/core';
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
-
+import { ENVIRONMENT_SOURCES } from '@kuoki/environment-angular';
 import { environment } from './../environments/environment';
 
 @Injectable()
