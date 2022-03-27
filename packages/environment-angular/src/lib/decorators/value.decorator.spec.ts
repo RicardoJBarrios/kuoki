@@ -63,30 +63,32 @@ describe('@Value(path,options?)', () => {
     expect(obj1.b2).toEqual(defaultValue);
   });
 
-  it(`returns undefined if no EnvironmentQuery`, () => {
+  it(`sets undefined if no EnvironmentQuery`, () => {
     jest.spyOn(EnvironmentModule, 'query', 'get').mockReturnValue(undefined);
     expect(spectator.service.a).toBeUndefined();
   });
 
-  it(`returns the environment value if property is undefined`, () => {
+  it(`sets the environment value at path if property is undefined`, () => {
     expect(spectator.service.a).toEqual(fromEnv);
   });
 
-  it(`returns the property value if is defined`, () => {
+  it(`do not changes the property if value is defined`, () => {
     expect(spectator.service.a2).toEqual(fromValue);
   });
 
-  it(`returns the environment value if property is set to undefined again`, () => {
+  it(`sets the environment value at path if property is set to undefined again`, () => {
     expect(spectator.service.a2).toEqual(fromValue);
     spectator.service.a2 = undefined;
     expect(spectator.service.a2).toEqual(fromEnv);
   });
 
-  it(`returns undefined if path not in environment`, () => {
+  it(`sets undefined if path is not in environment`, () => {
     expect(spectator.service.b).toBeUndefined();
   });
 
   it(`uses config to resolve the value`, () => {
     expect(spectator.service.b2).toEqual(defaultValue);
+
+    console.log(Object.getOwnPropertyDescriptor(spectator.service, 'c'));
   });
 });

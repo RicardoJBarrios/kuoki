@@ -30,7 +30,7 @@
       "rules": {}
     },
     {
-      "files": ["value.decorator.ts", "value-reactive.decorator.ts"],
+      "files": ["value.decorator.ts", "value-async.decorator.ts", "value-reactive.decorator.ts"],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off"
       }

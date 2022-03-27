@@ -22,7 +22,7 @@ class TetsService {
   b?: Observable<string>;
 
   @Value$('b', { defaultValue })
-  b2?: Observable<string>;
+  b2?: any;
 }
 
 describe('@Value$(path,options?)', () => {
@@ -80,9 +80,13 @@ describe('@Value$(path,options?)', () => {
   });
 
   it(`uses config to resolve the value`, (done) => {
-    sub = spectator.service.b2?.subscribe((v) => {
+    sub = spectator.service.b2?.subscribe((v: any) => {
       expect(v).toEqual(defaultValue);
       done();
     });
+  });
+
+  it(`throws if tries to set a non Observable value`, () => {
+    expect(() => (spectator.service.b2 = 'a')).toThrowWithMessage(TypeError, `b2 must be an Observable`);
   });
 });
