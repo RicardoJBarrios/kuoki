@@ -21,8 +21,8 @@ class TetsService {
   @Value$('b')
   b?: Observable<string>;
 
-  @Value$('c', { defaultValue })
-  c?: Observable<string>;
+  @Value$('b', { defaultValue })
+  b2?: Observable<string>;
 }
 
 describe('@Value$(path,options?)', () => {
@@ -80,7 +80,7 @@ describe('@Value$(path,options?)', () => {
   });
 
   it(`uses config to resolve the value`, (done) => {
-    sub = spectator.service.c?.subscribe((v) => {
+    sub = spectator.service.b2?.subscribe((v) => {
       expect(v).toEqual(defaultValue);
       done();
     });

@@ -19,8 +19,8 @@ class TetsService {
   @Value('b')
   b?: string;
 
-  @Value('c', { defaultValue })
-  c?: string;
+  @Value('b', { defaultValue })
+  b2?: string;
 }
 
 describe('@Value(path,options?)', () => {
@@ -39,6 +39,30 @@ describe('@Value(path,options?)', () => {
     jest.restoreAllMocks();
   });
 
+  it(`sets the value at instance level`, () => {
+    const obj1 = new TetsService();
+    const obj2 = new TetsService();
+    obj2.a = fromValue;
+    obj2.a2 = fromValue;
+    obj2.b = fromValue;
+    obj2.b2 = fromValue;
+
+    expect(obj1.a).toEqual(fromEnv);
+    expect(obj1.a2).toEqual(fromValue);
+    expect(obj1.b).toBeUndefined();
+    expect(obj1.b2).toEqual(defaultValue);
+
+    expect(obj2.a).toEqual(fromValue);
+    expect(obj2.a2).toEqual(fromValue);
+    expect(obj2.b).toEqual(fromValue);
+    expect(obj2.b2).toEqual(fromValue);
+
+    expect(obj1.a).toEqual(fromEnv);
+    expect(obj1.a2).toEqual(fromValue);
+    expect(obj1.b).toBeUndefined();
+    expect(obj1.b2).toEqual(defaultValue);
+  });
+
   it(`returns undefined if no EnvironmentQuery`, () => {
     jest.spyOn(EnvironmentModule, 'query', 'get').mockReturnValue(undefined);
     expect(spectator.service.a).toBeUndefined();
@@ -53,6 +77,7 @@ describe('@Value(path,options?)', () => {
   });
 
   it(`returns the environment value if property is set to undefined again`, () => {
+    expect(spectator.service.a2).toEqual(fromValue);
     spectator.service.a2 = undefined;
     expect(spectator.service.a2).toEqual(fromEnv);
   });
@@ -62,6 +87,6 @@ describe('@Value(path,options?)', () => {
   });
 
   it(`uses config to resolve the value`, () => {
-    expect(spectator.service.c).toEqual(defaultValue);
+    expect(spectator.service.b2).toEqual(defaultValue);
   });
 });

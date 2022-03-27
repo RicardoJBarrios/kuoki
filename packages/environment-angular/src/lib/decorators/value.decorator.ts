@@ -1,33 +1,39 @@
+import 'reflect-metadata';
+
 import { GetOptions, Path } from '@kuoki/environment';
 
 import { EnvironmentModule } from '../module';
 
 /**
- * Sets the property with the value at path from environment.
+ * Sets the property with the value at path from environment if the property value is undefined.
  * @param path The environment path to resolve.
  * @param options The options to get the value.
  */
-export function Value<T>(path: Path, options?: GetOptions<T>) {
-  return function (target: object, key: PropertyKey) {
-    let value: T | undefined;
+export function Value<T>(path: Path, options?: GetOptions<T>): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol): void => {
+    const metadataKey: unique symbol = Symbol(`environment-value-decorator:${String(propertyKey)}`);
 
-    const getter = () => {
-      if (value === undefined) {
-        value = EnvironmentModule.query?.get(path, options);
-      }
+    const descriptor: PropertyDescriptor = {
+      get(this: any) {
+        let value: any = Reflect.getMetadata(metadataKey, this);
 
-      return value;
-    };
+        if (value === undefined) {
+          value = EnvironmentModule.query?.get(path, options);
 
-    const setter = (newValue: T) => {
-      value = newValue;
-    };
+          if (value !== undefined) {
+            Reflect.defineMetadata(metadataKey, value, this);
+          }
+        }
 
-    Object.defineProperty(target, key, {
-      get: getter,
-      set: setter,
+        return value;
+      },
+      set(this: any, value: T | undefined) {
+        Reflect.defineMetadata(metadataKey, value, this);
+      },
       enumerable: true,
       configurable: true
-    });
+    };
+
+    Object.defineProperty(target, propertyKey, descriptor);
   };
 }
