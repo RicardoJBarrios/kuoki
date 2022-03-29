@@ -1,31 +1,35 @@
 import 'reflect-metadata';
 
-import { GetOptions, Path } from '@kuoki/environment';
+import { Path } from '@kuoki/environment';
 
-import { isPromiseLike } from '../helpers';
 import { EnvironmentModule } from '../module';
+import { ValueDecoratorOptions } from './value-decorator-options.type';
 
 /**
  * Gets the property with the value at path from environment as Promise if the property value is undefined.
  * @param path The environment path to resolve.
  * @param options The options to get the value.
- * @throws TypeError if tries to set a non Promise value.
+ * @returns A property decorator to get the property with the value at path from environment.
  */
-export function ValueAsync<T>(path: Path, options?: GetOptions<T>): PropertyDecorator {
+export function ValueAsync<T>(path: Path, options?: ValueDecoratorOptions<T>): PropertyDecorator {
   return (target: object, propertyKey: PropertyKey): void => {
-    const metadataKey: unique symbol = Symbol(`environment-value-decorator:${String(propertyKey)}`);
+    const metadataKey: symbol = Symbol.for(`environment-value-decorator:${String(propertyKey)}`);
 
     const descriptor: PropertyDescriptor = {
       get(this: any): any {
-        const value: any = Reflect.getMetadata(metadataKey, this);
+        let value: any = Reflect.getMetadata(metadataKey, this);
 
-        return value === undefined ? EnvironmentModule.query?.getAsync(path, options) : value;
-      },
-      set(this: any, value: any) {
-        if (value != null && !isPromiseLike(value)) {
-          throw new TypeError(`${String(propertyKey)} must be a PromiseLike`);
+        if (value === undefined) {
+          value = EnvironmentModule.query?.getAsync<T>(path, options);
+
+          if (options?.static !== false) {
+            Reflect.defineMetadata(metadataKey, value, this);
+          }
         }
 
+        return value;
+      },
+      set(this: any, value: any) {
         Reflect.defineMetadata(metadataKey, value, this);
       },
       enumerable: true,

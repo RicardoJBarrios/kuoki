@@ -72,8 +72,4 @@ describe('@ValueAsync(path,options?)', () => {
   it(`uses config to resolve the value`, async () => {
     await expect(spectator.service.b2).resolves.toEqual(defaultValue);
   });
-
-  it(`throws if tries to set a non Promise value`, () => {
-    expect(() => (spectator.service.b2 = 'a')).toThrowWithMessage(TypeError, `b2 must be a PromiseLike`);
-  });
 });

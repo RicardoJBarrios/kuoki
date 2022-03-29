@@ -88,7 +88,5 @@ describe('@Value(path,options?)', () => {
 
   it(`uses config to resolve the value`, () => {
     expect(spectator.service.b2).toEqual(defaultValue);
-
-    console.log(Object.getOwnPropertyDescriptor(spectator.service, 'c'));
   });
 });

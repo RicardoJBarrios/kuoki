@@ -85,8 +85,4 @@ describe('@Value$(path,options?)', () => {
       done();
     });
   });
-
-  it(`throws if tries to set a non Observable value`, () => {
-    expect(() => (spectator.service.b2 = 'a')).toThrowWithMessage(TypeError, `b2 must be an Observable`);
-  });
 });
