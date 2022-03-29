@@ -4,11 +4,15 @@
 
 An environment source is a gateway that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
 
+En example in JavaScript.
+
 ```js
 const fileSource = {
   load: async () => fetch('env.json')
 };
 ```
+
+An example in TypeScript.
 
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
@@ -244,7 +248,7 @@ const source1 = {
 const source2 = {
   isOrdered: true,
   load: async () => {
-    const basePath = await asyncNotNil(query.get$('basePath'));
+    const basePath = await query.getAsync('basePath');
     return fetch(`${basePath}/resource`).then((response) => response.json());
   }
 };

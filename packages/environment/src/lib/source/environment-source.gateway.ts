@@ -56,4 +56,9 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
    * Asynchronously loads the environment properties from the source.
    */
   abstract load(): ObservableInput<EnvironmentState>;
+
+  /**
+   * A function to map the value returned by `load()` before store it.
+   */
+  mapFn?: (properties: EnvironmentState) => EnvironmentState;
 }

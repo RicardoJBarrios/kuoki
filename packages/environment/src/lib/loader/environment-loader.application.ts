@@ -132,9 +132,15 @@ export class EnvironmentLoader<
         tap({
           next: (properties: EnvironmentState) => {
             lifecycleHook(this, 'onBeforeSourceAdd', properties, source);
-            const modifiedProperties: EnvironmentState = this.preAddProperties(properties, source);
-            this.saveSourceValueToStore(modifiedProperties, source);
-            lifecycleHook(this, 'onAfterSourceAdd', modifiedProperties, source);
+            let propertiesToStore: EnvironmentState = { ...properties };
+
+            if (source.mapFn != null) {
+              propertiesToStore = source.mapFn(propertiesToStore);
+            }
+
+            propertiesToStore = this.preAddProperties(propertiesToStore, source);
+            this.saveSourceValueToStore(propertiesToStore, source);
+            lifecycleHook(this, 'onAfterSourceAdd', propertiesToStore, source);
           }
         }),
         catchError(<E>(error: E) => this.checkSourceLoadError(error, source)),
