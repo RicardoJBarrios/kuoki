@@ -242,17 +242,15 @@ class FileSource implements EnvironmentSource {
 ```js
 // env.json = { basePath: 'https://myapi.com/api' }
 const source1 = {
-  isOrdered: true,
   load: async () => fetch('env.json').then((response) => response.json())
 };
 const source2 = {
-  isOrdered: true,
   load: async () => {
     const basePath = await query.getAsync('basePath');
     return fetch(`${basePath}/resource`).then((response) => response.json());
   }
 };
-loader.load(); // resolves after source 2 load
-// sets the infiniteSource properties every 10ms
-// never sets the source2 properties
+loader.load(); // resolves after source2 load
+// sets basePath with source 1
+// waits for source1 to use basePath to load resource from source2
 ```

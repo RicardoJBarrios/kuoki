@@ -1,9 +1,12 @@
+import fetch, { enableFetchMocks } from 'jest-fetch-mock';
 import { BehaviorSubject } from 'rxjs';
 
 import { createEnvironmentLoader, EnvironmentLoader } from '../loader';
 import { createEnvironmentQuery, EnvironmentQuery } from '../query';
 import { createEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentState, EnvironmentStore } from '../store';
+
+enableFetchMocks();
 
 function createEnvironmentStore(initial: EnvironmentState) {
   const state = new BehaviorSubject(initial);
@@ -31,7 +34,7 @@ describe('EnvironmentSource Use Cases', () => {
   });
 
   afterEach(() => {
-    fetchMock.reset();
+    fetch.resetMocks();
   });
 
   it(`Fallback sources`, () => {
@@ -39,25 +42,22 @@ describe('EnvironmentSource Use Cases', () => {
   });
 
   it(`Use values from other sources`, async () => {
-    // fetchMock.get('env.json', { basePath: 'https://api.com' });
-    // fetchMock.get('https://api.com/resource', { a: 0 });
-
+    fetch.once(JSON.stringify({ basePath: 'https://myapi.com/api' })).once(JSON.stringify({ a: 0 }));
     const source1 = {
-      isOrdered: true,
-      required: true,
       load: async () => fetch('env.json').then((response: any) => response.json())
     };
     const source2 = {
-      isOrdered: true,
-      required: true,
       load: async () => {
         const basePath = await query.getAsync('basePath');
         return fetch(`${basePath}/resource`).then((response: any) => response.json());
       }
     };
     loader = createEnvironmentLoader(service, [source1, source2]);
+
     loader.load();
 
     await expect(query.getAsync('a')).resolves.toEqual(0);
+    expect(fetch.mock.calls[0][0]).toEqual('env.json');
+    expect(fetch.mock.calls[1][0]).toEqual('https://myapi.com/api/resource');
   });
 });
