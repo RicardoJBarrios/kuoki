@@ -31,4 +31,10 @@ export interface GetOptions<T, CONFIG extends EnvironmentQueryConfig = Environme
    * @see {@link EnvironmentQueryConfig}
    */
   config?: CONFIG;
+
+  /**
+   * The maximum waiting time before emit undefined.
+   * Only used by the Async operation.
+   */
+  dueTime?: number;
 }

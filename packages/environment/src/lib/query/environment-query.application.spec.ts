@@ -265,6 +265,13 @@ describe('EnvironmentQuery', () => {
     await expect(query.getAsync('a.a')).resolves.toEqual(0);
   });
 
+  it(`getAsync(path, dueTime) returns Promise undefined id dueTime and no property at path`, async () => {
+    const obs = scheduled([null, {}, { a: 0 }, envA1], asyncScheduler);
+    jest.spyOn(store, 'getAll$').mockReturnValue(obs.pipe(delay<any>(5)));
+
+    await expect(query.getAsync('a.a', { dueTime: 5 })).resolves.toBeUndefined();
+  });
+
   it(`getAsync(path,{defaultValue}) returns the default value if the path cannot be resolved`, async () => {
     const obs = scheduled([null, {}, { a: 0 }, envA1], asyncScheduler);
     jest.spyOn(store, 'getAll$').mockReturnValue(obs.pipe(delay<any>(5)));

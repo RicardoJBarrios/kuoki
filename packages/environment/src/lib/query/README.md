@@ -42,6 +42,7 @@ class CustomEnvironmentQuery extends EnvironmentQuery {
     <li><a href="#containsall">containsAll</a></li>
     <li><a href="#containssome">containsSome</a></li>
     <li><a href="#get">get</a></li>
+    <li><a href="#first-not-nil-observable">First not nil Observable</a></li>
   </ol>
 </details>
 
@@ -99,7 +100,15 @@ query.getAsync('a', { targetType: String }); // resolves '0' at 20ms
 query.get('a', { targetType: String }); // 'undefined'
 ```
 
-Transpile the resturned value.
+Return the async value on due time.
+
+```js
+// Environment = ^{}-{a:0}-{a:1}-{b:0}-
+query.getAsync('b', { dueTime: 100 }); // resolves 0 at 60ms
+query.getAsync('b', { dueTime: 20 }); // resolves undefined at 20ms
+```
+
+Transpile the returned value.
 
 ```js
 // Environment = ^{a:'Hello {{name}}'}-
@@ -165,4 +174,15 @@ query2.getAsync('a', { transpile: { name: 'Sara' }, config });
 // resolves 'Hello Sara' at 0ms
 query2.get('a', { transpile: { name: 'Sara' }, config });
 // 'Hello Sara'
+```
+
+### First not nil Observable
+
+if you want to get the first not nil value on a time period using RxJS observables you can do it using `filterNil()` and the RxJS
+[take](https://rxjs.dev/api/operators/take) and [timeout](https://rxjs.dev/api/operators/timeout) operators.
+
+```js
+// observable = -null-undefined-0-1-2-
+query.get$('a').pipe(filterNil(), take(1), timeout(100)).subscribe(); // -----(0|)
+query.get$('a').pipe(filterNil(), take(1), timeout(2)).subscribe(); // --# TimeoutError
 ```

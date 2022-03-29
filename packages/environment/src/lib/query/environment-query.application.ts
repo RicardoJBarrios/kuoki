@@ -3,7 +3,7 @@ import { combineLatest, firstValueFrom, MonoTypeOperatorFunction, Observable } f
 import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 import { DeepRequired } from 'ts-essentials';
 
-import { asString, AtLeastOne, filterNil } from '../helpers';
+import { asString, AtLeastOne, delayedPromise, filterNil } from '../helpers';
 import { Path } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
@@ -195,8 +195,15 @@ export class EnvironmentQuery<
    */
   getAsync<T = Property>(path: Path, options?: GetOptions<T, CONFIG>): Promise<T | undefined> {
     const get$: Observable<T | undefined> = this.get$<T>(path, options).pipe(filterNil());
+    const getAsync: Promise<T | undefined> = firstValueFrom(get$);
 
-    return firstValueFrom(get$);
+    if (options?.dueTime != null) {
+      const dueAsync: Promise<undefined> = delayedPromise(undefined, options.dueTime);
+
+      return Promise.race([dueAsync, getAsync]);
+    }
+
+    return getAsync;
   }
 
   /**
