@@ -1,6 +1,6 @@
 import { EnvironmentState } from './environment-state.type';
 import { DefaultEnvironmentStore } from './environment-store.application';
-import { EnvironmentStore } from './environment-store.gateway';
+import { EnvironmentStore } from './environment-store.interface';
 
 /**
  * Creates a default environment store instance.

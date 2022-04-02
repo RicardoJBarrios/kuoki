@@ -2,13 +2,13 @@
 
 > Stores the environment properties that the application needs.
 
-An environment store is a gateway that must be implemented to manage the environment state. Can be integrated into any application using the provided default implementation or a custom one to integrate it with any state manager already used by the application.
+An environment store is an interface that must be implemented to manage the environment state. Can be integrated into any application using the provided default implementation or a custom one to integrate it with any state manager already used by the application.
 
 ```ts
 import { EnvironmentStore } from '@kuoki/environment';
 
 class CustomEnvironmentStore implements EnvironmentStore {
-  // ...implement environment store gateway
+  // ...implement environment store interface
 }
 
 const environmentStore: EnvironmentStore = new CustomEnvironmentStore();

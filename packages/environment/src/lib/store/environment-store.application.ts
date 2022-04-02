@@ -1,11 +1,8 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { EnvironmentState } from './environment-state.type';
-import { EnvironmentStore } from './environment-store.gateway';
+import { EnvironmentStore } from './environment-store.interface';
 
-/**
- * Stores the environment properties that the application needs using a basic RxJS implementation.
- */
 export class DefaultEnvironmentStore implements EnvironmentStore {
   /**
    * The initial environment state.
@@ -17,6 +14,10 @@ export class DefaultEnvironmentStore implements EnvironmentStore {
    */
   protected readonly state: BehaviorSubject<EnvironmentState> = new BehaviorSubject(this.initialState);
 
+  /**
+   * Stores the environment properties that the application needs.
+   * @param _initialState The initial environment state.
+   */
   constructor(protected readonly _initialState?: EnvironmentState) {}
 
   getAll$(): Observable<EnvironmentState> {
