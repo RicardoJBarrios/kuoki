@@ -3,11 +3,8 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
 
 /**
  * The options to get a property.
- * @template T The expected property target type.
- * @template CONFIG The query config used by the implementation.
- * @see {@link EnvironmentQueryConfig}
  */
-export interface GetOptions<T, CONFIG extends EnvironmentQueryConfig = EnvironmentQueryConfig> {
+export interface GetOptions<T> {
   /**
    * The default value to resolve if no value is found.
    */
@@ -28,9 +25,8 @@ export interface GetOptions<T, CONFIG extends EnvironmentQueryConfig = Environme
 
   /**
    * The custom query config for this check.
-   * @see {@link EnvironmentQueryConfig}
    */
-  config?: CONFIG;
+  config?: EnvironmentQueryConfig;
 
   /**
    * The maximum waiting time before emit undefined.

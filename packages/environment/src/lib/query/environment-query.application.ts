@@ -8,47 +8,33 @@ import { Path } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
+import { EnvironmentQuery } from './environment-query.interface';
 import { GetOptions } from './get-options.interface';
 import { GetProperty } from './get-property.type';
 
 /**
  * Gets the properties from the environment.
- * @template STORE The store used by the implementation.
- * @template CONFIG The query config used by the implementation.
- * @see {@link EnvironmentStore}
- * @see {@link EnvironmentQueryConfig}
  */
-export class EnvironmentQuery<
-  STORE extends EnvironmentStore = EnvironmentStore,
-  CONFIG extends EnvironmentQueryConfig = EnvironmentQueryConfig
-> {
+export class DefaultEnvironmentQuery implements EnvironmentQuery {
   /**
    * The configuration parameters for the environment query.
-   * @see {@link EnvironmentQueryConfig}
    */
-  protected readonly config: DeepRequired<CONFIG> = environmentQueryConfigFactory(this.queryConfig);
+  protected readonly config: DeepRequired<EnvironmentQueryConfig> = environmentQueryConfigFactory(this.queryConfig);
 
   /**
    * Gets the properties from the environment store.
    * @param store Manages the environment store.
    * @param queryConfig Configuration parameters for the environment query.
-   * @see {@link EnvironmentStore}
-   * @see {@link EnvironmentQueryConfig}
    */
-  constructor(protected readonly store: STORE, protected readonly queryConfig?: CONFIG | null) {}
+  constructor(
+    protected readonly store: EnvironmentStore,
+    protected readonly queryConfig?: EnvironmentQueryConfig | null
+  ) {}
 
-  /**
-   * Gets all the environment properties.
-   * @returns All the distinct environment properties as Observable.
-   */
   getAll$(): Observable<EnvironmentState> {
     return this.store.getAll$().pipe(distinctUntilChanged(isEqual), shareReplay(1));
   }
 
-  /**
-   * Gets all the environment properties.
-   * @returns The first non nil or empty set of environment properties as Promise.
-   */
   async getAllAsync(): Promise<EnvironmentState> {
     const getAll$: Observable<EnvironmentState> = this.getAll$().pipe(
       filterNil(),
@@ -58,19 +44,10 @@ export class EnvironmentQuery<
     return firstValueFrom(getAll$);
   }
 
-  /**
-   * Gets all the environment properties.
-   * @returns All the environment properties.
-   */
   getAll(): EnvironmentState {
     return this.store.getAll();
   }
 
-  /**
-   * Checks if all the environment property paths are available for resolution.
-   * @param paths The list of property paths to resolve.
-   * @returns distinct `true` as Observable if all the environment property paths exists, otherwise `false`.
-   */
   containsAll$(...paths: AtLeastOne<Path>): Observable<boolean> {
     const containsList$: Observable<boolean>[] = paths.map((path: Path) => this.containsImpl$(path));
 
@@ -80,33 +57,18 @@ export class EnvironmentQuery<
     );
   }
 
-  /**
-   * Checks if all the environment property paths are available for resolution.
-   * @param paths The property path to resolve.
-   * @returns The first `true` as Promise when all environment property paths exists.
-   */
   containsAllAsync(...paths: AtLeastOne<Path>): Promise<boolean> {
     const containsAll$: Observable<boolean> = this.containsAll$(...paths).pipe(this.containsAsyncImpl());
 
     return firstValueFrom(containsAll$);
   }
 
-  /**
-   * Checks if all the environment property paths are available for resolution.
-   * @param paths The list of property paths to resolve.
-   * @returns `true` if all the environment property paths exists, otherwise `false`.
-   */
   containsAll(...paths: AtLeastOne<Path>): boolean {
     const containsList: Array<boolean> = paths.map((path: Path) => this.containsImpl(path));
 
     return this.containsAllImpl(containsList);
   }
 
-  /**
-   * Checks if some environment property paths are available for resolution.
-   * @param paths The list of property paths to resolve.
-   * @returns distinct `true` as Observable if some environment property paths exists, otherwise `false`.
-   */
   containsSome$(...paths: AtLeastOne<Path>): Observable<boolean> {
     const containsList$: Observable<boolean>[] = paths.map((path: Path) => this.containsImpl$(path));
 
@@ -116,22 +78,12 @@ export class EnvironmentQuery<
     );
   }
 
-  /**
-   * Checks if some environment property paths are available for resolution.
-   * @param paths The property path to resolve.
-   * @returns The first `true` as Promise when some environment property paths exists.
-   */
   containsSomeAsync(...paths: AtLeastOne<Path>): Promise<boolean> {
     const containsSome$: Observable<boolean> = this.containsSome$(...paths).pipe(this.containsAsyncImpl());
 
     return firstValueFrom(containsSome$);
   }
 
-  /**
-   * Checks if some environment property paths are available for resolution.
-   * @param paths The list of property paths to resolve.
-   * @returns `true` if some environment property paths exists, otherwise `false`.
-   */
   containsSome(...paths: AtLeastOne<Path>): boolean {
     const containsList: Array<boolean> = paths.map((path: Path) => this.containsImpl(path));
 
@@ -167,15 +119,7 @@ export class EnvironmentQuery<
     return containsList.some((contains: boolean) => contains);
   }
 
-  /**
-   * Gets the environment property at path.
-   * @template T The expected return type.
-   * @param path The property path to resolve.
-   * @param options The options to get a property.
-   * @returns The distinct environment property at path as Observable.
-   * @see {@link GetOptions}
-   */
-  get$<T = Property>(path: Path, options?: GetOptions<T, CONFIG>): Observable<T | undefined> {
+  get$<T = Property>(path: Path, options?: GetOptions<T>): Observable<T | undefined> {
     return this.getAll$().pipe(
       map((state: EnvironmentState) => this.getProperty(state, path)),
       map((property?: Property) => this.getDefaultValue(property, options?.defaultValue)),
@@ -185,15 +129,7 @@ export class EnvironmentQuery<
     );
   }
 
-  /**
-   * Gets the environment property at path.
-   * @template T The expected return type.
-   * @param path The property path to resolve.
-   * @param options The options to get a property.
-   * @returns The first non nil environment property at path as Promise.
-   * @see {@link GetOptions}
-   */
-  getAsync<T = Property>(path: Path, options?: GetOptions<T, CONFIG>): Promise<T | undefined> {
+  getAsync<T = Property>(path: Path, options?: GetOptions<T>): Promise<T | undefined> {
     const get$: Observable<T | undefined> = this.get$<T>(path, options).pipe(filterNil());
     const getAsync: Promise<T | undefined> = firstValueFrom(get$);
 
@@ -206,15 +142,7 @@ export class EnvironmentQuery<
     return getAsync;
   }
 
-  /**
-   * Gets the environment property at path.
-   * @template T The expected return type.
-   * @param path The property path to resolve.
-   * @param options The options to get a property.
-   * @returns The environment property at path.
-   * @see {@link GetOptions}
-   */
-  get<T = Property>(path: Path, options?: GetOptions<T, CONFIG>): T | undefined {
+  get<T = Property>(path: Path, options?: GetOptions<T>): T | undefined {
     const state: EnvironmentState = this.getAll();
     let property: GetProperty<T> = this.getProperty(state, path);
 
@@ -237,12 +165,20 @@ export class EnvironmentQuery<
     return property !== undefined && targetType !== undefined ? targetType(property) : property;
   }
 
-  protected getTranspile<T>(property?: Property | T, transpile?: EnvironmentState, config?: CONFIG): GetProperty<T> {
+  protected getTranspile<T>(
+    property?: Property | T,
+    transpile?: EnvironmentState,
+    config?: EnvironmentQueryConfig
+  ): GetProperty<T> {
     return property !== undefined && transpile !== undefined ? this.transpile(transpile, property, config) : property;
   }
 
-  protected transpile<T>(transpile: EnvironmentState, property?: Property | T, config?: CONFIG): GetProperty<T> {
-    const localConfig: DeepRequired<CONFIG> = this.getLocalConfig(config);
+  protected transpile<T>(
+    transpile: EnvironmentState,
+    property?: Property | T,
+    config?: EnvironmentQueryConfig
+  ): GetProperty<T> {
+    const localConfig: DeepRequired<EnvironmentQueryConfig> = this.getLocalConfig(config);
 
     if (isString(property)) {
       const matcher: RegExp = this.getMatcher(localConfig.interpolation);
@@ -259,8 +195,8 @@ export class EnvironmentQuery<
     return property;
   }
 
-  protected getLocalConfig(config?: CONFIG): DeepRequired<CONFIG> {
-    const innerConfig: DeepRequired<CONFIG> = { ...this.config };
+  protected getLocalConfig(config?: EnvironmentQueryConfig): DeepRequired<EnvironmentQueryConfig> {
+    const innerConfig: DeepRequired<EnvironmentQueryConfig> = { ...this.config };
 
     innerConfig.interpolation = config?.interpolation ?? innerConfig.interpolation;
     innerConfig.transpileEnvironment = config?.transpileEnvironment ?? innerConfig.transpileEnvironment;

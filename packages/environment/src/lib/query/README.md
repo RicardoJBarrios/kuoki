@@ -2,7 +2,7 @@
 
 > Gets the properties from the environment.
 
-The environment query application is the way to get the environment values. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
+The environment query is an interface that must be implemented to get the environment values. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
 
 ```js
 import { createEnvironmentQuery } from '@kuoki/environment';

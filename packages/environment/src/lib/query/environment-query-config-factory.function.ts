@@ -8,11 +8,11 @@ import { EnvironmentQueryConfig } from './environment-query-config.interface';
  * @returns The environment query configuration with all default values for empty parameters.
  * @see {@link EnvironmentQueryConfig}
  */
-export function environmentQueryConfigFactory<CONFIG extends EnvironmentQueryConfig = EnvironmentQueryConfig>(
+export function environmentQueryConfigFactory(
   config?: EnvironmentQueryConfig | null
-): DeepRequired<CONFIG> {
+): DeepRequired<EnvironmentQueryConfig> {
   return {
     interpolation: config?.interpolation ?? ['{{', '}}'],
     transpileEnvironment: config?.transpileEnvironment ?? false
-  } as DeepRequired<CONFIG>;
+  } as DeepRequired<EnvironmentQueryConfig>;
 }

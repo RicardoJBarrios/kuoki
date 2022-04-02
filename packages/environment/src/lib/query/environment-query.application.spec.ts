@@ -4,7 +4,8 @@ import { marbles } from 'rxjs-marbles/jest';
 import { delay } from 'rxjs/operators';
 
 import { DefaultEnvironmentStore, EnvironmentState, EnvironmentStore } from '../store';
-import { EnvironmentQuery } from './environment-query.application';
+import { DefaultEnvironmentQuery } from './environment-query.application';
+import { EnvironmentQuery } from './environment-query.interface';
 
 const envA1 = Object.freeze({ a: Object.freeze({ a: 0 }), b: '{{a.a}}' });
 const envA2 = { a: { a: 0 }, b: '{{a.a}}' };
@@ -18,7 +19,7 @@ describe('EnvironmentQuery', () => {
 
   beforeEach(() => {
     store = createMockInstance(DefaultEnvironmentStore);
-    query = new EnvironmentQuery(store);
+    query = new DefaultEnvironmentQuery(store);
   });
 
   beforeEach(() => {
@@ -50,11 +51,11 @@ describe('EnvironmentQuery', () => {
     jest.spyOn(store, 'getAll$').mockReturnValue(sub);
     const prop = query.getAll$();
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     sub.next(value);
     expect(mockFn).toHaveBeenNthCalledWith(1, value);
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     expect(mockFn).toHaveBeenNthCalledWith(2, value);
   });
 
@@ -92,11 +93,11 @@ describe('EnvironmentQuery', () => {
     jest.spyOn(store, 'getAll$').mockReturnValue(sub);
     const prop = query.containsAll$('a');
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     sub.next(value);
     expect(mockFn).toHaveBeenNthCalledWith(1, true);
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     expect(mockFn).toHaveBeenNthCalledWith(2, true);
   });
 
@@ -141,11 +142,11 @@ describe('EnvironmentQuery', () => {
     jest.spyOn(store, 'getAll$').mockReturnValue(sub);
     const prop = query.containsSome$('a');
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     sub.next(value);
     expect(mockFn).toHaveBeenNthCalledWith(1, true);
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     expect(mockFn).toHaveBeenNthCalledWith(2, true);
   });
 
@@ -187,11 +188,11 @@ describe('EnvironmentQuery', () => {
     jest.spyOn(store, 'getAll$').mockReturnValue(sub);
     const prop = query.get$('a');
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     sub.next(value);
     expect(mockFn).toHaveBeenNthCalledWith(1, value.a);
 
-    prop.subscribe({ next: (v) => mockFn(v) });
+    prop.subscribe({ next: (v: any) => mockFn(v) });
     expect(mockFn).toHaveBeenNthCalledWith(2, value.a);
   });
 

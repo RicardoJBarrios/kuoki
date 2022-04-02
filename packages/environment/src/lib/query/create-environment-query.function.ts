@@ -1,13 +1,14 @@
 import { EnvironmentStore } from '../store';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
-import { EnvironmentQuery } from './environment-query.application';
+import { DefaultEnvironmentQuery } from './environment-query.application';
+import { EnvironmentQuery } from './environment-query.interface';
 
 /**
- * Creates an environment query.
+ * Creates a default environment query instance.
  * @param store The environment store.
  * @param config Configuration parameters for the environment query.
- * @returns An environment query instance.
+ * @returns A default environment query instance.
  */
 export function createEnvironmentQuery(store: EnvironmentStore, config?: EnvironmentQueryConfig): EnvironmentQuery {
-  return new EnvironmentQuery(store, config);
+  return new DefaultEnvironmentQuery(store, config);
 }
