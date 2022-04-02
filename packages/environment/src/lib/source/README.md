@@ -4,33 +4,17 @@
 
 An environment source is a gateway that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
 
-En example in JavaScript.
-
-```js
-const fileSource = {
-  load: async () => fetch('env.json')
-};
-```
-
-An example in TypeScript.
-
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
-import { Observable } from 'rxjs';
-import { HttpClient } from '...';
 
 class FileSource implements EnvironmentSource {
-  constructor(protected readonly http: HttpClient) {}
-
-  load(): Observable<EnvironmentState> {
-    return this.http.get('env.json');
-  }
+  // ...implement environment source gateway
 }
 ```
 
 ## Use cases
 
-Below are examples of the expected behavior with the default loader implementation.
+Below are examples of the expected behavior with the default environment loader implementation.
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
@@ -40,6 +24,8 @@ Below are examples of the expected behavior with the default loader implementati
     <li><a href="#ignoreerror">ignoreError</a></li>
     <li><a href="#path">path</a></li>
     <li><a href="#load">load()</a></li>
+    <li><a href="#mapfn">mapFn()</a></li>
+    <li><a href="#errorhandler">errorHandler()</a></li>
     <li><a href="#fallback-sources">Fallback sources</a></li>
     <li><a href="#use-values-from-other-sources">Use values from other sources</a></li>
   </ol>
@@ -204,11 +190,69 @@ const source2 = { load: () => of({ a: 0 }) };
 const source3 = { load: () => [{ a: 0 }] };
 ```
 
+### mapFn()
+
+```js
+const source = {
+  load: () => of({ a: 0 }),
+  mapFn: (properties) => ({ ...properties, b: 0 })
+};
+loader.load(); // resolves at 0ms
+// sets source properties at 0ms with {a:0,b:0}
+```
+
+### errorHandler()
+
+Return a default environment state on error.
+
+```js
+const source = {
+  load: () => throwError(() => new Error()),
+  errorHandler: () => ({ a: 0 })
+};
+loader.load(); // resolves at 0ms
+// sets source properties at 0ms with {a:0}
+```
+
+Execute aside code and return the same error.
+
+```js
+const source = {
+  id: 'source',
+  isRequired: true,
+  load: () => throwError(() => new Error('original')),
+  errorHandler: (error) => {
+    console.log(error);
+    throw error;
+  }
+};
+loader.load(); // rejects at 0ms
+// LOG ERROR 'original'
+// ERROR The environment source "source" failed to load: original
+```
+
+Return a custom error.
+
+```js
+const source = {
+  id: 'source',
+  isRequired: true,
+  load: () => throwError(() => new Error('original')),
+  errorHandler: () => {
+    throw new Error('new');
+  }
+};
+loader.load(); // rejects at 0ms
+// ERROR The environment source "source" failed to load: new
+```
+
 ### Fallback sources
 
 Sometimes is needed to provide a fallback source if the first one fails. This can be done easily in the original
 source with the `catch` method or the `catchError` operator function.
 This condition can be chained as many times as necessary.
+
+1. Using `catch` with `Promise`.
 
 ```js
 const fileSource = {
@@ -219,20 +263,18 @@ const fileSource = {
 };
 ```
 
+1. Using `catchError` with `Observable`.
+
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
 import { catchError, Observable } from 'rxjs';
 import { HttpClient } from '...';
 
 class FileSource implements EnvironmentSource {
-  constructor(private http: HttpClient) {}
+  constructor(protected readonly http: HttpClient) {}
 
   load(): Observable<EnvironmentState> {
-    return this.http.get('env-prod.json').pipe(catchError(() => this.fallbackSource()));
-  }
-
-  private fallbackSource(): Observable<EnvironmentState> {
-    return this.http.get('env.json');
+    return this.http.get('env-prod.json').pipe(catchError(() => this.http.get('env.json')));
   }
 }
 ```
@@ -242,15 +284,15 @@ class FileSource implements EnvironmentSource {
 ```js
 // env.json = { basePath: 'https://myapi.com/api' }
 const source1 = {
-  load: async () => fetch('env.json').then((response) => response.json())
+  load: async () => fetch('env.json').then((response: Response) => response.json())
 };
 const source2 = {
   load: async () => {
-    const basePath = await query.getAsync('basePath');
-    return fetch(`${basePath}/resource`).then((response) => response.json());
+    const basePath: string = await query.getAsync('basePath');
+    return fetch(`${basePath}/resource`).then((response: Response) => response.json());
   }
 };
-loader.load(); // resolves after source2 load
-// sets basePath with source 1
-// waits for source1 to use basePath to load resource from source2
+loader.load();
+// sets basePath with source1
+// waits for source1 to use basePath to load source2
 ```

@@ -17,7 +17,8 @@ export function isEnvironmentSource(value: any): value is EnvironmentSource {
     ifDefined(value?.ignoreError, typeof value?.ignoreError === 'boolean'),
     ifDefined(value?.strategy, Object.values(SourceStrategy).includes(value?.strategy)),
     ifDefined(value?.path, isPath(value?.path)),
-    ifDefined(value?.mapFn, typeof value?.mapFn === 'function')
+    ifDefined(value?.mapFn, typeof value?.mapFn === 'function'),
+    ifDefined(value?.errorHandler, typeof value?.errorHandler === 'function')
   ];
 
   return checks.every((check: boolean) => check);

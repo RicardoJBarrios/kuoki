@@ -6,10 +6,8 @@ import { SourceStrategy } from './source-strategy.enum';
 
 /**
  * The source from which to get environment properties.
- * @template STRATEGY The source strategy used by the implementation.
- * @see {@link SourceStrategy}
  */
-export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = SourceStrategy> {
+export abstract class EnvironmentSource {
   /**
    * Used by the loader to manage sources, so it must never be duplicated.
    * If not defined, the loader will assign a random UUID.
@@ -43,9 +41,8 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
 
   /**
    * The strategy to add properties to the environment.
-   * @see {@link SourceStrategy}
    */
-  strategy?: STRATEGY;
+  strategy?: SourceStrategy;
 
   /**
    * The path to set the properties in the environment.
@@ -61,4 +58,9 @@ export abstract class EnvironmentSource<STRATEGY extends SourceStrategy = Source
    * A function to map the value returned by `load()` before store it.
    */
   mapFn?: (properties: EnvironmentState) => EnvironmentState;
+
+  /**
+   * A function to manage errors.
+   */
+  errorHandler?: <E>(error: E) => EnvironmentState;
 }

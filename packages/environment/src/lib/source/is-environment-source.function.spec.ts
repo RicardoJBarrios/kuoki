@@ -113,4 +113,24 @@ describe('isEnvironmentSource(value)', () => {
     const source = { path: '2a', load: () => [''] };
     expect(isEnvironmentSource(source)).toBeFalse();
   });
+
+  it(`returns false for {mapFn}`, () => {
+    const source = { mapFn: () => {} };
+    expect(isEnvironmentSource(source)).toBeFalse();
+  });
+
+  it(`returns true for valid {mapFn,load}`, () => {
+    const source = { mapFn: () => {}, load: () => [''] };
+    expect(isEnvironmentSource(source)).toBeTrue();
+  });
+
+  it(`returns false for {errorHandler}`, () => {
+    const source = { errorHandler: () => {} };
+    expect(isEnvironmentSource(source)).toBeFalse();
+  });
+
+  it(`returns true for valid {errorHandler,load}`, () => {
+    const source = { errorHandler: () => {}, load: () => [''] };
+    expect(isEnvironmentSource(source)).toBeTrue();
+  });
 });

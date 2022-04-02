@@ -7,6 +7,7 @@ import {
   filter,
   finalize,
   firstValueFrom,
+  map,
   merge,
   Observable,
   of,
@@ -129,20 +130,12 @@ export class EnvironmentLoader<
 
         return source.load();
       }).pipe(
-        tap({
-          next: (properties: EnvironmentState) => {
-            lifecycleHook(this, 'onBeforeSourceAdd', properties, source);
-            let propertiesToStore: EnvironmentState = { ...properties };
-
-            if (source.mapFn != null) {
-              propertiesToStore = source.mapFn(propertiesToStore);
-            }
-
-            propertiesToStore = this.preAddProperties(propertiesToStore, source);
-            this.saveSourceValueToStore(propertiesToStore, source);
-            lifecycleHook(this, 'onAfterSourceAdd', propertiesToStore, source);
-          }
-        }),
+        catchError(<E>(error: E) => this.checkErrorHandler(error, source)),
+        tap((properties: EnvironmentState) => lifecycleHook(this, 'onBeforeSourceAdd', properties, source)),
+        map((properties: EnvironmentState) => this.checkMapFn(properties, source)),
+        map((properties: EnvironmentState) => this.preAddProperties(properties, source)),
+        tap((properties: EnvironmentState) => this.addToStore(properties, source)),
+        tap((properties: EnvironmentState) => lifecycleHook(this, 'onAfterSourceAdd', properties, source)),
         catchError(<E>(error: E) => this.checkSourceLoadError(error, source)),
         finalize(() => {
           lifecycleHook(this, 'onAfterSourceComplete', source);
@@ -151,6 +144,20 @@ export class EnvironmentLoader<
         takeUntil(this.sourcesSubject$.get(source.id) as ReplaySubject<void>)
       );
     });
+  }
+
+  protected checkErrorHandler<E>(error: E, source: LOADER_SOURCE): Observable<EnvironmentState> {
+    if (source.errorHandler != null) {
+      const state: EnvironmentState = source.errorHandler(error);
+
+      return of(state);
+    }
+
+    throw asError(error);
+  }
+
+  protected checkMapFn(properties: EnvironmentState, source: LOADER_SOURCE): EnvironmentState {
+    return source.mapFn != null ? source.mapFn(properties) : properties;
   }
 
   /**
@@ -163,7 +170,7 @@ export class EnvironmentLoader<
     return properties;
   }
 
-  protected saveSourceValueToStore(properties: EnvironmentState, source: LOADER_SOURCE): void {
+  protected addToStore(properties: EnvironmentState, source: LOADER_SOURCE): void {
     switch (source.strategy) {
       case SourceStrategy.ADD_PRESERVING:
         this.service.addPreserving(properties, source.path);

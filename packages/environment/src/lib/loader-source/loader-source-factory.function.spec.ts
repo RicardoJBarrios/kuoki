@@ -16,6 +16,8 @@ describe('loaderSourceFactory(source)', () => {
     expect(source.strategy).toEqual(SourceStrategy.ADD);
     expect(source.path).toBeUndefined();
     expect(source.load).toEqual(source1.load);
+    expect(source.mapFn).toBeUndefined();
+    expect(source.errorHandler).toBeUndefined();
   });
 
   it(`(source) returns with all custom`, () => {
@@ -25,7 +27,19 @@ describe('loaderSourceFactory(source)', () => {
     const ignoreError = true;
     const strategy = SourceStrategy.MERGE;
     const path = 'a';
-    const source1: EnvironmentSource = { id, isRequired, isOrdered, ignoreError, strategy, path, load: () => [{}] };
+    const mapFn = () => ({});
+    const errorHandler = () => ({});
+    const source1: EnvironmentSource = {
+      id,
+      isRequired,
+      isOrdered,
+      ignoreError,
+      strategy,
+      path,
+      load: () => [{}],
+      mapFn,
+      errorHandler
+    };
     const source: LoaderSource = loaderSourceFactory(source1);
 
     expect(source.id).toEqual(id);
@@ -35,6 +49,8 @@ describe('loaderSourceFactory(source)', () => {
     expect(source.strategy).toEqual(strategy);
     expect(source.path).toEqual(path);
     expect(source.load).toEqual(source1.load);
+    expect(source.mapFn).toEqual(mapFn);
+    expect(source.errorHandler).toEqual(errorHandler);
   });
 
   it(`throws if an environmnet source is invalid`, () => {

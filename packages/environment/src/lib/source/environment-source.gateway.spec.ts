@@ -1,6 +1,6 @@
 import { install, InstalledClock } from '@sinonjs/fake-timers';
 import createMockInstance from 'jest-create-mock-instance';
-import { catchError, delay, interval, map, of, take, throwError } from 'rxjs';
+import { delay, interval, map, of, take, throwError } from 'rxjs';
 
 import { EnvironmentLoader } from '../loader';
 import { EnvironmentService } from '../service';
@@ -361,35 +361,72 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
     });
   });
 
-  describe('fallback sources', () => {
-    it(`using catch`, async () => {
-      const state1: EnvironmentState = { a: 0 };
-      const source1: EnvironmentSource = { load: async () => Promise.reject().catch(() => Promise.resolve(state1)) };
-      loader = new EnvironmentLoader(service, [source1]);
+  describe('load() and mapFn()', () => {
+    it(`maps the value returned by load() before store it.`, async () => {
+      const state: EnvironmentState = { a: 0 };
+      const source: EnvironmentSource = {
+        load: () => of(state).pipe(delay(5)),
+        mapFn: (properties) => ({ ...properties, b: 0 })
+      };
+      loader = new EnvironmentLoader(service, source);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
       expect(load).toHaveBeenCalledTimes(1);
-      expect(service.add).toHaveBeenNthCalledWith(1, state1, undefined);
+      expect(service.add).not.toHaveBeenCalled();
+
+      await clock.tickAsync(5); // 5
+      expect(service.add).toHaveBeenNthCalledWith(1, { a: 0, b: 0 }, undefined);
 
       await clock.runAllAsync();
       expect(service.add).toHaveBeenCalledTimes(1);
     });
+  });
 
-    it(`using catchError`, async () => {
-      const state1: EnvironmentState = { a: 0 };
-      const source1: EnvironmentSource = {
-        load: () => throwError(() => new Error()).pipe(catchError(() => of(state1)))
+  describe('load() and errorHandler()', () => {
+    it(`returns an environment state on error`, async () => {
+      const source: EnvironmentSource = {
+        load: () => throwError(() => new Error('original')),
+        errorHandler: () => ({ a: 0 })
       };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = new EnvironmentLoader(service, source);
       loader.load().then(() => load());
 
-      await clock.tickAsync(0); // 0
-      expect(load).toHaveBeenCalledTimes(1);
-      expect(service.add).toHaveBeenNthCalledWith(1, state1, undefined);
-
       await clock.runAllAsync();
-      expect(service.add).toHaveBeenCalledTimes(1);
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.add).toHaveBeenNthCalledWith(1, { a: 0 }, undefined);
+    });
+
+    it(`executes aside code`, async () => {
+      jest.spyOn(console, 'log').mockImplementation(() => null);
+      const error = new Error('original');
+      const source: EnvironmentSource = {
+        id: 'a',
+        isRequired: true,
+        load: () => throwError(() => error),
+        errorHandler: (e) => {
+          console.log(e);
+          throw e;
+        }
+      };
+      loader = new EnvironmentLoader(service, source);
+
+      await expect(loader.load()).rejects.toThrow(`The environment source "a" failed to load: original`);
+      expect(console.log).toHaveBeenNthCalledWith(1, error);
+    });
+
+    it(`throws a custom error`, async () => {
+      const source: EnvironmentSource = {
+        id: 'a',
+        isRequired: true,
+        load: () => throwError(() => new Error('original')),
+        errorHandler: () => {
+          throw new Error('new');
+        }
+      };
+      loader = new EnvironmentLoader(service, source);
+
+      await expect(loader.load()).rejects.toThrow(`The environment source "a" failed to load: new`);
     });
   });
 });
