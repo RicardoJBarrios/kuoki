@@ -3,7 +3,7 @@ import { DefaultEnvironmentStore } from './environment-store.application';
 import { EnvironmentStore } from './environment-store.gateway';
 
 /**
- * Creates an environment store instance.
+ * Creates a default environment store instance.
  * @param initialState The initial environment state.
  * @returns A default environment store instance.
  */
