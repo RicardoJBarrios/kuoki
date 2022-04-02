@@ -1,29 +1,17 @@
 import createMockInstance from 'jest-create-mock-instance';
-import { Observable } from 'rxjs';
 
-import { EnvironmentState, EnvironmentStore } from '../store';
+import { DefaultEnvironmentStore, EnvironmentStore } from '../store';
 import { createEnvironmentService } from './create-environment-service.function';
-import { EnvironmentService } from './environment-service.application';
-
-class TestEnvironmentStore extends EnvironmentStore {
-  getAll$(): Observable<EnvironmentState> {
-    throw new Error('Method not implemented.');
-  }
-  getAll(): EnvironmentState {
-    throw new Error('Method not implemented.');
-  }
-  update(environment: EnvironmentState): void {}
-  reset(): void {}
-}
+import { DefaultEnvironmentService } from './environment-service.application';
 
 describe('createEnvironmentService(store)', () => {
   let store: EnvironmentStore;
 
   beforeEach(() => {
-    store = createMockInstance(TestEnvironmentStore);
+    store = createMockInstance(DefaultEnvironmentStore);
   });
 
   it(`returns an EnvironmentService`, () => {
-    expect(createEnvironmentService(store)).toBeInstanceOf(EnvironmentService);
+    expect(createEnvironmentService(store)).toBeInstanceOf(DefaultEnvironmentService);
   });
 });

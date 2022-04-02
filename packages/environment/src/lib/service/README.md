@@ -1,34 +1,70 @@
 # Environment Service
 
-> Sets properties in the environment store.
+> Sets the environment properties in the store.
 
-The environment service application is the way to mutate the environment store. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
-
-```js
-import { createEnvironmentService } from '@kuoki/environment';
-import { store } from '...';
-
-const service = createEnvironmentService(store);
-```
-
-```js
-import { EnvironmentService } from '@kuoki/environment';
-import { store } from '...';
-
-const service = new EnvironmentService(store);
-```
+An environment service is the way to mutate the environment store. Can be integrated into any application using the provided default implementation or a custom one. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
 
 ```ts
-import { EnvironmentService, EnvironmentStore } from '@kuoki/environment';
+import { EnvironmentService } from '@kuoki/environment';
 
-class CustomEnvironmentService extends EnvironmentService {
+class CustomEnvironmentService implements EnvironmentService {
+  // ...implement environment service gateway
+}
+
+const environmentService: EnvironmentService = new CustomEnvironmentService();
+```
+
+## DefaultEnvironmentService
+
+A basic implementation that can be instantiated from...
+
+1. A factory function.
+
+```js
+import {
+  createEnvironmentService,
+  createEnvironmentStore,
+  EnvironmentService,
+  EnvironmentStore
+} from '@kuoki/environment';
+
+const environmentStore: EnvironmentStore = createEnvironmentStore();
+const environmentService: EnvironmentService = createEnvironmentService(environmentStore);
+```
+
+1. The newable class.
+
+```js
+import {
+  DefaultEnvironmentService,
+  DefaultEnvironmentStore,
+  EnvironmentService,
+  EnvironmentStore
+} from '@kuoki/environment';
+
+const environmentStore: EnvironmentStore = new DefaultEnvironmentStore();
+const environmentService: EnvironmentService = new DefaultEnvironmentService(environmentStore);
+```
+
+1. A class that extends `DefaultEnvironmentService`.
+
+```ts
+import { DefaultEnvironmentService, EnvironmentStore } from '@kuoki/environment';
+
+class CustomEnvironmentService extends DefaultEnvironmentService {
   constructor(protected override readonly store: EnvironmentStore) {
     super(store);
   }
+  // ...override implementation
 }
+
+const environmentStore: EnvironmentStore = new DefaultEnvironmentStore();
+const environmentService: EnvironmentService = new CustomEnvironmentService(environmentStore);
 ```
 
 ## Use cases
+
+Below are examples of the expected behavior and some custom implementation examples.
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
@@ -50,7 +86,7 @@ class CustomEnvironmentService extends EnvironmentService {
 
 ```js
 // EnvironmentState = {a:0}
-service.reset(); // {code:205}
+environmentService.reset(); // {code:205}
 // EnvironmentState = {}
 ```
 
@@ -58,11 +94,17 @@ service.reset(); // {code:205}
 
 ```js
 // EnvironmentState = {}
-service.create('a', 0); // {code:201,path:'a',value:0}
+environmentService.create('a', 0);
+// {code:201,path:'a',value:0}
+
 // EnvironmentState = {a:0}
-service.create('2a', 0); // {code:400,path:'2a',value:0}
+environmentService.create('2a', 0);
+// {code:400,path:'2a',value:0}
+
 // EnvironmentState = {a:0}
-service.create('a', 1); // {code:422,path:'a',value:1}
+environmentService.create('a', 1);
+// {code:422,path:'a',value:1}
+
 // EnvironmentState = {a:0}
 ```
 
@@ -70,11 +112,17 @@ service.create('a', 1); // {code:422,path:'a',value:1}
 
 ```js
 // EnvironmentState = {a:0}
-service.update('a', 1); // {code:200,path:'a',value:1}
+environmentService.update('a', 1);
+// {code:200,path:'a',value:1}
+
 // EnvironmentState = {a:1}
-service.update('2a', 0); // {code:400,path:'2a',value:0}
+environmentService.update('2a', 0);
+// {code:400,path:'2a',value:0}
+
 // EnvironmentState = {a:1}
-service.update('b', 1); // {code:422,path:'b',value:1}
+environmentService.update('b', 1);
+// {code:422,path:'b',value:1}
+
 // EnvironmentState = {a:1}
 ```
 
@@ -82,11 +130,17 @@ service.update('b', 1); // {code:422,path:'b',value:1}
 
 ```js
 // EnvironmentState = {a:0}
-service.upsert('a', 1); // {code:200,path:'a',value:1}
+environmentService.upsert('a', 1);
+// {code:200,path:'a',value:1}
+
 // EnvironmentState = {a:1}
-service.upsert('b', 1); // {code:201,path:'b',value:1}
+environmentService.upsert('b', 1);
+// {code:201,path:'b',value:1}
+
 // EnvironmentState = {a:1, b:1}
-service.upsert('2a', 0); // {code:400,path:'2a',value:0}
+environmentService.upsert('2a', 0);
+// {code:400,path:'2a',value:0}
+
 // EnvironmentState = {a:1, b:1}
 ```
 
@@ -94,11 +148,17 @@ service.upsert('2a', 0); // {code:400,path:'2a',value:0}
 
 ```js
 // EnvironmentState = {a:0, b:1}
-service.delete('a'); // {code:204,path:'a'}
+environmentService.delete('a');
+// {code:204,path:'a'}
+
 // EnvironmentState = {b:1}
-service.delete('2a'); // {code:400,path:'2a'}
+environmentService.delete('2a');
+// {code:400,path:'2a'}
+
 // EnvironmentState = {b:1}
-service.delete('a'); // {code:422,path:'a'}
+environmentService.delete('a');
+// {code:422,path:'a'}
+
 // EnvironmentState = {b:1}
 ```
 
@@ -106,13 +166,21 @@ service.delete('a'); // {code:422,path:'a'}
 
 ```js
 // EnvironmentState = {a:{a:0}}
-service.add({ a: 1 }); // {code:200,value:{a:1}}
+environmentService.add({ a: 1 });
+// {code:200,value:{a:1}}
+
 // EnvironmentState = {a:1}
-service.add({ a: 1 }, 'a'); // {code:200,path:'a',value:{a:1}}
+environmentService.add({ a: 1 }, 'a');
+// {code:200,path:'a',value:{a:1}}
+
 // EnvironmentState = {a:{a:1}}
-service.add({ a: 0 }, 'a'); // {code:200,path:'a',value:{a:0}}
+environmentService.add({ a: 0 }, 'a');
+// {code:200,path:'a',value:{a:0}}
+
 // EnvironmentState = {a:{a:0}}
-service.add({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
+environmentService.add({ a: 1 }, '2a');
+// {code:400,path:'2a',value:{a:1}}
+
 // EnvironmentState = {a:{a:0}}
 ```
 
@@ -120,13 +188,21 @@ service.add({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 
 ```js
 // EnvironmentState = {a:{a:0}
-service.addPreserving({ a: 1 }); // {code:200,value:{a:1}}
+environmentService.addPreserving({ a: 1 });
+// {code:200,value:{a:1}}
+
 // EnvironmentState = {a:{a:0}}
-service.addPreserving({ a: 1 }, 'a'); // {code:200,path:'a',value:{a:1}}
+environmentService.addPreserving({ a: 1 }, 'a');
+// {code:200,path:'a',value:{a:1}}
+
 // EnvironmentState = {a:{a:0}}
-service.addPreserving({ a: 0 }, 'a'); // {code:200,path:'b',value:{a:0}}
+environmentService.addPreserving({ a: 0 }, 'a');
+// {code:200,path:'b',value:{a:0}}
+
 // EnvironmentState = {a:{a:0},b:{a:0}}
-service.addPreserving({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
+environmentService.addPreserving({ a: 1 }, '2a');
+// {code:400,path:'2a',value:{a:1}}
+
 // EnvironmentState = {a:{a:0},b:{a:0}}
 ```
 
@@ -134,15 +210,25 @@ service.addPreserving({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 
 ```js
 // EnvironmentState = {a:0}
-service.merge({ a: 1 }); // {code:200,value:{a:1}}
+environmentService.merge({ a: 1 });
+// {code:200,value:{a:1}}
+
 // EnvironmentState = {a:1}
-service.merge({ a: 1 }, 'a'); // {code:200,path:'a',value:{a:1}}
+environmentService.merge({ a: 1 }, 'a');
+// {code:200,path:'a',value:{a:1}}
+
 // EnvironmentState = {a:{a:1}}
-service.merge({ b: 1 }, 'a'); // {code:200,path:'a',value:{b:1}}
+environmentService.merge({ b: 1 }, 'a');
+// {code:200,path:'a',value:{b:1}}
+
 // EnvironmentState = {a:{a:1,b:1}}
-service.merge({ b: 0 }, 'a'); // {code:200,path:'a',value:{b:0}}
+environmentService.merge({ b: 0 }, 'a');
+// {code:200,path:'a',value:{b:0}}
+
 // EnvironmentState = {a:{a:1,b:0}}
-service.merge({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
+environmentService.merge({ a: 1 }, '2a');
+// {code:400,path:'2a',value:{a:1}}
+
 // EnvironmentState = {a:{a:1,b:0}}
 ```
 
@@ -150,22 +236,41 @@ service.merge({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
 
 ```js
 // EnvironmentState = {a:0}
-service.mergePreserving({ a: 1 }); // {code:200,value:{a:1}}
+environmentService.mergePreserving({ a: 1 });
+// {code:200,value:{a:1}}
+
 // EnvironmentState = {a:1}
-service.mergePreserving({ a: 1 }, 'a'); // {code:200,path:'a',value:{a:1}}
+environmentService.mergePreserving({ a: 1 }, 'a');
+// {code:200,path:'a',value:{a:1}}
+
 // EnvironmentState = {a:{a:1}}
-service.mergePreserving({ b: 1 }, 'a'); // {code:200,path:'a',value:{b:1}}
+environmentService.mergePreserving({ b: 1 }, 'a');
+// {code:200,path:'a',value:{b:1}}
+
 // EnvironmentState = {a:{a:1,b:1}}
-service.mergePreserving({ b: 0 }, 'a'); // {code:200,path:'a',value:{b:0}}
+environmentService.mergePreserving({ b: 0 }, 'a');
+// {code:200,path:'a',value:{b:0}}
+
 // EnvironmentState = {a:{a:1,b:1}}
-service.mergePreserving({ a: 1 }, '2a'); // {code:400,path:'2a',value:{a:1}}
+environmentService.mergePreserving({ a: 1 }, '2a');
+// {code:400,path:'2a',value:{a:1}}
+
 // EnvironmentState = {a:{a:1,b:1}}
 ```
 
 ### Log actions
 
 ```ts
-class CustomEnvironmentService extends EnvironmentService {
+import {
+  DefaultEnvironmentService,
+  EnvironmentResult,
+  EnvironmentState,
+  EnvironmentStore,
+  Path,
+  Property
+} from '@kuoki/environment';
+
+class CustomEnvironmentService extends DefaultEnvironmentService {
   constructor(protected override readonly store: EnvironmentStore) {
     super(store);
   }

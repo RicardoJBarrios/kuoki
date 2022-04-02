@@ -2,7 +2,7 @@
 
 > Stores the environment properties that the application needs.
 
-An environment store is a gateway that must be implemented to manage the environment state. Can be integrated into any state manager already using the application or use the default provided.
+An environment store is a gateway that must be implemented to manage the environment state. Can be integrated into any application using the provided default implementation or a custom one to integrate it with any state manager already used by the application.
 
 ```ts
 import { EnvironmentStore } from '@kuoki/environment';
@@ -16,7 +16,7 @@ const environmentStore: EnvironmentStore = new CustomEnvironmentStore();
 
 ## DefaultEnvironmentStore
 
-A basic RxJS environment store implementation that uses a [BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject) as state manager tha can be instantiated from...
+A basic RxJS environment store implementation that uses a [BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject) as state manager that can be instantiated from...
 
 1. A factory function.
 
@@ -27,7 +27,7 @@ const environmentStore1: EnvironmentStore = createEnvironmentStore({});
 const environmentStore2: EnvironmentStore = createEnvironmentStore({ a: 0 });
 ```
 
-2. The newable class.
+1. The newable class.
 
 ```js
 import { DefaultEnvironmentStore, EnvironmentStore } from '@kuoki/environment';
@@ -36,7 +36,7 @@ const environmentStore1: EnvironmentStore = new DefaultEnvironmentStore({});
 const environmentStore2: EnvironmentStore = new DefaultEnvironmentStore({ a: 0 });
 ```
 
-3. A class that extends `DefaultEnvironmentStore`.
+1. A class that extends `DefaultEnvironmentStore`.
 
 ```ts
 import { DefaultEnvironmentStore, EnvironmentState, EnvironmentStore } from '@kuoki/environment';
@@ -54,7 +54,7 @@ const environmentStore2: EnvironmentStore = new CustomEnvironmentStore({ a: 0 })
 
 ## Use cases
 
-Below are examples of the expected behavior and some implementation examples.
+Below are examples of the expected behavior and some custom implementation examples.
 
 <details>
   <summary><strong>Table of Contents</strong></summary>

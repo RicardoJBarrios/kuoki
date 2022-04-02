@@ -14,33 +14,19 @@ import {
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
+import { EnvironmentService } from './environment-service.gateway';
 
 /**
- * Sets properties in the environment store.
- * @template STORE The store used by the implementation.
- * @template RESULT The operation result used by the implementation.
- * @see {@link EnvironmentStore}
- * @see {@link EnvironmentResult}
+ * Sets the environment properties in the store.
  */
-export class EnvironmentService<
-  STORE extends EnvironmentStore = EnvironmentStore,
-  RESULT extends EnvironmentResult = EnvironmentResult
-> {
+export class DefaultEnvironmentService implements EnvironmentService {
   /**
-   * Sets properties in the environment store.
+   * Sets the environment properties in the store.
    * @param store The store used by the implementation.
-   * @see {@link EnvironmentStore}
    */
-  constructor(protected readonly store: STORE) {}
+  constructor(protected readonly store: EnvironmentStore) {}
 
-  /**
-   * Resets the environment to the initial state.
-   * @returns The operation result with the code:
-   * - 205 Store resetted
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  reset(): RESULT {
+  reset(): EnvironmentResult {
     try {
       this.store.reset();
     } catch (error) {
@@ -50,19 +36,7 @@ export class EnvironmentService<
     return this.returnCode(EnvironmentResultCode.RESET);
   }
 
-  /**
-   * Creates a new property in the environment and sets the value.
-   * Ignores the action if property path already exists or is an invalid path.
-   * @param path The path of the property to create.
-   * @param value The value of the property.
-   * @returns The operation result with the code:
-   * - 201 Property created
-   * - 400 Invalid path
-   * - 422 Property path already exists
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  create(path: Path, value: Property): RESULT {
+  create(path: Path, value: Property): EnvironmentResult {
     if (!isPath(path)) {
       return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value });
     }
@@ -82,19 +56,7 @@ export class EnvironmentService<
     return this.upsertValue(state, path, value) ?? this.returnCode(EnvironmentResultCode.CREATED, { path, value });
   }
 
-  /**
-   * Updates the value of a property in the environment.
-   * Ignores the action if property doesn't exist or is an invalid path.
-   * @param path The path of the property to update.
-   * @param value The value of the property.
-   * @returns The operation result with the code:
-   * - 200 Property updated
-   * - 400 Invalid path
-   * - 422 Property doesn't exist
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  update(path: Path, value: Property): RESULT {
+  update(path: Path, value: Property): EnvironmentResult {
     if (!isPath(path)) {
       return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value });
     }
@@ -113,19 +75,7 @@ export class EnvironmentService<
     return this.upsertValue(state, path, value) ?? this.returnCode(EnvironmentResultCode.UPDATED, { path, value });
   }
 
-  /**
-   * Updates or creates the value of a property in the environment.
-   * Ignores the action if is an invalid path.
-   * @param path The path of the property to upsert.
-   * @param value The value of the property.
-   * @returns The operation result with the code:
-   * - 201 Property created
-   * - 200 Property updated
-   * - 400 Invalid path
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  upsert(path: Path, value: Property): RESULT {
+  upsert(path: Path, value: Property): EnvironmentResult {
     if (!isPath(path)) {
       return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value });
     }
@@ -142,18 +92,7 @@ export class EnvironmentService<
     );
   }
 
-  /**
-   * Deletes a property from the environment.
-   * Ignores the action if property doesn't exist or is an invalid path.
-   * @param path The path of the property to delete.
-   * @returns The operation result with the code:
-   * - 204 Property deleted
-   * - 400 Invalid path
-   * - 422 Property doesn't exist
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  delete(path: Path): RESULT {
+  delete(path: Path): EnvironmentResult {
     if (!isPath(path)) {
       return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path });
     }
@@ -171,7 +110,7 @@ export class EnvironmentService<
     return this.upsertValue(state, path) ?? this.returnCode(EnvironmentResultCode.DELETED, { path });
   }
 
-  protected upsertValue(state: EnvironmentState, path: Path, value?: Property): RESULT | void {
+  protected upsertValue(state: EnvironmentState, path: Path, value?: Property): EnvironmentResult | void {
     const mutableState: EnvironmentState = mutable(state);
     const newState: EnvironmentState = set(mutableState, path, value);
     try {
@@ -181,18 +120,7 @@ export class EnvironmentService<
     }
   }
 
-  /**
-   * Adds properties to the environment overwriting the existing ones.
-   * Ignores the action if is an invalid path.
-   * @param properties The properties to add.
-   * @param path The path of the properties to add.
-   * @returns The operation result with the code:
-   * - 200 Properties added
-   * - 400 Invalid path
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  add(properties: EnvironmentState, path?: Path): RESULT {
+  add(properties: EnvironmentState, path?: Path): EnvironmentResult {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) => ({ ...state, ...newProperties }),
       properties,
@@ -200,18 +128,7 @@ export class EnvironmentService<
     );
   }
 
-  /**
-   * Adds properties to the environment preserving the existing ones.
-   * Ignores the action if is an invalid path.
-   * @param properties The properties to add.
-   * @param path The path of the properties to add.
-   * @returns The operation result with the code:
-   * - 200 Properties added
-   * - 400 Invalid path
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  addPreserving(properties: EnvironmentState, path?: Path): RESULT {
+  addPreserving(properties: EnvironmentState, path?: Path): EnvironmentResult {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) => ({ ...newProperties, ...state }),
       properties,
@@ -219,18 +136,7 @@ export class EnvironmentService<
     );
   }
 
-  /**
-   * Adds properties to the environment merging the values and overwriting the existing ones.
-   * Ignores the action if is an invalid path.
-   * @param properties The properties to merge.
-   * @param path The path of the properties to merge.
-   * @returns The operation result with the code:
-   * - 200 Properties merged
-   * - 400 Invalid path
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  merge(properties: EnvironmentState, path?: Path): RESULT {
+  merge(properties: EnvironmentState, path?: Path): EnvironmentResult {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) =>
         mergeWith(state, newProperties, this.mergeCustomizer),
@@ -239,18 +145,7 @@ export class EnvironmentService<
     );
   }
 
-  /**
-   * Adds properties to the environment merging the values and preserving the existing ones.
-   * Ignores the action if is an invalid path.
-   * @param properties The properties to merge.
-   * @param path The path of the properties to merge.
-   * @returns The operation result with the code:
-   * - 200 Properties merged
-   * - 400 Invalid path
-   * - 460 Store error
-   * @see {@link EnvironmentResult}
-   */
-  mergePreserving(properties: EnvironmentState, path?: Path): RESULT {
+  mergePreserving(properties: EnvironmentState, path?: Path): EnvironmentResult {
     return this.upsertProperties(
       (state: EnvironmentState, newProperties: EnvironmentState) =>
         mergeWith(newProperties, state, this.reverseMergeCustomizer),
@@ -263,7 +158,7 @@ export class EnvironmentService<
     resolveFn: (state: EnvironmentState, newProperties: EnvironmentState) => EnvironmentState,
     properties: EnvironmentState,
     path?: Path
-  ): RESULT {
+  ): EnvironmentResult {
     if (path != null && !isPath(path)) {
       return this.returnCode(EnvironmentResultCode.INVALID_PATH, { path, value: properties });
     }
@@ -281,7 +176,7 @@ export class EnvironmentService<
     return this.returnCode(EnvironmentResultCode.UPDATED, { value: properties, path });
   }
 
-  protected returnCode(code: RESULT['code'], optionals?: { [key: string]: unknown }): RESULT {
+  protected returnCode(code: EnvironmentResult['code'], optionals?: { [key: string]: unknown }): EnvironmentResult {
     if (optionals != null) {
       const error: unknown = get(optionals, 'error');
       if (error != null) {
@@ -298,7 +193,7 @@ export class EnvironmentService<
       }
     }
 
-    return { code, ...optionals } as RESULT;
+    return { code, ...optionals } as EnvironmentResult;
   }
 
   protected mergeCustomizer<O, S>(obj: O, source: S): (O | S)[] | undefined {

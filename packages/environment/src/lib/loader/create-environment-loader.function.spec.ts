@@ -1,6 +1,6 @@
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { EnvironmentService } from '../service';
+import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
 import { createEnvironmentLoader } from './create-environment-loader.function';
 import { EnvironmentLoader } from './environment-loader.application';
@@ -12,7 +12,7 @@ describe('createEnvironmentLoader(service, sources?)', () => {
   let service: jest.Mocked<EnvironmentService>;
 
   beforeEach(() => {
-    service = createMockInstance(EnvironmentService);
+    service = createMockInstance(DefaultEnvironmentService);
   });
 
   afterEach(() => {

@@ -3,7 +3,7 @@ import { createMockInstance } from 'jest-create-mock-instance';
 import { delay, of, throwError } from 'rxjs';
 import { validate } from 'uuid';
 
-import { EnvironmentService } from '../service';
+import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource, InvalidSourceError } from '../source';
 import { EnvironmentState } from '../store';
 import { EnvironmentLoader } from './environment-loader.application';
@@ -15,7 +15,7 @@ describe('EnvironmentLoader', () => {
   let load: jest.Mock<any, any>;
 
   beforeEach(() => {
-    service = createMockInstance(EnvironmentService);
+    service = createMockInstance(DefaultEnvironmentService);
     loader = new EnvironmentLoader(service);
     clock = install();
     load = jest.fn();

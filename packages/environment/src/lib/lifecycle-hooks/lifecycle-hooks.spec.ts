@@ -15,7 +15,7 @@ import {
 } from '../lifecycle-hooks';
 import { EnvironmentLoader } from '../loader';
 import { LoaderSource } from '../loader-source';
-import { EnvironmentService } from '../service';
+import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
 import { EnvironmentState } from '../store';
 
@@ -75,7 +75,7 @@ describe('LifecycleHooks integration with EnvironmentLoader', () => {
   let clock: InstalledClock;
 
   beforeEach(() => {
-    service = createMockInstance(EnvironmentService);
+    service = createMockInstance(DefaultEnvironmentService);
     loader = new Loader(service);
     clock = install();
   });
