@@ -1,21 +1,10 @@
 import createMockInstance from 'jest-create-mock-instance';
-import { asyncScheduler, Observable, scheduled, Subject } from 'rxjs';
+import { asyncScheduler, scheduled, Subject } from 'rxjs';
 import { marbles } from 'rxjs-marbles/jest';
 import { delay } from 'rxjs/operators';
 
-import { EnvironmentState, EnvironmentStore } from '../store';
+import { DefaultEnvironmentStore, EnvironmentState, EnvironmentStore } from '../store';
 import { EnvironmentQuery } from './environment-query.application';
-
-class TestEnvironmentStore extends EnvironmentStore {
-  getAll$(): Observable<EnvironmentState> {
-    throw new Error('Method not implemented.');
-  }
-  getAll(): EnvironmentState {
-    throw new Error('Method not implemented.');
-  }
-  update(environment: EnvironmentState): void {}
-  reset(): void {}
-}
 
 const envA1 = Object.freeze({ a: Object.freeze({ a: 0 }), b: '{{a.a}}' });
 const envA2 = { a: { a: 0 }, b: '{{a.a}}' };
@@ -28,7 +17,7 @@ describe('EnvironmentQuery', () => {
   let mockFn: jest.Mock<any, any>;
 
   beforeEach(() => {
-    store = createMockInstance(TestEnvironmentStore);
+    store = createMockInstance(DefaultEnvironmentStore);
     query = new EnvironmentQuery(store);
   });
 
