@@ -2,13 +2,13 @@
 
 > Sets the environment properties in the store.
 
-An environment service is the way to mutate the environment store. Can be integrated into any application using the provided default implementation or a custom one. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
+An environment service is an interface that must be implemented to mutate the environment store. Can be integrated into any application using the provided default implementation or a custom one. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
 
 ```ts
 import { EnvironmentService } from '@kuoki/environment';
 
 class CustomEnvironmentService implements EnvironmentService {
-  // ...implement environment service gateway
+  // ...implement environment service interface
 }
 
 const environmentService: EnvironmentService = new CustomEnvironmentService();

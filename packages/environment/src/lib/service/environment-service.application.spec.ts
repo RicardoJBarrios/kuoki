@@ -3,7 +3,7 @@ import createMockInstance from 'jest-create-mock-instance';
 import { InvalidPathError, Path, PathDoesntExistError, PathExistsError } from '../path';
 import { DefaultEnvironmentStore, EnvironmentStore } from '../store';
 import { DefaultEnvironmentService } from './environment-service.application';
-import { EnvironmentService } from './environment-service.gateway';
+import { EnvironmentService } from './environment-service.interface';
 
 describe('DefaultEnvironmentService', () => {
   let store: EnvironmentStore;

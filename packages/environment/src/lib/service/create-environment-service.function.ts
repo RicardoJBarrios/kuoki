@@ -1,6 +1,6 @@
 import { EnvironmentStore } from '../store';
 import { DefaultEnvironmentService } from './environment-service.application';
-import { EnvironmentService } from './environment-service.gateway';
+import { EnvironmentService } from './environment-service.interface';
 
 /**
  * Creates a default environment service instance.

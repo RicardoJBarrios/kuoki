@@ -14,7 +14,7 @@ import {
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
-import { EnvironmentService } from './environment-service.gateway';
+import { EnvironmentService } from './environment-service.interface';
 
 /**
  * Sets the environment properties in the store.
