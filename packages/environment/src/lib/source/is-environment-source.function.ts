@@ -1,6 +1,6 @@
 import { ifDefined } from '../helpers';
 import { isPath } from '../path';
-import { EnvironmentSource } from './environment-source.gateway';
+import { EnvironmentSource } from './environment-source.interface';
 import { SourceStrategy } from './source-strategy.enum';
 
 /**

@@ -2,13 +2,13 @@
 
 > The source from which to get environment properties.
 
-An environment source is a gateway that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
+An environment source is an interface that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
 
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
 
 class FileSource implements EnvironmentSource {
-  // ...implement environment source gateway
+  // ...implement environment source interface
 }
 ```
 

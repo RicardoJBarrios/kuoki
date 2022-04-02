@@ -2,10 +2,10 @@ import { install, InstalledClock } from '@sinonjs/fake-timers';
 import createMockInstance from 'jest-create-mock-instance';
 import { delay, interval, map, of, take, throwError } from 'rxjs';
 
-import { EnvironmentLoader } from '../loader';
+import { createEnvironmentLoader, EnvironmentLoader } from '../loader';
 import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentState } from '../store';
-import { EnvironmentSource } from './environment-source.gateway';
+import { EnvironmentSource } from './environment-source.interface';
 import { SourceStrategy } from './source-strategy.enum';
 
 describe('EnvironmentSource integration with EnvironmentLoader', () => {
@@ -41,7 +41,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
             take(3)
           )
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(5); // 5
@@ -65,7 +65,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isRequired: true,
         load: () => interval(10).pipe(map((v) => ({ a: v })))
       };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = createEnvironmentLoader(service, [source1]);
       loader.load().finally(() => load());
 
       await clock.tickAsync(100); // 100
@@ -82,7 +82,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isRequired: true,
         load: () => of(state2).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().catch(() => load());
 
       await clock.tickAsync(0); // 0
@@ -103,7 +103,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isRequired: true,
         load: () => of(state2).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -134,7 +134,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isOrdered: true,
         load: () => of(state2).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -158,7 +158,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
       const state2: EnvironmentState = { b: 0 };
       const source1: EnvironmentSource = { load: () => of(state1).pipe(delay(5)) };
       const source2: EnvironmentSource = { load: () => of(state2).pipe(delay(5)) };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -182,7 +182,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isOrdered: true,
         load: () => of({ b: 0 }).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -206,7 +206,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isOrdered: true,
         load: () => of(state2).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -233,7 +233,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         isRequired: true,
         load: () => of(state2).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -256,7 +256,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         strategy: SourceStrategy.ADD,
         load: () => of(state1).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = createEnvironmentLoader(service, [source1]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -276,7 +276,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         strategy: SourceStrategy.ADD_PRESERVING,
         load: () => of(state1).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = createEnvironmentLoader(service, [source1]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -296,7 +296,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         strategy: SourceStrategy.MERGE,
         load: () => of(state1).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = createEnvironmentLoader(service, [source1]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -316,7 +316,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         strategy: SourceStrategy.MERGE_PRESERVING,
         load: () => of(state1).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = createEnvironmentLoader(service, [source1]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -344,7 +344,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         strategy: SourceStrategy.MERGE,
         load: () => of(state2).pipe(delay(5))
       };
-      loader = new EnvironmentLoader(service, [source1, source2]);
+      loader = createEnvironmentLoader(service, [source1, source2]);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -368,7 +368,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         load: () => of(state).pipe(delay(5)),
         mapFn: (properties) => ({ ...properties, b: 0 })
       };
-      loader = new EnvironmentLoader(service, source);
+      loader = createEnvironmentLoader(service, source);
       loader.load().then(() => load());
 
       await clock.tickAsync(0); // 0
@@ -389,7 +389,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
         load: () => throwError(() => new Error('original')),
         errorHandler: () => ({ a: 0 })
       };
-      loader = new EnvironmentLoader(service, source);
+      loader = createEnvironmentLoader(service, source);
       loader.load().then(() => load());
 
       await clock.runAllAsync();
@@ -409,7 +409,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
           throw e;
         }
       };
-      loader = new EnvironmentLoader(service, source);
+      loader = createEnvironmentLoader(service, source);
 
       await expect(loader.load()).rejects.toThrow(`The environment source "a" failed to load: original`);
       expect(console.log).toHaveBeenNthCalledWith(1, error);
@@ -424,7 +424,7 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
           throw new Error('new');
         }
       };
-      loader = new EnvironmentLoader(service, source);
+      loader = createEnvironmentLoader(service, source);
 
       await expect(loader.load()).rejects.toThrow(`The environment source "a" failed to load: new`);
     });

@@ -32,7 +32,7 @@ describe('EnvironmentSource Use Cases', () => {
     it(`using Promise catch`, async () => {
       const state1 = { a: 0 };
       const source1 = { load: async () => Promise.reject().catch(() => Promise.resolve(state1)) };
-      loader = new EnvironmentLoader(service, [source1]);
+      loader = createEnvironmentLoader(service, [source1]);
 
       await expect(loader.load()).toResolve();
       expect(service.add).toHaveBeenNthCalledWith(1, state1, undefined);
@@ -43,7 +43,7 @@ describe('EnvironmentSource Use Cases', () => {
       const source = {
         load: () => throwError(() => new Error()).pipe(catchError(() => of(state)))
       };
-      loader = new EnvironmentLoader(service, [source]);
+      loader = createEnvironmentLoader(service, [source]);
 
       await expect(loader.load()).toResolve();
       expect(service.add).toHaveBeenNthCalledWith(1, state, undefined);
