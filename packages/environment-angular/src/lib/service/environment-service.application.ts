@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EnvironmentService, EnvironmentStore } from '@kuoki/environment';
+import { DefaultEnvironmentService as OriginalEnvironmentService, EnvironmentStore } from '@kuoki/environment';
 
 @Injectable()
-export class DefaultEnvironmentService extends EnvironmentService {
+export class DefaultEnvironmentService extends OriginalEnvironmentService {
   constructor(protected override readonly store: EnvironmentStore) {
     super(store);
   }

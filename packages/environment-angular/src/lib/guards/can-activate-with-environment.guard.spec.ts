@@ -1,20 +1,26 @@
 import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
-import { EnvironmentQuery } from '@kuoki/environment';
+import { EnvironmentQuery, EnvironmentStore } from '@kuoki/environment';
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator/jest';
 import { set } from 'lodash-es';
 
+import { DefaultEnvironmentQuery } from '../query';
+import { DefaultEnvironmentStore } from '../store';
 import { CanActivateWithEnvironmentGuard } from './can-activate-with-environment.guard';
 
 describe('CanActivateWithEnvironmentGuard', () => {
   let spectator: SpectatorService<CanActivateWithEnvironmentGuard>;
-  let query: SpyObject<EnvironmentQuery>;
+  let query: EnvironmentQuery;
   let router: SpyObject<Router>;
   let service: any;
   let route: ActivatedRouteSnapshot;
 
   const createService = createServiceFactory({
     service: CanActivateWithEnvironmentGuard,
-    mocks: [EnvironmentQuery, Router]
+    providers: [
+      { provide: EnvironmentQuery, useClass: DefaultEnvironmentQuery },
+      { provide: EnvironmentStore, useClass: DefaultEnvironmentStore }
+    ],
+    mocks: [Router]
   });
 
   beforeEach(() => {
@@ -31,14 +37,14 @@ describe('CanActivateWithEnvironmentGuard', () => {
 
   it(`canActivate(route) returns true if properties exists`, () => {
     service.properties = ['a'];
-    query.containsAll.andReturn(true);
+    jest.spyOn(query, 'containsAll').mockReturnValue(true);
 
     expect(spectator.service.canActivate(route)).toBeTrue();
   });
 
   it(`canActivate(route) returns false if properties doesn't exist and no urlOnError`, () => {
     service.properties = ['a'];
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
 
     expect(spectator.service.canActivate(route)).toBeFalse();
   });
@@ -47,7 +53,7 @@ describe('CanActivateWithEnvironmentGuard', () => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
     service.urlOnError = 'path/to';
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
     router.parseUrl.mockReturnValue(urlTree);
 
     expect(spectator.service.canActivate(route)).toEqual(urlTree);
@@ -57,7 +63,7 @@ describe('CanActivateWithEnvironmentGuard', () => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
     service.urlOnError = urlTree;
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
     router.parseUrl.mockReturnValue(urlTree);
 
     expect(spectator.service.canActivate(route)).toEqual(urlTree);
@@ -77,7 +83,7 @@ describe('CanActivateWithEnvironmentGuard', () => {
   });
 
   it(`canActivate(route) returns true if route.data properties is not an array`, () => {
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
     set(route, 'data.canActivateWithEnvironment.properties', null);
     expect(spectator.service.canActivate(route)).toBeTrue();
     set(route, 'data.canActivateWithEnvironment.properties', undefined);
@@ -87,7 +93,7 @@ describe('CanActivateWithEnvironmentGuard', () => {
   });
 
   it(`canActivate(route) returns true if route.data properties is empty array`, () => {
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
     set(route, 'data.canActivateWithEnvironment.properties', []);
     expect(spectator.service.canActivate(route)).toBeTrue();
   });
@@ -96,7 +102,7 @@ describe('CanActivateWithEnvironmentGuard', () => {
     service.properties = ['a'];
     service.urlOnError = 'path/to';
     const dataUrlOnError = 'data/path';
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
     jest.spyOn(router, 'parseUrl');
     spectator.service.canActivate(route);
 
@@ -111,7 +117,7 @@ describe('CanActivateWithEnvironmentGuard', () => {
   it(`canActivate(route) returns false if route.data urlOnError is not string or UrlTree`, () => {
     service.properties = ['a'];
     const dataUrlOnError = 0;
-    query.containsAll.andReturn(false);
+    jest.spyOn(query, 'containsAll').mockReturnValue(false);
     set(route, 'data.canActivateWithEnvironment.urlOnError', dataUrlOnError);
 
     expect(spectator.service.canActivate(route)).toBeFalse();

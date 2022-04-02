@@ -1,10 +1,14 @@
 import { Inject, Injectable, Optional } from '@angular/core';
-import { EnvironmentQuery, EnvironmentQueryConfig, EnvironmentStore } from '@kuoki/environment';
+import {
+  DefaultEnvironmentQuery as OriginalEnvironmentQuery,
+  EnvironmentQueryConfig,
+  EnvironmentStore
+} from '@kuoki/environment';
 
 import { ENVIRONMENT_QUERY_CONFIG } from './environment-query-config.token';
 
 @Injectable()
-export class DefaultEnvironmentQuery extends EnvironmentQuery {
+export class DefaultEnvironmentQuery extends OriginalEnvironmentQuery {
   constructor(
     protected override readonly store: EnvironmentStore,
 

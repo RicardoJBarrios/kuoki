@@ -1,6 +1,6 @@
 import {
-  EnvironmentLoader,
-  EnvironmentQuery,
+  DefaultEnvironmentLoader,
+  DefaultEnvironmentQuery,
   EnvironmentQueryConfig,
   EnvironmentService,
   EnvironmentSource,
@@ -34,11 +34,11 @@ export interface EnvironmentModuleConfig {
   /**
    * The implementation for the environment query.
    */
-  query?: ProviderValue<EnvironmentQuery>;
+  query?: ProviderValue<DefaultEnvironmentQuery>;
   /**
    * The implementation for the environment loader.
    */
-  loader?: ProviderValue<EnvironmentLoader>;
+  loader?: ProviderValue<DefaultEnvironmentLoader>;
   /**
    * The enviroment sources to load.
    */

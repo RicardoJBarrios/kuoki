@@ -32,14 +32,14 @@ export class CustomEnvironmentStore implements EnvironmentStore {
 }
 
 @Injectable()
-export class CustomEnvironmentService extends EnvironmentService {
+export class CustomEnvironmentService extends DefaultEnvironmentService {
   constructor(protected override readonly store: EnvironmentStore) {
     super(store);
   }
 }
 
 @Injectable()
-export class CustomEnvironmentQuery extends EnvironmentQuery {
+export class CustomEnvironmentQuery extends DefaultEnvironmentQuery {
   constructor(
     protected override readonly store: EnvironmentStore,
     @Optional()
@@ -51,7 +51,7 @@ export class CustomEnvironmentQuery extends EnvironmentQuery {
 }
 
 @Injectable()
-export class CustomEnvironmentLoader extends EnvironmentLoader {
+export class CustomEnvironmentLoader extends DefaultEnvironmentLoader {
   constructor(
     protected override readonly service: EnvironmentService,
     @Optional()
