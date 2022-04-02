@@ -13,7 +13,7 @@ import {
   OnBeforeSourceAdd,
   OnBeforeSourceLoad
 } from '../lifecycle-hooks';
-import { EnvironmentLoader } from '../loader';
+import { DefaultEnvironmentLoader } from '../loader';
 import { LoaderSource } from '../loader-source';
 import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
@@ -22,7 +22,7 @@ import { EnvironmentState } from '../store';
 const hook = jest.fn();
 
 class Loader
-  extends EnvironmentLoader
+  extends DefaultEnvironmentLoader
   implements
     OnAfterLoad,
     OnAfterComplete,
@@ -71,7 +71,7 @@ class Loader
 
 describe('LifecycleHooks integration with EnvironmentLoader', () => {
   let service: jest.Mocked<EnvironmentService>;
-  let loader: EnvironmentLoader;
+  let loader: DefaultEnvironmentLoader;
   let clock: InstalledClock;
 
   beforeEach(() => {

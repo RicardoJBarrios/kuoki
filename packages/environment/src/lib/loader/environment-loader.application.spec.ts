@@ -6,17 +6,17 @@ import { validate } from 'uuid';
 import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource, InvalidSourceError } from '../source';
 import { EnvironmentState } from '../store';
-import { EnvironmentLoader } from './environment-loader.application';
+import { DefaultEnvironmentLoader } from './environment-loader.application';
 
 describe('EnvironmentLoader', () => {
   let service: jest.Mocked<EnvironmentService>;
-  let loader: EnvironmentLoader;
+  let loader: DefaultEnvironmentLoader;
   let clock: InstalledClock;
   let load: jest.Mock<any, any>;
 
   beforeEach(() => {
     service = createMockInstance(DefaultEnvironmentService);
-    loader = new EnvironmentLoader(service);
+    loader = new DefaultEnvironmentLoader(service);
     clock = install();
     load = jest.fn();
   });
@@ -31,7 +31,7 @@ describe('EnvironmentLoader', () => {
     const source1: any = { load: 0 };
     const error: Error = new InvalidSourceError(source1);
 
-    expect(() => new EnvironmentLoader(service, [source1])).toThrowError(error);
+    expect(() => new DefaultEnvironmentLoader(service, [source1])).toThrowError(error);
   });
 
   it(`throws if there are sources with duplicated ids`, () => {
@@ -41,12 +41,12 @@ describe('EnvironmentLoader', () => {
     const source4: EnvironmentSource = { id: 'b', load: () => [{}] };
     const error: Error = new Error(`There are sources with duplicate id's: a, b`);
 
-    expect(() => new EnvironmentLoader(service, [source1, source2, source3, source4])).toThrowError(error);
+    expect(() => new DefaultEnvironmentLoader(service, [source1, source2, source3, source4])).toThrowError(error);
   });
 
   it(`.loaderSources is set on constructor with single source`, () => {
     const source1: EnvironmentSource = { id: 'a', load: () => [{}] };
-    loader = new EnvironmentLoader(service, source1);
+    loader = new DefaultEnvironmentLoader(service, source1);
 
     expect(loader['loaderSources']).toBeArrayOfSize(1);
     expect(loader['loaderSources'][0]).toEqual(source1);
@@ -55,7 +55,7 @@ describe('EnvironmentLoader', () => {
   it(`.loaderSources is set on constructor with sources array`, () => {
     const source1: EnvironmentSource = { id: 'a', load: () => [{}] };
     const source2: EnvironmentSource = { id: 'b', load: () => [{}] };
-    loader = new EnvironmentLoader(service, [source1, source2]);
+    loader = new DefaultEnvironmentLoader(service, [source1, source2]);
 
     expect(loader['loaderSources']).toBeArrayOfSize(2);
     expect(loader['loaderSources'][0]).toEqual(source1);
@@ -64,7 +64,7 @@ describe('EnvironmentLoader', () => {
 
   it(`.loaderSources sets source id with UUID if undefined`, () => {
     const source1: EnvironmentSource = { load: () => [{}] };
-    loader = new EnvironmentLoader(service, source1);
+    loader = new DefaultEnvironmentLoader(service, source1);
 
     expect(loader['loaderSources']).toBeArrayOfSize(1);
     expect(validate(loader['loaderSources'][0].id)).toBeTrue();
@@ -73,7 +73,7 @@ describe('EnvironmentLoader', () => {
   it(`.sourcesSubject$ is set on constructor`, () => {
     const source1: EnvironmentSource = { id: 'a', load: () => [{}] };
     const source2: EnvironmentSource = { id: 'b', load: () => [{}] };
-    loader = new EnvironmentLoader(service, [source1, source2]);
+    loader = new DefaultEnvironmentLoader(service, [source1, source2]);
 
     expect(loader['sourcesSubject$'].size).toEqual(2);
     expect([...loader['sourcesSubject$'].keys()]).toEqual([source1.id, source2.id]);
@@ -82,7 +82,7 @@ describe('EnvironmentLoader', () => {
   it(`.load() resolves immedialely if there are no required sources`, async () => {
     const state1: EnvironmentState = { a: 0 };
     const source1: EnvironmentSource = { load: () => of(state1).pipe(delay(5)) };
-    loader = new EnvironmentLoader(service, [source1]);
+    loader = new DefaultEnvironmentLoader(service, [source1]);
     loader.load().then(() => load());
 
     await clock.tickAsync(0); // 0
@@ -99,7 +99,7 @@ describe('EnvironmentLoader', () => {
   it(`.load() rejects with Error`, async () => {
     const source1: EnvironmentSource = { id: 'a', isRequired: true, load: () => throwError(() => new Error('test')) };
     const error: Error = new Error('The environment source "a" failed to load: test');
-    loader = new EnvironmentLoader(service, [source1]);
+    loader = new DefaultEnvironmentLoader(service, [source1]);
 
     await expect(loader.load()).rejects.toEqual(error);
   });
@@ -107,7 +107,7 @@ describe('EnvironmentLoader', () => {
   it(`.resolveLoad() forces the load to resolve`, async () => {
     const state1: EnvironmentState = { a: 0 };
     const source1: EnvironmentSource = { isRequired: true, load: () => of(state1).pipe(delay(10)) };
-    loader = new EnvironmentLoader(service, [source1]);
+    loader = new DefaultEnvironmentLoader(service, [source1]);
     loader.load().then(() => load());
 
     await clock.tickAsync(0); // 0
@@ -132,7 +132,7 @@ describe('EnvironmentLoader', () => {
   it(`.rejectLoad() forces the load to reject`, async () => {
     const state1: EnvironmentState = { a: 0 };
     const source1: EnvironmentSource = { isRequired: true, load: () => of(state1).pipe(delay(10)) };
-    loader = new EnvironmentLoader(service, [source1]);
+    loader = new DefaultEnvironmentLoader(service, [source1]);
     loader.load().catch(() => load());
 
     await clock.tickAsync(0); // 0
@@ -156,7 +156,7 @@ describe('EnvironmentLoader', () => {
 
   it(`.completeAllSources() completes all ongoing sources`, async () => {
     const source1: EnvironmentSource = { isRequired: true, load: () => of({ a: 0 }).pipe(delay(10)) };
-    loader = new EnvironmentLoader(service, [source1]);
+    loader = new DefaultEnvironmentLoader(service, [source1]);
     loader.load().then(() => load());
 
     await clock.tickAsync(0); // 0
@@ -179,7 +179,7 @@ describe('EnvironmentLoader', () => {
     const state2: EnvironmentState = { b: 0 };
     const source1: EnvironmentSource = { isRequired: true, isOrdered: true, load: () => of({ a: 0 }).pipe(delay(10)) };
     const source2: EnvironmentSource = { isRequired: true, isOrdered: true, load: () => of(state2).pipe(delay(10)) };
-    loader = new EnvironmentLoader(service, [source1, source2]);
+    loader = new DefaultEnvironmentLoader(service, [source1, source2]);
     loader.load().then(() => load());
 
     await clock.tickAsync(0); // 0
@@ -204,7 +204,7 @@ describe('EnvironmentLoader', () => {
   it(`.onDestroy() is called after all sources completes`, async () => {
     const source1: EnvironmentSource = { isRequired: true, load: () => throwError(() => new Error()) };
     const source2: EnvironmentSource = { load: () => of({ a: 0 }).pipe(delay(10)) };
-    loader = new EnvironmentLoader(service, [source1, source2]);
+    loader = new DefaultEnvironmentLoader(service, [source1, source2]);
     jest.spyOn(loader, 'onDestroy');
     loader.load().catch(() => load());
 
@@ -232,7 +232,7 @@ describe('EnvironmentLoader', () => {
       isOrdered: true,
       load: () => of({}).pipe(delay(10))
     };
-    loader = new EnvironmentLoader(service, [source1, source2]);
+    loader = new DefaultEnvironmentLoader(service, [source1, source2]);
     loader.load().then(() => load());
 
     await clock.tickAsync(0); // 0
@@ -261,7 +261,7 @@ describe('EnvironmentLoader', () => {
   it(`.preAddProperties(properties, source) intercepts every value before store`, async () => {
     const state1: EnvironmentState = { a: 0 };
     const source1: EnvironmentSource = { id: 'a', load: () => of(state1) };
-    loader = new EnvironmentLoader(service, [source1]);
+    loader = new DefaultEnvironmentLoader(service, [source1]);
     loader.preAddProperties = (p: any, s: any) => ({ ...p, ...s });
     loader.load();
 

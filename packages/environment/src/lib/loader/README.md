@@ -2,7 +2,7 @@
 
 > Loads the environment properties from the provided asynchronous sources.
 
-The environment loader application is the way to load the properties to the environment. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
+The environment loader is an interface that must be implemented to load the properties to the environment. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
 
 ```js
 import { createEnvironmentLoader } from '@kuoki/environment';

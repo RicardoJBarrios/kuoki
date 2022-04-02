@@ -2,17 +2,18 @@ import { ArrayOrSingle } from 'ts-essentials';
 
 import { EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
-import { EnvironmentLoader } from './environment-loader.application';
+import { DefaultEnvironmentLoader } from './environment-loader.application';
+import { EnvironmentLoader } from './environment-loader.interface';
 
 /**
- * Creates an EnvironmentLoader.
+ * Creates a default environment loader instance.
  * @param service The environment service.
  * @param sources The sources to get environment properties.
- * @returns An EnvironmentLoader instance.
+ * @returns A default environment loader instance.
  */
 export function createEnvironmentLoader(
   service: EnvironmentService,
   sources?: ArrayOrSingle<EnvironmentSource>
 ): EnvironmentLoader {
-  return new EnvironmentLoader(service, sources);
+  return new DefaultEnvironmentLoader(service, sources);
 }

@@ -3,7 +3,7 @@ import { createMockInstance } from 'jest-create-mock-instance';
 import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource } from '../source';
 import { createEnvironmentLoader } from './create-environment-loader.function';
-import { EnvironmentLoader } from './environment-loader.application';
+import { DefaultEnvironmentLoader } from './environment-loader.application';
 
 const source1: EnvironmentSource = { id: '0', load: () => [{ a: 0 }] };
 const source2: EnvironmentSource = { id: '1', load: () => [{ b: 0 }] };
@@ -20,24 +20,24 @@ describe('createEnvironmentLoader(service, sources?)', () => {
   });
 
   it(`(service) returns an EnvironmentLoader without sources`, () => {
-    const loader: EnvironmentLoader = createEnvironmentLoader(service);
+    const loader: any = createEnvironmentLoader(service);
 
-    expect(loader).toBeInstanceOf(EnvironmentLoader);
+    expect(loader).toBeInstanceOf(DefaultEnvironmentLoader);
     expect(loader['loaderSources']).toEqual([]);
   });
 
   it(`(service, source) returns an EnvironmentLoader with a single source`, () => {
-    const loader: EnvironmentLoader = createEnvironmentLoader(service, source1);
+    const loader: any = createEnvironmentLoader(service, source1);
 
-    expect(loader).toBeInstanceOf(EnvironmentLoader);
+    expect(loader).toBeInstanceOf(DefaultEnvironmentLoader);
     expect(loader['loaderSources']).toBeArrayOfSize(1);
     expect(loader['loaderSources'][0].id).toEqual('0');
   });
 
   it(`(service, source[]) returns an EnvironmentLoader with an array of sources`, () => {
-    const loader: EnvironmentLoader = createEnvironmentLoader(service, [source1, source2]);
+    const loader: any = createEnvironmentLoader(service, [source1, source2]);
 
-    expect(loader).toBeInstanceOf(EnvironmentLoader);
+    expect(loader).toBeInstanceOf(DefaultEnvironmentLoader);
     expect(loader['loaderSources']).toBeArrayOfSize(2);
     expect(loader['loaderSources'][0].id).toEqual('0');
     expect(loader['loaderSources'][1].id).toEqual('1');
