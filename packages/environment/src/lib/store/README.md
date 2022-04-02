@@ -2,7 +2,55 @@
 
 > Stores the environment properties that the application needs.
 
-An environment store is a gateway that must be implemented to manage the environment state. Can be integrated into any state manager already using the application or create your own.
+An environment store is a gateway that must be implemented to manage the environment state. Can be integrated into any state manager already using the application or use the default provided.
+
+```ts
+import { EnvironmentStore } from '@kuoki/environment';
+
+class CustomEnvironmentStore implements EnvironmentStore {
+  // ...implement environment store gateway
+}
+
+const environmentStore: EnvironmentStore = new CustomEnvironmentStore();
+```
+
+## DefaultEnvironmentStore
+
+A basic RxJS environment store implementation that uses a [BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject) as state manager tha can be instantiated from...
+
+1. A factory function.
+
+```js
+import { createEnvironmentStore, EnvironmentStore } from '@kuoki/environment';
+
+const environmentStore1: EnvironmentStore = createEnvironmentStore({});
+const environmentStore2: EnvironmentStore = createEnvironmentStore({ a: 0 });
+```
+
+2. The newable class.
+
+```js
+import { DefaultEnvironmentStore, EnvironmentStore } from '@kuoki/environment';
+
+const environmentStore1: EnvironmentStore = new DefaultEnvironmentStore({});
+const environmentStore2: EnvironmentStore = new DefaultEnvironmentStore({ a: 0 });
+```
+
+3. A class that extends `DefaultEnvironmentStore`.
+
+```ts
+import { DefaultEnvironmentStore, EnvironmentState, EnvironmentStore } from '@kuoki/environment';
+
+class CustomEnvironmentStore extends DefaultEnvironmentStore {
+  constructor(protected override readonly _initialState?: EnvironmentState) {
+    super(_initialState);
+  }
+  // ...override implementation
+}
+
+const environmentStore1: EnvironmentStore = new CustomEnvironmentStore({});
+const environmentStore2: EnvironmentStore = new CustomEnvironmentStore({ a: 0 });
+```
 
 ## Use cases
 
@@ -15,9 +63,8 @@ Below are examples of the expected behavior and some implementation examples.
     <li><a href="#getall-1">getAll</a></li>
     <li><a href="#update">update</a></li>
     <li><a href="#reset">reset</a></li>
-    <li><a href="#rxjs">RxJS</a></li>
-    <li><a href="#redux">Redux</a></li>
-    <li><a href="#akita">Akita</a></li>
+    <li><a href="#implementation-using-redux">Implementation using Redux</a></li>
+    <li><a href="#implementation-using-akita">Implementation using Akita</a></li>
   </ol>
 </details>
 
@@ -25,14 +72,14 @@ Below are examples of the expected behavior and some implementation examples.
 
 ```js
 // EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
-store.getAll$(); // ^{a:0}-{a:0}-{a:0,b:0}-
+environmentStore.getAll$(); // ^{a:0}-{a:0}-{a:0,b:0}-
 ```
 
 ### getAll
 
 ```js
-// EnvironmentState = {a:0}
-store.getAll(); // {a:0}
+// EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
+environmentStore.getAll(); // {a:0}
 ```
 
 ### update
@@ -44,14 +91,14 @@ and a partial update can cause inconsistencies.
 ```js
 // CORRECT: Overwrite
 // EnvironmentState = {a:0}
-store.update({ b: 0 });
+environmentStore.update({ b: 0 });
 // EnvironmentState = {b:0}
 ```
 
 ```js
 // WRONG: Partial Update
 // EnvironmentState = {a:0}
-store.update({ b: 0 });
+environmentStore.update({ b: 0 });
 // EnvironmentState = {a:0,b:0}
 ```
 
@@ -59,55 +106,11 @@ store.update({ b: 0 });
 
 ```js
 // EnvironmentState = {a:0}
-store.reset();
+environmentStore.reset();
 // EnvironmentState = {}
 ```
 
-### RxJS
-
-A basic RxJS implementation that uses a [BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject) as state manager.
-
-```js
-import { BehaviorSubject } from 'rxjs';
-
-const initialState = {};
-const store = new BehaviorSubject(initialState);
-export const environmentStore = {
-  getAll$: () => store.asObservable(),
-  getAll: () => store.getValue(),
-  update: (environment) => store.next(environment),
-  reset: () => store.next(initialState)
-};
-```
-
-```ts
-import { EnvironmentState, EnvironmentStore } from '@kuoki/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
-
-export class RxJSEnvironmentStore implements EnvironmentStore {
-  protected readonly state: BehaviorSubject<EnvironmentState> = new BehaviorSubject(this.initialState);
-
-  constructor(protected readonly initialState: EnvironmentState = {}) {}
-
-  getAll$(): Observable<EnvironmentState> {
-    return this.state.asObservable();
-  }
-
-  getAll(): EnvironmentState {
-    return this.state.getValue();
-  }
-
-  update(environment: EnvironmentState): void {
-    this.state.next(environment);
-  }
-
-  reset(): void {
-    this.state.next(this.initialState);
-  }
-}
-```
-
-### Redux
+### Implementation using Redux
 
 [Redux](https://redux.js.org/) is a predictable state container for JavaScript apps.
 
@@ -135,7 +138,7 @@ export const environmentStore = {
 };
 ```
 
-### Akita
+### Implementation using Akita
 
 [Akita](https://datorama.github.io/akita/) is a state management pattern built on top of RxJS.
 
