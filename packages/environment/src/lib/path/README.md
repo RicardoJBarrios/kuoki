@@ -15,6 +15,7 @@ letters `a-zA-Z`, `$`, `_`, and digits `0-9`, but may not start with a digit.
     <li><a href="#overwritespath">overwritesPath</a></li>
     <li><a href="#pathasarray">pathAsArray</a></li>
     <li><a href="#pathasstring">pathAsString</a></li>
+    <li><a href="#errors">Errors</a></li>
   </ol>
 </details>
 
@@ -62,4 +63,12 @@ pathAsArray(['a', 'a']); // ['a','a']
 ```js
 pathAsString('a.a'); // 'a.a'
 pathAsString(['a', 'a']); // 'a.a'
+```
+
+### Errors
+
+```js
+new InvalidPathError('2a'); // The path "2a" is invalid
+new PathDoesntExistError('a'); // The path "a" doesn't exist in the environment
+new PathExistsError('a'); // The path "a" already exists in the environment
 ```
