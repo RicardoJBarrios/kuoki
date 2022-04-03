@@ -23,13 +23,15 @@
     "@angular/core": ">=13.2.0",
     "@angular/router": ">=13.2.0",
     "@kuoki/environment": ">=0.2.1",
-    "lodash-es": ">=4.0.0",
-    "reflect-metadata": ">=0.1.2",
-    "rxjs": ">=7.0.0",
-    "ts-essentials": ">=9.1.0"
+    "rxjs": ">=7.0.0"
   },
   "dependencies": {
+    "lodash-es": ">=4.0.0",
+    "reflect-metadata": ">=0.1.2",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "ts-essentials": ">=9.1.0"
   },
   "private": false
 }
