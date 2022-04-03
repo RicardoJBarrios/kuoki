@@ -2,35 +2,71 @@
 
 > Gets the properties from the environment.
 
-The environment query is an interface that must be implemented to get the environment values. The base implementation can be directly instantiated or customized by creating a custom inherit class that overrides the methods.
-
-```js
-import { createEnvironmentQuery } from '@kuoki/environment';
-import { store } from '...';
-
-const query = createEnvironmentQuery(store);
-const query2 = createEnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
-```
-
-```js
-import { EnvironmentQuery } from '@kuoki/environment';
-import { store } from '...';
-
-const query = new EnvironmentQuery(store);
-const query2 = new EnvironmentQuery(store, { transpileEnvironment: true, interpolation: ['[[', ']]'] });
-```
+The environment query is an interface that must be implemented to get the environment values. Can be integrated into any application using the provided default implementation or a custom one.
 
 ```ts
-import { EnvironmentQuery, EnvironmentQueryConfig, EnvironmentStore } from '@kuoki/environment';
+import { EnvironmentQuery } from '@kuoki/environment';
 
-class CustomEnvironmentQuery extends EnvironmentQuery {
+class CustomEnvironmentQuery implements EnvironmentQuery {
+  // ...implement environment query interface
+}
+
+const environmentQuery: EnvironmentQuery = new CustomEnvironmentQuery();
+```
+
+## DefaultEnvironmentQuery
+
+A basic implementation that can be instantiated from...
+
+1. A factory function.
+
+```js
+import { createEnvironmentQuery, createEnvironmentStore, EnvironmentQuery, EnvironmentStore } from '@kuoki/environment';
+
+const environmentStore: EnvironmentStore = createEnvironmentStore();
+const environmentQuery1: EnvironmentQuery = createEnvironmentQuery(environmentStore);
+
+const queryConfig: EnvironmentQueryConfig = { transpileEnvironment: true, interpolation: ['[[', ']]'] };
+const environmentQuery2: EnvironmentQuery = createEnvironmentQuery(environmentStore, queryConfig);
+```
+
+1. The newable class.
+
+```js
+import {
+  DefaultEnvironmentQuery,
+  DefaultEnvironmentStore,
+  EnvironmentQuery,
+  EnvironmentStore
+} from '@kuoki/environment';
+
+const environmentStore: EnvironmentStore = new DefaultEnvironmentStore();
+const environmentQuery1: EnvironmentQuery = new DefaultEnvironmentQuery(environmentStore);
+
+const queryConfig: EnvironmentQueryConfig = { transpileEnvironment: true, interpolation: ['[[', ']]'] };
+const environmentQuery2: EnvironmentQuery = new DefaultEnvironmentQuery(environmentStore, queryConfig);
+```
+
+1. A class that extends `DefaultEnvironmentQuery`.
+
+```ts
+import { DefaultEnvironmentQuery, EnvironmentStore } from '@kuoki/environment';
+
+class CustomEnvironmentQuery extends DefaultEnvironmentQuery {
   constructor(
     protected override readonly store: EnvironmentStore,
     protected override readonly queryConfig?: EnvironmentQueryConfig
   ) {
     super(store, queryConfig);
   }
+  // ...override implementation
 }
+
+const environmentStore: EnvironmentStore = new DefaultEnvironmentStore();
+const environmentQuery1: EnvironmentQuery = new CustomEnvironmentQuery(environmentStore);
+
+const queryConfig: EnvironmentQueryConfig = { transpileEnvironment: true, interpolation: ['[[', ']]'] };
+const environmentQuery1: EnvironmentQuery = new CustomEnvironmentQuery(environmentStore, queryConfig);
 ```
 
 ## Use cases
