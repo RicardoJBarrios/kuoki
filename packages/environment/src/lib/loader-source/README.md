@@ -18,7 +18,7 @@ The default values are:
 
 ```js
 {
-  id: 'v4 UUID',
+  id: 'unique id',
   isRequired: false,
   isOrdered: false,
   ignoreError: false,

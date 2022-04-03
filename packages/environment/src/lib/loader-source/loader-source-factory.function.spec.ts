@@ -1,5 +1,3 @@
-import { validate } from 'uuid';
-
 import { EnvironmentSource, InvalidSourceError, SourceStrategy } from '../source';
 import { loaderSourceFactory } from './loader-source-factory.function';
 import { LoaderSource } from './loader-source.type';
@@ -9,7 +7,7 @@ describe('loaderSourceFactory(source)', () => {
     const source1: EnvironmentSource = { load: () => [{}] };
     const source: LoaderSource = loaderSourceFactory(source1);
 
-    expect(validate(source.id)).toBeTrue();
+    expect(source.id).toBeString();
     expect(source.isRequired).toBeFalse();
     expect(source.isOrdered).toBeFalse();
     expect(source.ignoreError).toBeFalse();

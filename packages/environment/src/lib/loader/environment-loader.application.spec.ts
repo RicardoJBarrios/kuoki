@@ -1,7 +1,6 @@
 import { install, InstalledClock } from '@sinonjs/fake-timers';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { delay, of, throwError } from 'rxjs';
-import { validate } from 'uuid';
 
 import { DefaultEnvironmentService, EnvironmentService } from '../service';
 import { EnvironmentSource, InvalidSourceError } from '../source';
@@ -67,7 +66,7 @@ describe('EnvironmentLoader', () => {
     loader = new DefaultEnvironmentLoader(service, source1);
 
     expect(loader['loaderSources']).toBeArrayOfSize(1);
-    expect(validate(loader['loaderSources'][0].id)).toBeTrue();
+    expect(loader['loaderSources'][0].id).toBeString();
   });
 
   it(`.sourcesSubject$ is set on constructor`, () => {
