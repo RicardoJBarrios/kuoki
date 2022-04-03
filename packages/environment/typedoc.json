@@ -5,6 +5,7 @@
     "./src/lib/lifecycle-hooks/index.ts",
     "./src/lib/loader/index.ts",
     "./src/lib/loader-source/index.ts",
+    "./src/lib/module/index.ts",
     "./src/lib/path/index.ts",
     "./src/lib/query/index.ts",
     "./src/lib/service/index.ts",

@@ -5,6 +5,7 @@ export * from './lib/helpers/index';
 export * from './lib/lifecycle-hooks/index';
 export * from './lib/loader/index';
 export * from './lib/loader-source/index';
+export * from './lib/module/index';
 export * from './lib/path/index';
 export * from './lib/query/index';
 export * from './lib/service/index';

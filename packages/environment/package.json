@@ -24,8 +24,7 @@
   "peerDependencies": {
     "lodash-es": ">=4.0.0",
     "rxjs": ">=7.0.0",
-    "ts-essentials": ">=9.1.0",
-    "uuid": ">=8.0.0"
+    "ts-essentials": ">=9.1.0"
   },
   "private": false
 }
