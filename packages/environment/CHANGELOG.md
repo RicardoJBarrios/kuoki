@@ -2,6 +2,23 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.3.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-0.2.1...environment-0.3.0) (2022-04-03)
+
+
+### Features
+
+* **environment:** add default environment store ([bae1250](https://github.com/RicardoJBarrios/kuoki/commit/bae1250aa62c9d4f6935f78978b5341d71348a7c))
+* **environment:** add environment module ([7de214a](https://github.com/RicardoJBarrios/kuoki/commit/7de214a91176db47ed3065b0c1c3499420ed4d4f))
+* **environment:** add mapFn and errorHandler to environment source ([8bbab59](https://github.com/RicardoJBarrios/kuoki/commit/8bbab599ac2cb7299c76a1a522bad7daf9453db6))
+* **environment:** add mapFn to EnvironmentSource ([26fd2b6](https://github.com/RicardoJBarrios/kuoki/commit/26fd2b6b74525c6375c66f7866f8c309adcae3ee))
+* **environment:** remove uuid dep ([12c1025](https://github.com/RicardoJBarrios/kuoki/commit/12c102568ded6d616b76822d20e988ffc02c7136))
+* **environment:** tweak environment to make easier use with Angular ([90f795f](https://github.com/RicardoJBarrios/kuoki/commit/90f795f7ce2700326c630155f00b0f383d24d4f3))
+* **environment:** update async query ([f27f97d](https://github.com/RicardoJBarrios/kuoki/commit/f27f97de004dfa17647d8e08b8b76809efa72343))
+* **environment:** update environment service gateway and add default service ([1f7e987](https://github.com/RicardoJBarrios/kuoki/commit/1f7e987d2110433613ccbcd94543c7e37d6d7fda))
+* **environment:** update helpers ([b307aef](https://github.com/RicardoJBarrios/kuoki/commit/b307aefcc2c9442936c2d51e89ce1e7d6092b965))
+
+
+
 ## [0.2.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-0.2.0...environment-0.2.1) (2022-03-09)
 
 
