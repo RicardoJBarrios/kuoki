@@ -22,8 +22,12 @@
     "directory": "packages/environment"
   },
   "peerDependencies": {
-    "lodash-es": ">=4.0.0",
-    "rxjs": ">=7.0.0",
+    "rxjs": ">=7.0.0"
+  },
+  "dependencies": {
+    "lodash-es": ">=4.0.0"
+  },
+  "devDependencies": {
     "ts-essentials": ">=9.1.0"
   },
   "private": false
