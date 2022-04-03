@@ -23,5 +23,7 @@ export function loaderSourceFactory(source: EnvironmentSource): LoaderSource {
 }
 
 function randId(): string {
-  return Date.now().toString() + window.crypto.getRandomValues(new Uint32Array(1)).toString();
+  const radix = 36;
+
+  return Date.now().toString(radix) + Math.random().toString(radix);
 }
