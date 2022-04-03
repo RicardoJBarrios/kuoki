@@ -1,17 +1,16 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
-import { EnvironmentQuery, EnvironmentStore } from '@kuoki/environment';
-import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator/jest';
+import { EnvironmentQuery } from '@kuoki/environment';
+import { createServiceFactory, createSpyObject, SpectatorService, SpyObject } from '@ngneat/spectator/jest';
 import { set } from 'lodash-es';
 import { delay, of, Subscription } from 'rxjs';
 
 import { DefaultEnvironmentQuery } from '../query';
-import { DefaultEnvironmentStore } from '../store';
 import { CanActivateWithEnvironmentReactiveGuard } from './can-activate-with-environment-reactive.guard';
 
 describe('CanActivateWithEnvironmentReactiveGuard', () => {
   let spectator: SpectatorService<CanActivateWithEnvironmentReactiveGuard>;
-  let query: EnvironmentQuery;
+  let query: SpyObject<EnvironmentQuery>;
   let router: SpyObject<Router>;
   let service: any;
   let route: ActivatedRouteSnapshot;
@@ -19,10 +18,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
 
   const createService = createServiceFactory({
     service: CanActivateWithEnvironmentReactiveGuard,
-    providers: [
-      { provide: EnvironmentQuery, useClass: DefaultEnvironmentQuery },
-      { provide: EnvironmentStore, useClass: DefaultEnvironmentStore }
-    ],
+    providers: [{ provide: EnvironmentQuery, useValue: createSpyObject(DefaultEnvironmentQuery) }],
     mocks: [Router]
   });
 
@@ -35,13 +31,14 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
     sub.unsubscribe();
+    query.containsAll$.mockRestore();
+    router.parseUrl.mockRestore();
   });
 
   it(`canActivate(route) emits true if properties exists and no timeout`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true));
+    query.containsAll$.andReturn(of(true));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(true);
@@ -52,7 +49,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) emits true if properties exists before timeout`, (done) => {
     service.properties = ['a'];
     service.dueTime = 5;
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true));
+    query.containsAll$.andReturn(of(true));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(true);
@@ -63,7 +60,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) never emits if properties doesn't exists and no timeout`, fakeAsync(() => {
     const mockFn = jest.fn();
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(false));
+    query.containsAll$.andReturn(of(false));
 
     sub = spectator.service.canActivate(route).subscribe(() => mockFn());
 
@@ -74,7 +71,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) emits false if properties exists, timeout and no urlOnError`, (done) => {
     service.properties = ['a'];
     service.dueTime = 5;
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true).pipe(delay(10)));
+    query.containsAll$.andReturn(of(true).pipe(delay(10)));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(false);
@@ -85,7 +82,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) emits false if properties doesn't exist, timeout and no urlOnError`, (done) => {
     service.properties = ['a'];
     service.dueTime = 5;
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(false));
+    query.containsAll$.andReturn(of(false));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(false);
@@ -98,8 +95,8 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     service.properties = ['a'];
     service.dueTime = 5;
     service.urlOnError = 'path/to';
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(false));
-    router.parseUrl.mockReturnValue(urlTree);
+    query.containsAll$.andReturn(of(false));
+    router.parseUrl.andReturn(urlTree);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(urlTree);
@@ -112,7 +109,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     service.properties = ['a'];
     service.dueTime = 5;
     service.urlOnError = urlTree;
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(false));
+    query.containsAll$.andReturn(of(false));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(urlTree);
@@ -122,7 +119,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
 
   it(`canActivate(route) uses properties from route.data`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true));
+    query.containsAll$.andReturn(of(true));
     set(route, 'data.canActivateWithEnvironment.properties', ['b']);
 
     sub = spectator.service.canActivate(route).subscribe(() => {
@@ -133,7 +130,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
 
   it(`canActivate(route) emits true if route.data properties is not an array`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true));
+    query.containsAll$.andReturn(of(true));
     set(route, 'data.canActivateWithEnvironment.properties', null);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
@@ -144,7 +141,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
 
   it(`canActivate(route) emits true if route.data properties is empty array`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true));
+    query.containsAll$.andReturn(of(true));
     set(route, 'data.canActivateWithEnvironment.properties', []);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
@@ -155,7 +152,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
 
   it(`canActivate(route) uses dueTime from route.dueTime`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true).pipe(delay(10)));
+    query.containsAll$.andReturn(of(true).pipe(delay(10)));
     set(route, 'data.canActivateWithEnvironment.dueTime', 5);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
@@ -166,7 +163,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
 
   it(`canActivate(route) ignores route.dueTime if isn't a number`, (done) => {
     service.properties = ['a'];
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(true).pipe(delay(10)));
+    query.containsAll$.andReturn(of(true).pipe(delay(10)));
     set(route, 'data.canActivateWithEnvironment.dueTime', '5');
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
@@ -180,8 +177,8 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     service.properties = ['a'];
     service.dueTime = 5;
     set(route, 'data.canActivateWithEnvironment.urlOnError', 'path/to');
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(false));
-    router.parseUrl.mockReturnValue(urlTree);
+    query.containsAll$.andReturn(of(false));
+    router.parseUrl.andReturn(urlTree);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(urlTree);
@@ -194,7 +191,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     service.properties = ['a'];
     service.dueTime = 5;
     set(route, 'data.canActivateWithEnvironment.urlOnError', 0);
-    jest.spyOn(query, 'containsAll$').mockReturnValue(of(false));
+    query.containsAll$.andReturn(of(false));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toBeFalse();
