@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for store/environment-store.gateway.ts</title>
+    <title>Code coverage report for module/create-environment-module.function.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">store</a> environment-store.gateway.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">module</a> create-environment-module.function.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>11/11</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>11/11</span>
             </div>
         
             
@@ -87,21 +87,13 @@
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
 <a name='L24'></a><a href='#L24'>24</a>
-<a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a>
-<a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L25'></a><a href='#L25'>25</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -109,52 +101,39 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Observable } from 'rxjs';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { ArrayOrSingle } from 'ts-essentials';
 &nbsp;
-import { EnvironmentState } from './environment-state.type';
+import { createEnvironmentLoader, EnvironmentLoader } from '../loader';
+import { createEnvironmentQuery, EnvironmentQuery } from '../query';
+import { createEnvironmentService, EnvironmentService } from '../service';
+import { EnvironmentSource } from '../source';
+import { createEnvironmentStore, EnvironmentStore } from '../store';
+import { EnvironmentModule } from './environment-module.interface';
 &nbsp;
 /**
- * Stores the environment properties that the application needs.
+ * Creates an environment module with all the default implementations and starts the load of properties.
+ * @param sources The sources to get environment properties.
+ * @returns An environment module as Promise with all the default implementations.
  */
-export abstract class EnvironmentStore {
-  /**
-   * Gets all properties from the environment store.
-   * @returns The environment properties as Observable.
-   */
-  abstract getAll$(): Observable&lt;EnvironmentState&gt;;
+export async function createEnvironmentModule(sources?: ArrayOrSingle&lt;EnvironmentSource&gt;): Promise&lt;EnvironmentModule&gt; {
+  const store: EnvironmentStore = createEnvironmentStore();
+  const service: EnvironmentService = createEnvironmentService(store);
+  const query: EnvironmentQuery = createEnvironmentQuery(store);
+  const loader: EnvironmentLoader = createEnvironmentLoader(service, sources);
 &nbsp;
-  /**
-   * Gets all properties from the environment store.
-   * @returns The environment properties.
-   */
-  abstract getAll(): EnvironmentState;
+  await loader.load();
 &nbsp;
-  /**
-   * Updates the environment store.
-   * @param environment The new environment properties.
-   */
-  abstract update(environment: EnvironmentState): void;
-&nbsp;
-  /**
-   * Resets the environment store to the initial state.
-   */
-  abstract reset(): void;
+  return Promise.resolve({ store, service, query, loader });
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -163,7 +142,7 @@ export abstract class EnvironmentStore {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Wed Mar 09 2022 22:53:45 GMT+0000 (Coordinated Universal Time)
+                at Sun Apr 03 2022 19:21:15 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>

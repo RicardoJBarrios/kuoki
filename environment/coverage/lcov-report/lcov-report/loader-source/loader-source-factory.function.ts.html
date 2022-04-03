@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -92,12 +92,7 @@
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
+<a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -107,57 +102,53 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">66x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">74x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">63x</span>
-<span class="cline-any cline-yes">63x</span>
-<span class="cline-any cline-yes">63x</span>
-<span class="cline-any cline-yes">63x</span>
-<span class="cline-any cline-yes">63x</span>
+<span class="cline-any cline-yes">71x</span>
+<span class="cline-any cline-yes">71x</span>
+<span class="cline-any cline-yes">71x</span>
+<span class="cline-any cline-yes">71x</span>
+<span class="cline-any cline-yes">71x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">63x</span>
+<span class="cline-any cline-yes">71x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { v4 } from 'uuid';
-&nbsp;
-import { EnvironmentSource, InvalidSourceError, isEnvironmentSource, SourceStrategy } from '../source';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { EnvironmentSource, InvalidSourceError, isEnvironmentSource, SourceStrategy } from '../source';
 import { LoaderSource } from './loader-source.type';
 &nbsp;
 /**
  * Converts a source to loader source.
- * @template SOURCE The source used by the implementation.
- * @template LOADER_SOURCE The loader source used by the implementation.
  * @param source the source to convert.
  * @returns A loader sources.
  * @throws InvalidSourceError if an environmnet source is invalid.
- * @see {@link EnvironmentSource}
- * @see {@link LoaderSource}
  * @see {@link InvalidSourceError}
  */
-export function loaderSourceFactory&lt;
-  SOURCE extends EnvironmentSource = EnvironmentSource,
-  LOADER_SOURCE extends LoaderSource = LoaderSource
-&gt;(source: SOURCE): LOADER_SOURCE {
+export function loaderSourceFactory(source: EnvironmentSource): LoaderSource {
   if (!isEnvironmentSource(source)) {
     throw new InvalidSourceError(source);
   }
 &nbsp;
-  source.id = source.id ?? v4();
+  source.id = source.id ?? randId();
   source.isRequired = source.isRequired ?? false;
   source.isOrdered = source.isOrdered ?? false;
   source.ignoreError = source.ignoreError ?? false;
   source.strategy = source.strategy ?? SourceStrategy.ADD;
 &nbsp;
-  return source as LOADER_SOURCE;
+  return source as LoaderSource;
+}
+&nbsp;
+function randId(): string {
+  const radix = 36;
+&nbsp;
+  return Date.now().toString(radix) + Math.random().toString(radix);
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -166,7 +157,7 @@ export function loaderSourceFactory&lt;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Wed Mar 09 2022 22:53:45 GMT+0000 (Coordinated Universal Time)
+                at Sun Apr 03 2022 19:21:15 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
