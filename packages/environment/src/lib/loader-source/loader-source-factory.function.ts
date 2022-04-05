@@ -13,7 +13,7 @@ export function loaderSourceFactory(source: EnvironmentSource): LoaderSource {
     throw new InvalidSourceError(source);
   }
 
-  source.id = source.id ?? randId();
+  source.id = source.id ?? randomId();
   source.isRequired = source.isRequired ?? false;
   source.isOrdered = source.isOrdered ?? false;
   source.ignoreError = source.ignoreError ?? false;
@@ -22,7 +22,7 @@ export function loaderSourceFactory(source: EnvironmentSource): LoaderSource {
   return source as LoaderSource;
 }
 
-function randId(): string {
+function randomId(): string {
   const radix = 36;
 
   return Date.now().toString(radix) + Math.random().toString(radix);
