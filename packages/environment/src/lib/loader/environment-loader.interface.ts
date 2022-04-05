@@ -20,6 +20,13 @@ export abstract class EnvironmentLoader {
   abstract preAddProperties(properties: EnvironmentState, source?: LoaderSource): EnvironmentState;
 
   /**
+   * Returns the loader source definition with the given id.
+   * @param id The id of the loader source to get.
+   * @returns The loader source definition or undefined if the source doesn't exist.
+   */
+  abstract getSourceById(id: string): LoaderSource | undefined;
+
+  /**
    * Forces the load to resolve.
    */
   abstract resolveLoad(): void;

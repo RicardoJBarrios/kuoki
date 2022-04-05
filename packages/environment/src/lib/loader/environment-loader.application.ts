@@ -190,6 +190,10 @@ export class DefaultEnvironmentLoader implements EnvironmentLoader {
     }
   }
 
+  getSourceById(id: string): LoaderSource | undefined {
+    return this.loaderSources.find((source: LoaderSource) => id === source.id);
+  }
+
   resolveLoad(): void {
     this.loadSubject$.next();
   }
