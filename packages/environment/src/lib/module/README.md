@@ -38,6 +38,7 @@ const source: EnvironmentSource = {
   load: () => fetch('env.json').then((response: Response) => response.json())
 };
 const environmentModule: EnvironmentModule = await createEnvironmentModule(source);
+
 environmentModule.query.get('a'); // undefined
 await environmentModule.query.getAsync('a'); // 0
 ```

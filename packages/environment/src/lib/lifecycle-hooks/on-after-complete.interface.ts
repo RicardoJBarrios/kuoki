@@ -1,9 +1,9 @@
 /**
- * A lifecycle hook that is called after all environment sources complete.
+ * A lifecycle hook that is called after all environment sources completes.
  */
 export interface OnAfterComplete {
   /**
-   * Handles any additional tasks after all environment sources complete.
+   * Handles any additional tasks after all environment sources completes.
    */
   onAfterComplete(): void;
 }

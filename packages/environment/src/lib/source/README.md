@@ -28,6 +28,7 @@ Below are examples of the expected behavior with the default environment loader 
     <li><a href="#errorhandler">errorHandler()</a></li>
     <li><a href="#fallback-sources">Fallback sources</a></li>
     <li><a href="#use-values-from-other-sources">Use values from other sources</a></li>
+    <li><a href="#errors">Errors</a></li>
   </ol>
 </details>
 
@@ -192,6 +193,8 @@ const source3 = { load: () => [{ a: 0 }] };
 
 ### mapFn()
 
+Its's executed before `EnvironmentLoader.preAddProperties()`.
+
 ```js
 const source = {
   load: () => of({ a: 0 }),
@@ -295,4 +298,10 @@ const source2 = {
 loader.load();
 // sets basePath with source1
 // waits for source1 to use basePath to load source2
+```
+
+### Errors
+
+```js
+new InvalidSourceError(source); // The source "a" is invalid
 ```

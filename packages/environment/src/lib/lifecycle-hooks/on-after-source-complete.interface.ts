@@ -1,11 +1,11 @@
 import { LoaderSource } from '../loader-source';
 
 /**
- * A lifecycle hook that is called after a source complete.
+ * A lifecycle hook that is called after a source completes.
  */
 export interface OnAfterSourceComplete {
   /**
-   * Handles any additional tasks after a source complete.
+   * Handles any additional tasks after a source completes.
    * @param source The completed source.
    */
   onAfterSourceComplete(source: LoaderSource): void;

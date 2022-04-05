@@ -103,6 +103,21 @@ describe('EnvironmentLoader', () => {
     await expect(loader.load()).rejects.toEqual(error);
   });
 
+  it(`.getSourceById(id) returns the source if exists`, () => {
+    const source: EnvironmentSource = { id: 'a', load: () => [{ a: 0 }] };
+    loader = new DefaultEnvironmentLoader(service, source);
+
+    const loaderSource = loader.getSourceById('a');
+    expect(loaderSource).toBeDefined();
+  });
+
+  it(`.getSourceById(id) returns undefined if the source doesn't exist`, () => {
+    const source: EnvironmentSource = { id: 'a', load: () => [{ a: 0 }] };
+    loader = new DefaultEnvironmentLoader(service, source);
+
+    expect(loader.getSourceById('b')).toBeUndefined();
+  });
+
   it(`.resolveLoad() forces the load to resolve`, async () => {
     const state1: EnvironmentState = { a: 0 };
     const source1: EnvironmentSource = { isRequired: true, load: () => of(state1).pipe(delay(10)) };

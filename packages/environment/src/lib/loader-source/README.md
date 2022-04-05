@@ -9,6 +9,7 @@
   <ol>
     <li><a href="#loadersourcefactory">loaderSourceFactory</a></li>
     <li><a href="#loadersourcesfactory">loaderSourcesFactory</a></li>
+    <li><a href="#errors">Errors</a></li>
   </ol>
 </details>
 
@@ -18,7 +19,7 @@ The default values are:
 
 ```js
 {
-  id: 'unique id',
+  id: 'random id',
   isRequired: false,
   isOrdered: false,
   ignoreError: false,
@@ -29,7 +30,7 @@ The default values are:
 ```js
 loaderSourceFactory({ load: () => [{}] });
 // {
-//   id: 'e4d51685-dcd4-46d3-9c6b-74917125e4ae',
+//   id: '1fvtjeqav0.fpjcvk57vno',
 //   isRequired: false,
 //   isOrdered: false,
 //   ignoreError: false,
@@ -70,7 +71,7 @@ loaderSourceFactory({ load: 0 }); // throws InvalidSourceError
 const source1 = { load: () => [{ a: 0 }] };
 loaderSourcesFactory(source1);
 // [{
-//   id: 'e4d51685-dcd4-46d3-9c6b-74917125e4ae',
+//   id: '1fvtjeqav0.fpjcvk57vno',
 //   isRequired: false,
 //   isOrdered: false,
 //   ignoreError: false,
@@ -84,7 +85,7 @@ const source1 = { load: () => [{ a: 0 }] };
 const source2 = { load: () => [{ a: 1 }] };
 loaderSourcesFactory([source1, source2]);
 // [{
-//   id: 'e4d51685-dcd4-46d3-9c6b-74917125e4ae',
+//   id: '1fvtjeqav0.fpjcvk57vno',
 //   isRequired: false,
 //   isOrdered: false,
 //   ignoreError: false,
@@ -92,7 +93,7 @@ loaderSourcesFactory([source1, source2]);
 //   load: () => [{a:0}]
 // },
 // {
-//   id: '92556fe6-b40e-4c34-acca-d95cc45937cc',
+//   id: '1fvtjfh8q0.tnprppqrf3g',
 //   isRequired: false,
 //   isOrdered: false,
 //   ignoreError: false,
@@ -109,4 +110,10 @@ loaderSourcesFactory({ load: 0 }); // throws InvalidSourceError
 const source1 = { id: 'a', load: () => [{ a: 0 }] };
 const source2 = { id: 'a', load: () => [{ a: 1 }] };
 loaderSourcesFactory([source1, source2]); // throws DuplicatedSourcesError
+```
+
+### Errors
+
+```js
+new DuplicatedSourcesError(['a', 'b']); // There are sources with duplicate id's: a, b
 ```

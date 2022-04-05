@@ -47,11 +47,9 @@ Using Yarn
 yarn add @kuoki/environment
 ```
 
-Install dependencies
+Dependencies
 
-- [lodash-es](https://www.npmjs.com/package/lodash-es): >=4.0.0
 - [rxjs](https://www.npmjs.com/package/rxjs): >=7.0.0
-- [ts-essentials](https://www.npmjs.com/package/ts-essentials): >=9.1.0
 
 ## Usage
 
@@ -65,20 +63,20 @@ The steps to generate an environment manager are described below. Each of the st
 
 There is a faster way to get started if you want to use all the default implementations, which is to use `createEnvironment()`, a factory that creates an environment module and starts the load of properties.
 
-```js
-import { createEnvironmentModule } from '@kuoki/environment';
+```ts
+import { createEnvironmentModule, EnvironmentModule, EnvironmentQuery, EnvironmentSource } from '@kuoki/environment';
 
 // env.json = { userName: 'JohnDoe01' }
-const fileSource = {
+const fileSource: EnvironmentSource = {
   isRequired: true,
-  load: () => fetch('env.json').then((response) => response.json())
+  load: async () => fetch('env.json').then((response) => response.json())
 };
-const constSource = {
+const constSource: EnvironmentSource = {
   isRequired: true,
   load: () => [{ name: 'John Doe' }]
 };
-const environmentModule = await createEnvironmentModule([fileSource, constSource]);
-export const env = environmentModule.query;
+const environmentModule: EnvironmentModule = await createEnvironmentModule([fileSource, constSource]);
+export const env: EnvironmentQuery = environmentModule.query;
 
 env.getAll(); // {name:'John Doe',userName:'JohnDoe01'}
 ```
