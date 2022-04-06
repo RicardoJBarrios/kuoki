@@ -43,7 +43,15 @@
       "options": {
         "commitMessageFormat": "chore(${projectName}): release version ${version}",
         "tagPrefix": "${projectName}-",
-        "push": true
+        "push": true,
+        "postTargets": ["environment:github"]
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
       }
     }
   },
