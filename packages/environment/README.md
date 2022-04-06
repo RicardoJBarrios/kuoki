@@ -61,7 +61,7 @@ The steps to generate an environment manager are described below. Each of the st
 1. Implement and instantiate as many [`EnvironmentSource`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentSource.html) as needed to get the environment properties.
 1. Implement and instantiate an [`EnvironmentLoader`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentLoader.html) to get the properties from the sources.
 
-There is a faster way to get started if you want to use all the default implementations, which is to use `createEnvironment()`, a factory that creates an environment module and starts the load of properties.
+There is a faster way to get started if you want to use all the default implementations, which is to use `createEnvironment()`, a factory that creates an [`EnvironmentModule`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentModule.html) and starts the load of properties.
 
 ```ts
 import { createEnvironmentModule, EnvironmentModule, EnvironmentQuery, EnvironmentSource } from '@kuoki/environment';
@@ -80,3 +80,5 @@ export const env: EnvironmentQuery = environmentModule.query;
 
 env.getAll(); // {name:'John Doe',userName:'JohnDoe01'}
 ```
+
+// TODO: On demand loads: Load a parameter from server on get
