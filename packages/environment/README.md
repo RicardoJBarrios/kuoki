@@ -80,5 +80,3 @@ export const env: EnvironmentQuery = environmentModule.query;
 
 env.getAll(); // {name:'John Doe',userName:'JohnDoe01'}
 ```
-
-// TODO: On demand loads: Load a parameter from server on get
