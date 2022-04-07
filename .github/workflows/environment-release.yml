@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Analyze in SonarCloud
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: ./.github/actions/setup
       - name: Extract package.json version
@@ -41,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish Release
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: ./.github/actions/setup
       - name: Build
@@ -55,6 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate and Publish Documentation
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: ./.github/actions/setup
       - name: Generate Documentation
