@@ -11,22 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Analyze in SonarCloud
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Extract package.json version
         id: extract_version
         uses: Saionaro/extract-package-version@v1.1.1
         with:
           path: packages/environment
-      - name: Setup NodeJS 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'yarn'
-      - name: Install packages
-        run: yarn install --frozen-lockfile --prefer-offline
       - name: Generate Unit Tests Coverage
         run: |
           yarn nx test environment --code-coverage --coverageReporters lcov --coverageDirectory packages/environment
@@ -50,23 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish Release
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Extract package.json version
-        id: extract_version
-        uses: Saionaro/extract-package-version@v1.1.1
-        with:
-          path: packages/environment
-      - name: Setup NodeJS 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'yarn'
-          registry-url: https://registry.npmjs.org/
-      - name: Install packages
-        run: yarn install --frozen-lockfile --prefer-offline
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Build
         run: yarn nx build environment
       - name: Publish in NpmJS
@@ -79,22 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate and Publish Documentation
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Extract package.json version
-        id: extract_version
-        uses: Saionaro/extract-package-version@v1.1.1
-        with:
-          path: packages/environment
-      - name: Setup NodeJS 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'yarn'
-      - name: Install packages
-        run: yarn install --frozen-lockfile --prefer-offline
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Generate Documentation
         run: yarn nx docs environment
       - name: Deploy Documentation
