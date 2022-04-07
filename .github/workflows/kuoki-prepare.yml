@@ -50,8 +50,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx nx affected --target=version --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
-      - name: Tag last-release
-        run: git tag -f last-release
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
