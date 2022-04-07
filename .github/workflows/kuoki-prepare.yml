@@ -18,6 +18,7 @@ jobs:
         node_version: [14, 16, 17]
     name: Test Affected on NodeJS ${{ matrix.node_version }}
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: ./.github/actions/setup
         with:
@@ -29,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build & Lint Affected
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: ./.github/actions/setup
       - name: Build Affected
@@ -40,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate Affected Version
     steps:
+      - uses: actions/checkout@v3
       - name: Setup
         uses: ./.github/actions/setup
       - name: Version Affected
