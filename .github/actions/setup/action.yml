@@ -23,8 +23,10 @@ runs:
         cache: 'yarn'
         registry-url: https://registry.npmjs.org
     - name: Setup Git User
+      shell: bash
       run: |
         git config user.name "Kuoki Bot"
         git config user.email "-"
     - name: Install Dependencies
+      shell: bash
       run: yarn install --frozen-lockfile --prefer-offline --no-progress --non-interactive
