@@ -43,6 +43,7 @@
       "options": {
         "commitMessageFormat": "chore(${projectName}): release version ${version}",
         "tagPrefix": "${projectName}-",
+        "noVerify": true,
         "push": true,
         "postTargets": ["environment:github"]
       }

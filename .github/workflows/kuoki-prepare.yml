@@ -1,0 +1,57 @@
+name: Kuoki Prepare
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-test-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [14, 16, 17]
+    name: Test Affected on NodeJS ${{ matrix.node_version }}
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          node_version: ${{ matrix.node_version }}
+      - name: Test Affected
+        run: yarn nx affected --target=test --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+
+  build-lint:
+    runs-on: ubuntu-latest
+    name: Build & Lint Affected
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Build Affected
+        run: yarn nx affected --target=build --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+      - name: Lint Affected
+        run: yarn nx affected --target=lint --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+
+  version:
+    runs-on: ubuntu-latest
+    name: Generate Affected Version
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Version Affected
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx nx affected --target=version --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+      - name: Tag last-release
+        run: git tag -f last-release
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          force: true
+          tags: true

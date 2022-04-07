@@ -1,0 +1,30 @@
+name: Setup
+description: Setup job NodeJS and install dependencies
+
+inputs:
+  node_version:
+    description: NodeJS version
+    required: false
+    default: '16'
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout all commits from main
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Derive appropriate SHAs for base and head for `nx affected` commands
+      uses: nrwl/nx-set-shas@v2
+    - name: Setup NodeJS ${{ inputs.node_version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node_version }}
+        cache: 'yarn'
+        registry-url: https://registry.npmjs.org
+    - name: Setup Git User
+      run: |
+        git config user.name "Kuoki Bot"
+        git config user.email "-"
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile --prefer-offline --no-progress --non-interactive
