@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.1.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-1.0.1...environment-1.1.0) (2022-04-08)
+
+
+### Features
+
+* **environment-angular:** make @Value work with accessors and refactor code ([f9e9299](https://github.com/RicardoJBarrios/kuoki/commit/f9e9299b0e2a1804bac46c2786004aa79848bbfd))
+
+
+
 ## [1.0.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-1.0.0...environment-1.0.1) (2022-04-08)
 
 
