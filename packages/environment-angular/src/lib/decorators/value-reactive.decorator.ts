@@ -1,41 +1,30 @@
-import 'reflect-metadata';
+import { GetOptions, Path } from '@kuoki/environment';
+import { Observable } from 'rxjs';
 
-import { Path } from '@kuoki/environment';
-
+import { getOptionsFactory } from '../helpers';
 import { EnvironmentModule } from '../module';
+import { valueDecoratorFactory } from './value-decorator-factory.function';
 import { ValueDecoratorOptions } from './value-decorator-options.type';
 
 /**
- * Gets the property with the value at path from environment as Observable if the property value is undefined.
+ * Gets the value at path from environment as Observable if the property is undefined.
  * @param path The environment path to resolve.
- * @param options The options to get the value.
+ * @param options The options to get the value and set the property.
  * @returns A property decorator to get the property with the value at path from environment.
  */
-export function Value$<T>(path: Path, options?: ValueDecoratorOptions<T>): PropertyDecorator {
-  return (target: object, propertyKey: PropertyKey): void => {
-    const metadataKey: symbol = Symbol.for(`environment-value-decorator:${String(propertyKey)}`);
+export function Value$<T>(path: Path, options?: ValueDecoratorOptions<T>): PropertyDecorator;
+/**
+ * Gets the value at path from environment as Observable if the getter returns undefined.
+ * @param path The environment path to resolve.
+ * @param options The options to get the value and set the property.
+ * @returns A property decorator to get the property with the value at path from environment.
+ */
+export function Value$<T>(path: Path, options?: ValueDecoratorOptions<T>): MethodDecorator;
+export function Value$<T>(
+  path: Path,
+  options?: ValueDecoratorOptions<Observable<T>>
+): PropertyDecorator | MethodDecorator {
+  const getOptions: GetOptions<T> = getOptionsFactory<T, ValueDecoratorOptions<Observable<T>>>(options);
 
-    const descriptor: PropertyDescriptor = {
-      get(this: any): any {
-        let value: any = Reflect.getMetadata(metadataKey, this);
-
-        if (value === undefined) {
-          value = EnvironmentModule.query?.get$<T>(path, options);
-
-          if (options?.static !== false) {
-            Reflect.defineMetadata(metadataKey, value, this);
-          }
-        }
-
-        return value;
-      },
-      set(this: any, value: any) {
-        Reflect.defineMetadata(metadataKey, value, this);
-      },
-      enumerable: true,
-      configurable: true
-    };
-
-    Object.defineProperty(target, propertyKey, descriptor);
-  };
+  return valueDecoratorFactory<Observable<T>>(() => EnvironmentModule.query?.get$<T>(path, getOptions), options);
 }

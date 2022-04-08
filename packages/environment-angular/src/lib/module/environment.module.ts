@@ -14,11 +14,6 @@ function loadBeforeInitFactory(loader: EnvironmentLoader): () => Promise<void> {
   return () => loader.load();
 }
 
-const requiredQueryError: Error = new Error(
-  'An instance of EnvironmentQuery is required. ' +
-    'Use EnvironmentModule.forRoot() or provide the EnvironmentQuery service'
-);
-
 @NgModule({ imports: [CommonModule] })
 export class EnvironmentModule {
   private static _query?: EnvironmentQuery;
@@ -113,7 +108,10 @@ export class EnvironmentModule {
     const query: EnvironmentQuery | null = this.injector.get(EnvironmentQuery, null);
 
     if (query == null) {
-      throw requiredQueryError;
+      throw new Error(
+        'An instance of EnvironmentQuery is required. ' +
+          'Use EnvironmentModule.forRoot() or provide the EnvironmentQuery service'
+      );
     }
 
     EnvironmentModule._query = query;
