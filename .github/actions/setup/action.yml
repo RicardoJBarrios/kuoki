@@ -1,11 +1,15 @@
 name: Setup
-description: Setup job NodeJS and install dependencies
+description: Setup node.js and install dependencies
 
 inputs:
   node_version:
-    description: NodeJS version
+    description: node.js version
     required: false
     default: '16'
+  registry-url:
+    description: Registry URL
+    required: false
+    default: https://registry.npmjs.org
 
 runs:
   using: composite
@@ -16,12 +20,12 @@ runs:
         fetch-depth: 0
     - name: Derive appropriate SHAs for base and head for `nx affected` commands
       uses: nrwl/nx-set-shas@v2
-    - name: Setup NodeJS ${{ inputs.node_version }}
+    - name: Setup node.js ${{ inputs.node_version }}
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ inputs.node_version }}
         cache: 'yarn'
-        registry-url: https://registry.npmjs.org
+        node-version: ${{ inputs.node_version }}
+        registry-url: ${{ inputs.registry-url }}
     - name: Setup Git User
       shell: bash
       run: |

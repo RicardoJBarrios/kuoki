@@ -49,7 +49,7 @@
       "executor": "@jscutlery/semver:version",
       "options": {
         "commitMessageFormat": "chore(${projectName}): release version ${version}",
-        "tagPrefix": "${projectName}-",
+        "tagPrefix": "${projectName}-v",
         "noVerify": true,
         "push": true,
         "postTargets": ["environment:github"]

@@ -1,0 +1,52 @@
+name: Environment Continuous Integration and Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - environment-v*
+
+env:
+  PROJECT_NAME: environment
+
+concurrency:
+  group: ci-test-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    name: Analyze in SonarCloud
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup
+        uses: ./.github/actions/setup
+      - uses: ./.github/actions/sonar
+        with:
+          project_name: $PROJECT_NAME
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  deploy_package:
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+    name: Generate and Deploy Package
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/deploy-package
+        with:
+          project_name: $PROJECT_NAME
+          npm_token: ${{ secrets.NPM_TOKEN }}
+
+  deploy_docs:
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+    name: Generate and Deploy Documentation
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/deploy-docs
+        with:
+          project_name: $PROJECT_NAME
+          github_token: ${{ secrets.GITHUB_TOKEN }}

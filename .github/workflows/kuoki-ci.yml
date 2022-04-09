@@ -1,4 +1,4 @@
-name: Kuoki Prepare
+name: Kuoki Continuous Integration
 
 on:
   workflow_dispatch:
@@ -19,37 +19,34 @@ jobs:
     name: Test Affected on NodeJS ${{ matrix.node_version }}
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup
         with:
           node_version: ${{ matrix.node_version }}
       - name: Test Affected
-        run: yarn nx affected --target=test --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: yarn nx affected --target=test
 
   build-lint:
     runs-on: ubuntu-latest
     name: Build & Lint Affected
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup
       - name: Build Affected
-        run: yarn nx affected --target=build --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: yarn nx affected --target=build
       - name: Lint Affected
-        run: yarn nx affected --target=lint --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: yarn nx affected --target=lint
 
   version:
     needs: [test, build-lint]
     runs-on: ubuntu-latest
-    name: Generate Affected Version
+    name: Generate Affected Versions
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup
       - name: Version Affected
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx nx affected --target=version --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: npx nx affected --target=version --parallel=1
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:

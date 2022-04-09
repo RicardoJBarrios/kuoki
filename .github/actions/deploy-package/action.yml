@@ -1,0 +1,22 @@
+name: Deploy Package
+description: Deploy Kuoki project package
+
+inputs:
+  project_name:
+    description: Project name
+    required: true
+  npm_token:
+    description: GitHub Token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Build
+      shell: bash
+      run: yarn nx build ${{ inputs.project_name }}
+    - name: Deploy in npm.js
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
+      shell: bash
+      run: npm publish dist/packages/${{ inputs.project_name }}

@@ -1,0 +1,41 @@
+name: Sonar
+description: Executes a SonarCloud Analysis
+
+inputs:
+  project_name:
+    description: Project name
+    required: true
+  github_token:
+    description: GitHub Token
+    required: true
+  sonar_token:
+    description: SonarCloud Token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Extract package.json version
+      id: extract_version
+      uses: Saionaro/extract-package-version@v1.1.1
+      with:
+        path: packages/${{ inputs.project_name }}
+    - name: Generate Unit Tests Coverage
+      shell: bash
+      run: |
+        yarn nx test ${{ inputs.project_name }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ inputs.project }}
+        sed -i 's#packages/${{ inputs.project_name }}/##g' packages/${{ inputs.project_name }}/lcov.info
+    - name: Generate Lint Report
+      shell: bash
+      run: |
+        yarn nx lint ${{ inputs.project_name }} --format json --outputFile packages/${{ inputs.project_name }}/eslint.json
+        sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/${{ inputs.project_name }}/eslint.json
+    - name: Analyze in SonarCloud
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: packages/${{ inputs.project_name }}
+        args: >
+          -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        SONAR_TOKEN: ${{ inputs.sonar_token }}
