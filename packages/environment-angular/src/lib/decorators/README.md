@@ -9,37 +9,37 @@ Below are examples of the expected behavior and some implementation examples.
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
-    <li><a href="#value">@Value</a></li>
-    <li><a href="#valueasync">@ValueAsync</a></li>
-    <li><a href="#value-1">@Value$</a></li>
+    <li><a href="#environmentvalue">@EnvironmentValue</a></li>
+    <li><a href="#environmentvalueasync">@EnvironmentValueAsync</a></li>
+    <li><a href="#environmentvalue-1">@EnvironmentValue$</a></li>
     <li><a href="#static-option">Static option</a></li>
     <li><a href="#best-practices">Best practices</a></li>
   </ol>
 </details>
 
-### @Value
+### @EnvironmentValue
 
 This decorator uses the [`EnvironmentQuery.get(path,options?)`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentQuery.html#get) to get the value if the decorated property value its undefined.
 
 ```ts
 @Injectable()
 class ClassA {
-  @Value('a');
+  @EnvironmentValue('a');
   a?: number;
 
-  @Value('a');
+  @EnvironmentValue('a');
   a2?: number = 1;
 
-  @Value('b');
+  @EnvironmentValue('b');
   b?: number;
 
-  @Value('b');
+  @EnvironmentValue('b');
   b2?: number = 2;
 
-  @Value('c', {defaultValue: 3, targetType: String});
+  @EnvironmentValue('c', {defaultValue: 3, targetType: String});
   c?: string;
 
-  @Value('c', {defaultValue: 3, targetType: String});
+  @EnvironmentValue('c', {defaultValue: 3, targetType: String});
   c2?: string = '4';
 }
 
@@ -60,18 +60,18 @@ classA.c; // '3'
 classA.c2; // '4'
 ```
 
-### @ValueAsync
+### @EnvironmentValueAsync
 
-### @Value$
+### @EnvironmentValue$
 
 ### Static option
 
-All decorators have a `static` option which defaults to true. With the default config the instance property will store the first value returned by the environment query, and this value will not change unless the property is set to undefined again.
+Value decorators have a `static` option which defaults to true. With the default config the instance property will store the first value returned by the environment query, and this value will not change unless the property is set to undefined again.
 
 ```ts
 @Injectable()
 class ClassA {
-  @Value('a');
+  @EnvironmentValue('a');
   a?: number;
 }
 
@@ -95,7 +95,7 @@ If the value is set to false, it becomes a not pure function, and will always re
 ```ts
 @Injectable()
 class ClassA {
-  @Value('a', {static: false});
+  @EnvironmentValue('a', {static: false});
   a?: number;
 }
 
@@ -123,13 +123,13 @@ classA.a; // 1
 ```ts
 @Injectable()
 class ClassA {
-  @Value<string>('api.path');
+  @EnvironmentValue<string>('api.path');
   readonly apiPath!: string;
 
-  @Value<number>('user.yob');
+  @EnvironmentValue<number>('user.yob');
   readonly yearOfBirth?: number;
 
-  @Value$<boolean>('isOfferPeriod', { defaultValue: false });
+  @EnvironmentValue$<boolean>('isOfferPeriod', { defaultValue: false });
   readonly isOfferPeriod$!: Observable<boolean>;
 }
 ```

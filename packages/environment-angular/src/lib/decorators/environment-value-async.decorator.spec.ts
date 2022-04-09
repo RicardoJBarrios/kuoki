@@ -3,21 +3,21 @@ import { EnvironmentQuery } from '@kuoki/environment';
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
 
 import { EnvironmentModule } from '../module';
-import { ValueAsync } from './value-async.decorator';
+import { EnvironmentValueAsync } from './environment-value-async.decorator';
 
 const fromEnv = 'fromEnv';
 const defaultValue = 'defaultValue';
 
 @Injectable()
 class TetsService {
-  @ValueAsync('a')
+  @EnvironmentValueAsync('a')
   a?: Promise<string>;
 
-  @ValueAsync('b', { defaultValue })
+  @EnvironmentValueAsync('b', { defaultValue })
   b?: Promise<string>;
 }
 
-describe('@ValueAsync(path,options?)', () => {
+describe('@EnvironmentValueAsync(path,options?)', () => {
   let spectator: SpectatorService<TetsService>;
   let query: SpyObject<EnvironmentQuery>;
 

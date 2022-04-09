@@ -4,21 +4,21 @@ import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spect
 import { Observable, Subscription } from 'rxjs';
 
 import { EnvironmentModule } from '../module';
-import { Value$ } from './value-reactive.decorator';
+import { EnvironmentValue$ } from './environment-value-reactive.decorator';
 
 const fromEnv = 'fromEnv';
 const defaultValue = 'defaultValue';
 
 @Injectable()
 class TetsService {
-  @Value$<string>('a')
+  @EnvironmentValue$<string>('a')
   a?: Observable<string>;
 
-  @Value$('b', { defaultValue })
+  @EnvironmentValue$('b', { defaultValue })
   b?: Observable<string>;
 }
 
-describe('@Value$(path,options?)', () => {
+describe('@EnvironmentValue$(path,options?)', () => {
   let spectator: SpectatorService<TetsService>;
   let query: SpyObject<EnvironmentQuery>;
   let sub: Subscription | undefined;

@@ -3,13 +3,13 @@ import 'reflect-metadata';
 import { Observable } from 'rxjs';
 import { Newable } from 'ts-essentials';
 
-import { ValueDecoratorOptions } from './value-decorator-options.type';
+import { EnvironmentValueDecoratorOptions } from './environment-value-decorator-options.type';
 
-export type ValueDecoratorMethodReturn<T> = T | Observable<T | unknown> | Promise<T | unknown> | unknown;
+export type EnvironmentValueDecoratorMethodReturn<T> = T | Observable<T | unknown> | Promise<T | unknown> | unknown;
 
-export function valueDecoratorFactory<T>(
-  method: () => ValueDecoratorMethodReturn<T>,
-  options?: ValueDecoratorOptions<T>
+export function environmentValueDecoratorFactory<T>(
+  method: () => EnvironmentValueDecoratorMethodReturn<T>,
+  options?: EnvironmentValueDecoratorOptions<T>
 ): PropertyDecorator | MethodDecorator {
   return (
     target: object,
@@ -26,8 +26,8 @@ export function valueDecoratorFactory<T>(
       descriptor != null
         ? descriptor
         : {
-            enumerable: options?.enumerable ?? true,
-            configurable: options?.configurable ?? true
+            enumerable: true,
+            configurable: true
           };
 
     localDescriptor.get = function <THIS extends Newable<object>>(this: THIS): T {
