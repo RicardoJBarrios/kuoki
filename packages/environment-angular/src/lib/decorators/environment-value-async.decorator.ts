@@ -1,6 +1,5 @@
 import { GetOptions, Path } from '@kuoki/environment';
 
-import { getOptionsFactory } from '../helpers';
 import { EnvironmentModule } from '../module';
 import { environmentValueDecoratorFactory } from './environment-value-decorator-factory.function';
 import { EnvironmentValueDecoratorOptions } from './environment-value-decorator-options.type';
@@ -23,10 +22,9 @@ export function EnvironmentValueAsync<T>(
   path: Path,
   options?: EnvironmentValueDecoratorOptions<Promise<T>>
 ): PropertyDecorator | MethodDecorator {
-  const getOptions: GetOptions<T> = getOptionsFactory<T, EnvironmentValueDecoratorOptions<Promise<T>>>(options);
-
-  return environmentValueDecoratorFactory<Promise<T>>(
-    () => EnvironmentModule.query?.getAsync<T>(path, getOptions),
+  return environmentValueDecoratorFactory(
+    (_path: Path, _options: GetOptions<Promise<T>>) => EnvironmentModule.query?.getAsync(_path, _options),
+    path,
     options
   );
 }

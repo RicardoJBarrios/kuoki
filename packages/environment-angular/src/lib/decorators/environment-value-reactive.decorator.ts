@@ -1,7 +1,6 @@
 import { GetOptions, Path } from '@kuoki/environment';
 import { Observable } from 'rxjs';
 
-import { getOptionsFactory } from '../helpers';
 import { EnvironmentModule } from '../module';
 import { environmentValueDecoratorFactory } from './environment-value-decorator-factory.function';
 import { EnvironmentValueDecoratorOptions } from './environment-value-decorator-options.type';
@@ -24,10 +23,9 @@ export function EnvironmentValue$<T>(
   path: Path,
   options?: EnvironmentValueDecoratorOptions<Observable<T>>
 ): PropertyDecorator | MethodDecorator {
-  const getOptions: GetOptions<T> = getOptionsFactory<T, EnvironmentValueDecoratorOptions<Observable<T>>>(options);
-
-  return environmentValueDecoratorFactory<Observable<T>>(
-    () => EnvironmentModule.query?.get$<T>(path, getOptions),
+  return environmentValueDecoratorFactory(
+    (_path: Path, _options: GetOptions<Observable<T>>) => EnvironmentModule.query?.get$(_path, _options),
+    path,
     options
   );
 }

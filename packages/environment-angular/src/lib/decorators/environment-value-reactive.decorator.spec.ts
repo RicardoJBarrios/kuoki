@@ -6,16 +6,13 @@ import { Observable, Subscription } from 'rxjs';
 import { EnvironmentModule } from '../module';
 import { EnvironmentValue$ } from './environment-value-reactive.decorator';
 
-const fromEnv = 'fromEnv';
-const defaultValue = 'defaultValue';
+const fromEnv = 0;
+const initialState = { a: fromEnv };
 
 @Injectable()
 class TetsService {
-  @EnvironmentValue$<string>('a')
-  a?: Observable<string>;
-
-  @EnvironmentValue$('b', { defaultValue })
-  b?: Observable<string>;
+  @EnvironmentValue$('a')
+  envValue?: Observable<number>;
 }
 
 describe('@EnvironmentValue$(path,options?)', () => {
@@ -25,7 +22,7 @@ describe('@EnvironmentValue$(path,options?)', () => {
 
   const createService = createServiceFactory({
     service: TetsService,
-    imports: [EnvironmentModule.forRoot({ initialState: { a: fromEnv } })]
+    imports: [EnvironmentModule.forRoot({ initialState })]
   });
 
   beforeEach(() => {
@@ -38,16 +35,14 @@ describe('@EnvironmentValue$(path,options?)', () => {
     sub?.unsubscribe();
   });
 
-  it(`returns the environment value as Observable if property is undefined`, (done) => {
-    sub = spectator.service.a?.subscribe((v) => {
-      expect(v).toEqual(fromEnv);
-      done();
-    });
+  it(`sets undefined if no EnvironmentQuery`, () => {
+    jest.spyOn(EnvironmentModule, 'query', 'get').mockReturnValue(undefined);
+    expect(spectator.service.envValue).toBeUndefined();
   });
 
-  it(`returns the environment value as Observable using options`, (done) => {
-    sub = spectator.service.b?.subscribe((v) => {
-      expect(v).toEqual(defaultValue);
+  it(`sets the environment value at path as Observable if property value is undefined`, (done) => {
+    sub = spectator.service.envValue?.subscribe((v) => {
+      expect(v).toEqual(fromEnv);
       done();
     });
   });

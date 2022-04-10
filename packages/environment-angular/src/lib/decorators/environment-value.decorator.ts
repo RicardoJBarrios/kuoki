@@ -1,4 +1,4 @@
-import { Path } from '@kuoki/environment';
+import { GetOptions, Path } from '@kuoki/environment';
 
 import { EnvironmentModule } from '../module';
 import { environmentValueDecoratorFactory } from './environment-value-decorator-factory.function';
@@ -22,5 +22,9 @@ export function EnvironmentValue<T>(
   path: Path,
   options?: EnvironmentValueDecoratorOptions<T>
 ): PropertyDecorator | MethodDecorator {
-  return environmentValueDecoratorFactory(() => EnvironmentModule.query?.get(path, options), options);
+  return environmentValueDecoratorFactory(
+    (_path: Path, _options: GetOptions<T>) => EnvironmentModule.query?.get(_path, _options),
+    path,
+    options
+  );
 }

@@ -6,12 +6,11 @@ import { EnvironmentModule } from '../module';
 import { EnvironmentValue } from './environment-value.decorator';
 
 const fromEnv = 0;
-const fromEnv2 = 2;
 const fromValue = 1;
 const defaultValue = '9';
 const targetType = (v: Property) => parseInt(String(v), 10);
 const getOptionsValue = 9;
-const initialState = { a: fromEnv, z: { a: fromEnv2 } };
+const initialState = { a: fromEnv };
 
 @Injectable()
 class TetsService {

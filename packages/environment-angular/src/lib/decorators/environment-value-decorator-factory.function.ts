@@ -1,14 +1,18 @@
 import 'reflect-metadata';
 
+import { GetOptions, Path, prefixPath } from '@kuoki/environment';
 import { Observable } from 'rxjs';
 import { Newable } from 'ts-essentials';
 
+import { getOptionsFactory } from '../helpers';
+import { ENVIRONMENT_PREFIX_METADATA_KEY } from './environment-prefix.decorator';
 import { EnvironmentValueDecoratorOptions } from './environment-value-decorator-options.type';
 
 export type EnvironmentValueDecoratorMethodReturn<T> = T | Observable<T | unknown> | Promise<T | unknown> | unknown;
 
 export function environmentValueDecoratorFactory<T>(
-  method: () => EnvironmentValueDecoratorMethodReturn<T>,
+  getEnvironmentValueFn: (path: Path, options: GetOptions<T>) => EnvironmentValueDecoratorMethodReturn<T>,
+  path: Path,
   options?: EnvironmentValueDecoratorOptions<T>
 ): PropertyDecorator | MethodDecorator {
   return (
@@ -34,7 +38,13 @@ export function environmentValueDecoratorFactory<T>(
       let value: unknown = Reflect.getMetadata(metadataKey, this);
 
       if (value === undefined) {
-        value = method();
+        const prefixDecorator: Path | undefined = Reflect.getMetadata(
+          ENVIRONMENT_PREFIX_METADATA_KEY,
+          target.constructor
+        );
+        const localPath: Path = prefixDecorator != null ? prefixPath(path, prefixDecorator) : path;
+        const getOptions: GetOptions<T> = getOptionsFactory<T, EnvironmentValueDecoratorOptions<unknown>>(options);
+        value = getEnvironmentValueFn(localPath, getOptions);
 
         if (options?.static !== false) {
           Reflect.defineMetadata(metadataKey, value, this);

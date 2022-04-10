@@ -3,15 +3,17 @@ import { EnvironmentQuery } from '@kuoki/environment';
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
 
 import { EnvironmentModule } from '../module';
-import { EnvironmentValueAsync } from './environment-value-async.decorator';
+import { EnvironmentPrefix } from './environment-prefix.decorator';
+import { EnvironmentValue } from './environment-value.decorator';
 
 const fromEnv = 0;
-const initialState = { a: fromEnv };
+const initialState = { a: { a: fromEnv } };
 
 @Injectable()
+@EnvironmentPrefix('a')
 class TetsService {
-  @EnvironmentValueAsync('a')
-  envValue?: Promise<number>;
+  @EnvironmentValue('a')
+  envValue?: number;
 }
 
 describe('@EnvironmentValueAsync(path,options?)', () => {
@@ -32,12 +34,7 @@ describe('@EnvironmentValueAsync(path,options?)', () => {
     jest.restoreAllMocks();
   });
 
-  it(`sets undefined if no EnvironmentQuery`, () => {
-    jest.spyOn(EnvironmentModule, 'query', 'get').mockReturnValue(undefined);
-    expect(spectator.service.envValue).toBeUndefined();
-  });
-
-  it(`sets the environment value at path as Promise if property value is undefined`, async () => {
-    await expect(spectator.service.envValue).resolves.toEqual(fromEnv);
+  it(`sets the environment value at path if property value is undefined`, () => {
+    expect(spectator.service.envValue).toEqual(fromEnv);
   });
 });

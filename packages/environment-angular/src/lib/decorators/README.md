@@ -9,6 +9,7 @@ Below are examples of the expected behavior and some implementation examples.
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
+  <li><a href="#environmentprefix">@EnvironmentPrefix</a></li>
     <li><a href="#environmentvalue">@EnvironmentValue</a></li>
     <li><a href="#environmentvalueasync">@EnvironmentValueAsync</a></li>
     <li><a href="#environmentvalue-1">@EnvironmentValue$</a></li>
@@ -16,6 +17,20 @@ Below are examples of the expected behavior and some implementation examples.
     <li><a href="#best-practices">Best practices</a></li>
   </ol>
 </details>
+
+### @EnvironmentPrefix
+
+```ts
+@Injectable()
+@EnvironmentPrefix('a')
+class ClassA {
+  @EnvironmentValue('a');
+  a?: number;
+}
+
+// Environment = {a:{a:0}}
+classA.a; // 0
+```
 
 ### @EnvironmentValue
 
@@ -45,7 +60,7 @@ class ClassA {
 
 const classA: ClassA = Injector.get(ClassA);
 
-// Environment = { a: 0 }
+// Environment = {a:0}
 classA.a; // 0
 classA.a = 10;
 classA.a; // 10
