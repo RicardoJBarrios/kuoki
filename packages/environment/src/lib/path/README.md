@@ -15,6 +15,8 @@ letters `a-zA-Z`, `$`, `_`, and digits `0-9`, but may not start with a digit.
     <li><a href="#overwritespath">overwritesPath</a></li>
     <li><a href="#pathasarray">pathAsArray</a></li>
     <li><a href="#pathasstring">pathAsString</a></li>
+    <li><a href="#prefixpath">prefixPath</a></li>
+    <li><a href="#suffixpath">suffixPath</a></li>
     <li><a href="#errors">Errors</a></li>
   </ol>
 </details>
@@ -63,6 +65,24 @@ pathAsArray(['a', 'a']); // ['a','a']
 ```js
 pathAsString('a.a'); // 'a.a'
 pathAsString(['a', 'a']); // 'a.a'
+```
+
+### prefixPath
+
+```js
+prefixPath(['a', 'a'], ['b', 'b']); // ['b','b','a','a']
+prefixPath(['a', 'a'], 'b.b'); // ['b','b','a','a']
+prefixPath('a.a', 'b.b'); // 'b.b.a.a'
+prefixPath('a.a', ['b', 'b']); // 'b.b.a.a'
+```
+
+### suffixPath
+
+```js
+suffixPath(['a', 'a'], ['b', 'b']); // ['a','a','b','b']
+suffixPath(['a', 'a'], 'b.b'); // ['a','a','b','b']
+suffixPath('a.a', 'b.b'); // 'a.a.b.b'
+suffixPath('a.a', ['b', 'b']); // 'a.a.b.b'
 ```
 
 ### Errors

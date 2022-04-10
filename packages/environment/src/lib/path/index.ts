@@ -11,3 +11,4 @@ export * from './path-doesnt-exist.error';
 export * from './path-exists.error';
 export * from './path.type';
 export * from './prefix-path.function';
+export * from './suffix-path.function';
