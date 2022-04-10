@@ -34,7 +34,6 @@ describe('CanActivateWithEnvironmentGuard', () => {
 
   it(`canActivate(route) returns true if properties exists`, () => {
     service.properties = ['a'];
-    console.log(query);
     query.containsAll.andReturn(true);
 
     expect(spectator.service.canActivate(route)).toBeTrue();

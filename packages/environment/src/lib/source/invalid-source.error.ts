@@ -20,7 +20,7 @@ export class InvalidSourceError extends Error {
       return asString(source);
     }
 
-    if (source?.id) {
+    if (source.id) {
       return source.id;
     }
 
@@ -35,11 +35,11 @@ export class InvalidSourceError extends Error {
     return asString(source);
   }
 
-  protected isNamedObject(source: unknown): boolean {
-    return typeof source === 'object' && Boolean(source?.constructor?.name) && source?.constructor?.name !== 'Object';
+  protected isNamedObject(source: any): boolean {
+    return typeof source === 'object' && Boolean(source.constructor.name) && source.constructor.name !== 'Object';
   }
 
-  protected isNamedFunction(source: unknown): boolean {
-    return typeof source === 'function' && Boolean(source?.name) && source.name !== 'Function';
+  protected isNamedFunction(source: any): boolean {
+    return typeof source === 'function' && Boolean(source.name) && source.name !== 'Function';
   }
 }
