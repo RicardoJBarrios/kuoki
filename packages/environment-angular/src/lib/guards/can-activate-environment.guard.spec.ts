@@ -6,10 +6,10 @@ import { set } from 'lodash-es';
 import { delay, of, Subscription } from 'rxjs';
 
 import { DefaultEnvironmentQuery } from '../query';
-import { CanActivateWithEnvironmentReactiveGuard } from './can-activate-with-environment-reactive.guard';
+import { CanActivateEnvironment } from './can-activate-environment.guard';
 
-describe('CanActivateWithEnvironmentReactiveGuard', () => {
-  let spectator: SpectatorService<CanActivateWithEnvironmentReactiveGuard>;
+describe('CanActivateWithEnvironment', () => {
+  let spectator: SpectatorService<CanActivateEnvironment>;
   let query: SpyObject<EnvironmentQuery>;
   let router: SpyObject<Router>;
   let service: any;
@@ -17,7 +17,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   let sub: Subscription;
 
   const createService = createServiceFactory({
-    service: CanActivateWithEnvironmentReactiveGuard,
+    service: CanActivateEnvironment,
     providers: [{ provide: EnvironmentQuery, useValue: createSpyObject(DefaultEnvironmentQuery) }],
     mocks: [Router]
   });
@@ -120,7 +120,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) uses properties from route.data`, (done) => {
     service.properties = ['a'];
     query.containsAll$.andReturn(of(true));
-    set(route, 'data.canActivateWithEnvironment.properties', ['b']);
+    set(route, 'data.canActivateEnvironment.properties', ['b']);
 
     sub = spectator.service.canActivate(route).subscribe(() => {
       expect(query.containsAll$).toHaveBeenNthCalledWith(1, 'b');
@@ -131,7 +131,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) emits true if route.data properties is not an array`, (done) => {
     service.properties = ['a'];
     query.containsAll$.andReturn(of(true));
-    set(route, 'data.canActivateWithEnvironment.properties', null);
+    set(route, 'data.canActivateEnvironment.properties', null);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(true);
@@ -142,7 +142,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) emits true if route.data properties is empty array`, (done) => {
     service.properties = ['a'];
     query.containsAll$.andReturn(of(true));
-    set(route, 'data.canActivateWithEnvironment.properties', []);
+    set(route, 'data.canActivateEnvironment.properties', []);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(true);
@@ -153,7 +153,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) uses dueTime from route.dueTime`, (done) => {
     service.properties = ['a'];
     query.containsAll$.andReturn(of(true).pipe(delay(10)));
-    set(route, 'data.canActivateWithEnvironment.dueTime', 5);
+    set(route, 'data.canActivateEnvironment.dueTime', 5);
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(false);
@@ -164,7 +164,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
   it(`canActivate(route) ignores route.dueTime if isn't a number`, (done) => {
     service.properties = ['a'];
     query.containsAll$.andReturn(of(true).pipe(delay(10)));
-    set(route, 'data.canActivateWithEnvironment.dueTime', '5');
+    set(route, 'data.canActivateEnvironment.dueTime', '5');
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
       expect(v).toEqual(true);
@@ -176,7 +176,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
     service.dueTime = 5;
-    set(route, 'data.canActivateWithEnvironment.urlOnError', 'path/to');
+    set(route, 'data.canActivateEnvironment.urlOnError', 'path/to');
     query.containsAll$.andReturn(of(false));
     router.parseUrl.andReturn(urlTree);
 
@@ -190,7 +190,7 @@ describe('CanActivateWithEnvironmentReactiveGuard', () => {
     const urlTree: UrlTree = new UrlTree();
     service.properties = ['a'];
     service.dueTime = 5;
-    set(route, 'data.canActivateWithEnvironment.urlOnError', 0);
+    set(route, 'data.canActivateEnvironment.urlOnError', 0);
     query.containsAll$.andReturn(of(false));
 
     sub = spectator.service.canActivate(route).subscribe((v) => {
