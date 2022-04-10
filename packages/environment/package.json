@@ -1,6 +1,6 @@
 {
   "name": "@kuoki/environment",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An Asynchronous Environment Manager for JavaScript and TypeScript Applications",
   "keywords": [
     "kuoki",
