@@ -25,7 +25,7 @@ runs:
     - name: Generate Unit Tests Coverage
       shell: bash
       run: |
-        yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ inputs.project }}
+        yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ env.PROJECT_NAME }}
         sed -i 's#packages/${{ env.PROJECT_NAME }}/##g' packages/${{ env.PROJECT_NAME }}/lcov.info
     - name: Generate Lint Report
       shell: bash
