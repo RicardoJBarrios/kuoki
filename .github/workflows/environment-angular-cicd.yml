@@ -7,7 +7,7 @@ on:
       - environment-angular-v*
 
 env:
-  PROJECT_NAME: environment
+  PROJECT_NAME: environment-angular
 
 concurrency:
   group: ci-test-${{ github.ref }}-1
@@ -16,14 +16,12 @@ concurrency:
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest
-    name: Analyze in SonarCloud
+    name: Generate Reports and Analyze in SonarCloud
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
-        uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup
       - uses: ./.github/actions/sonar
         with:
-          project_name: $PROJECT_NAME
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
@@ -36,7 +34,6 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-package
         with:
-          project_name: $PROJECT_NAME
           npm_token: ${{ secrets.NPM_TOKEN }}
 
   deploy_docs:
@@ -48,5 +45,4 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-docs
         with:
-          project_name: $PROJECT_NAME
           github_token: ${{ secrets.GITHUB_TOKEN }}

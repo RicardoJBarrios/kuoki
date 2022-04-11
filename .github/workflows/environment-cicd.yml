@@ -16,13 +16,11 @@ concurrency:
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest
-    name: Analyze in SonarCloud
+    name: Generate Reports and Analyze in SonarCloud
     steps:
       - uses: actions/checkout@v3
-      - name: Setup node.js and install
-        uses: ./.github/actions/setup
-      - name: Generate repots and analyze in SonarCloud
-        uses: ./.github/actions/sonar
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/sonar
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
