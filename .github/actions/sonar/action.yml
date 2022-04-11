@@ -2,9 +2,6 @@ name: Sonar
 description: Executes a SonarCloud Analysis
 
 inputs:
-  project_name:
-    description: Project name
-    required: true
   github_token:
     description: GitHub Token
     required: true
@@ -46,6 +43,5 @@ runs:
     #     args: >
     #       -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
     #   env:
-    #     PROJECT_NAME: ${{ inputs.project_name }}
     #     GITHUB_TOKEN: ${{ inputs.github_token }}
     #     SONAR_TOKEN: ${{ inputs.sonar_token }}

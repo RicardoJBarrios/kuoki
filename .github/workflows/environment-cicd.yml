@@ -19,11 +19,11 @@ jobs:
     name: Analyze in SonarCloud
     steps:
       - uses: actions/checkout@v3
-      - name: Setup
+      - name: Setup node.js and install
         uses: ./.github/actions/setup
-      - uses: ./.github/actions/sonar
+      - name: Generate repots and analyze in SonarCloud
+        uses: ./.github/actions/sonar
         with:
-          project_name: ${{ env.PROJECT_NAME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
