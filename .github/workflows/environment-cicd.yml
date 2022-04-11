@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/setup
       - uses: ./.github/actions/sonar
         with:
-          project_name: environment
+          project_name: ${{ env.PROJECT_NAME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
