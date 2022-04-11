@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/setup
       - uses: ./.github/actions/sonar
         with:
-          project_name: $PROJECT_NAME
+          project_name: environment
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
@@ -36,7 +36,7 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-package
         with:
-          project_name: $PROJECT_NAME
+          project_name: environment
           npm_token: ${{ secrets.NPM_TOKEN }}
 
   deploy_docs:
@@ -48,5 +48,5 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-docs
         with:
-          project_name: $PROJECT_NAME
+          project_name: environment
           github_token: ${{ secrets.GITHUB_TOKEN }}
