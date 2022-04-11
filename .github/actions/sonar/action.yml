@@ -19,9 +19,7 @@ runs:
       id: extract_version
       uses: Saionaro/extract-package-version@v1.1.1
       with:
-        path: packages/${{ env.PROJECT_NAME }}
-      env:
-        PROJECT_NAME: ${{ inputs.project_name }}
+        path: packages/${{ inputs.project_name }}
     - name: Generate Unit Tests Coverage
       shell: bash
       run: |
