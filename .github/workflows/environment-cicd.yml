@@ -36,7 +36,6 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-package
         with:
-          project_name: ${{ env.PROJECT_NAME }}
           npm_token: ${{ secrets.NPM_TOKEN }}
 
   deploy_docs:
@@ -48,5 +47,4 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-docs
         with:
-          project_name: ${{ env.PROJECT_NAME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
