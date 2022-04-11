@@ -21,13 +21,13 @@ runs:
         INPUT_PROJECT_NAME: ${{ inputs.project_name }}
       run: echo hello $INPUT_PROJECT_NAME
 
-    # - name: Extract package.json version
-    #   id: extract_version
-    #   env:
-    #     PROJECT_NAME: ${{ inputs.project_name }}
-    #   uses: Saionaro/extract-package-version@v1.1.1
-    #   with:
-    #     path: packages/$PROJECT_NAME
+    - name: Extract package.json version
+      id: extract_version
+      env:
+        INPUT_PROJECT_NAME: ${{ inputs.project_name }}
+      uses: Saionaro/extract-package-version@v1.1.1
+      with:
+        path: packages/$INPUT_PROJECT_NAME
 
     # - name: Generate Unit Tests Coverage
     #   shell: bash
