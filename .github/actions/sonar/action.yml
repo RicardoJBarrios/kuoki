@@ -27,7 +27,7 @@ runs:
         INPUT_PROJECT_NAME: ${{ inputs.project_name }}
       uses: Saionaro/extract-package-version@v1.1.1
       with:
-        path: packages/$INPUT_PROJECT_NAME
+        path: packages/${{ env.INPUT_PROJECT_NAME }}
 
     # - name: Generate Unit Tests Coverage
     #   shell: bash
