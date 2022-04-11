@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - packages/**
 
 concurrency:
   group: ci-test-${{ github.ref }}-1
