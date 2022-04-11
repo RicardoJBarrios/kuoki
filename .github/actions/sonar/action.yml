@@ -22,26 +22,22 @@ runs:
       with:
         path: packages/${{ env.PROJECT_NAME }}
 
-    # - name: Generate Unit Tests Coverage
-    #   shell: bash
-    #   run: |
-    #     yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ inputs.project }}
-    #     sed -i 's#packages/${{ env.PROJECT_NAME }}/##g' packages/${{ env.PROJECT_NAME }}/lcov.info
-    #   env:
-    #     PROJECT_NAME: ${{ inputs.project_name }}
-    # - name: Generate Lint Report
-    #   shell: bash
-    #   run: |
-    #     yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json
-    #     sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/${{ env.PROJECT_NAME }}/eslint.json
-    #   env:
-    #     PROJECT_NAME: ${{ inputs.project_name }}
-    # - name: Analyze in SonarCloud
-    #   uses: SonarSource/sonarcloud-github-action@master
-    #   with:
-    #     projectBaseDir: packages/${{ env.PROJECT_NAME }}
-    #     args: >
-    #       -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
-    #   env:
-    #     GITHUB_TOKEN: ${{ inputs.github_token }}
-    #     SONAR_TOKEN: ${{ inputs.sonar_token }}
+    - name: Generate Unit Tests Coverage
+      shell: bash
+      run: |
+        yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ inputs.project }}
+        sed -i 's#packages/${{ env.PROJECT_NAME }}/##g' packages/${{ env.PROJECT_NAME }}/lcov.info
+    - name: Generate Lint Report
+      shell: bash
+      run: |
+        yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json
+        sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/${{ env.PROJECT_NAME }}/eslint.json
+    - name: Analyze in SonarCloud
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: packages/${{ env.PROJECT_NAME }}
+        args: >
+          -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        SONAR_TOKEN: ${{ inputs.sonar_token }}
