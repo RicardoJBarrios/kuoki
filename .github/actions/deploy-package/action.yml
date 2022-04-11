@@ -12,11 +12,13 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Build
+    - run: echo hello ${{ inputs.project_name }}
       shell: bash
-      run: yarn nx build ${{ inputs.project_name }}
-    - name: Deploy in npm.js
-      env:
-        NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
-      shell: bash
-      run: npm publish dist/packages/${{ inputs.project_name }}
+    # - name: Build
+    #   shell: bash
+    #   run: yarn nx build ${{ inputs.project_name }}
+    # - name: Deploy in npm.js
+    #   env:
+    #     NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
+    #   shell: bash
+    #   run: npm publish dist/packages/${{ inputs.project_name }}

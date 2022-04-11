@@ -12,12 +12,14 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Generate Documentation
+    - run: echo hello ${{ inputs.project_name }}
       shell: bash
-      run: yarn nx docs ${{ inputs.project_name }}
-    - name: Deploy Documentation to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ inputs.github_token }}
-        publish_dir: docs/${{ inputs.project_name }}
-        destination_dir: ${{ inputs.project_name }}
+    # - name: Generate Documentation
+    #   shell: bash
+    #   run: yarn nx docs ${{ inputs.project_name }}
+    # - name: Deploy Documentation to GitHub Pages
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   with:
+    #     github_token: ${{ inputs.github_token }}
+    #     publish_dir: docs/${{ inputs.project_name }}
+    #     destination_dir: ${{ inputs.project_name }}
