@@ -10,6 +10,7 @@
     <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#contributing">Contributing</a></li>
   </ol>
 </details>
 
@@ -49,7 +50,7 @@ yarn add @kuoki/environment
 
 Dependencies
 
-- [rxjs](https://www.npmjs.com/package/rxjs): >=7.0.0
+- [rxjs](https://rxjs.dev) >= 7.0.0
 
 ## Usage
 
@@ -80,3 +81,13 @@ export const env: EnvironmentQuery = environmentModule.query;
 
 env.getAll(); // {name:'John Doe',userName:'JohnDoe01'}
 ```
+
+## Contributing
+
+In order to better manage all the contributions it is important that, when creating a new issue or discussion, the label `environment` is added (as well any other required) and to follow the [Code of Conduct](https://github.com/RicardoJBarrios/kuoki/blob/dca1a8b10dec511585324873e52377a347454d54/CODE_OF_CONDUCT.md).
+
+- :bug:` `If you want to track or report an issue in the code or documentation use the [Environment Issues](https://github.com/RicardoJBarrios/kuoki/labels/environment).
+- :bulb:` `If you want to track or discuss new features or share new ideas use the [Environment Ideas](https://github.com/RicardoJBarrios/kuoki/discussions/categories/ideas?discussions_q=category%3AIdeas+label%3Aenvironment) discussion forum.
+- :pray:` `If you want to track or get support use the [Environment Q&A](https://github.com/RicardoJBarrios/kuoki/discussions/categories/q-a?discussions_q=label%3Aenvironment+category%3AQ%26A) discussion forum.
+- :raised_hands:` `If you want to track or show off what you have been able to do use the [Environment Show and tell](https://github.com/RicardoJBarrios/kuoki/discussions/categories/show-and-tell?discussions_q=label%3Aenvironment+category%3A%22Show+and+tell%22) discussion forum.
+- :handshake:` ` If you want to contribute fixing issues or with new features you can create a [pull request](https://docs.github.com/es/github-ae@latest/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) with the new code.

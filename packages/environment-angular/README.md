@@ -15,7 +15,7 @@
 
 ## About The Project
 
-This library provides tools to manage environment properties in browser based JavaScript and TypeScript applications.
+This library provides wrappers for managing environment properties in Angular applications using the [`@kuoki/environment`](https://ricardojbarrios.github.io/kuoki/environment/) library, as well as additional tools such as decorators and guards.
 
 ## Getting Started
 
@@ -35,11 +35,88 @@ yarn add @kuoki/environment-angular
 
 Dependencies
 
-- [rxjs](https://www.npmjs.com/package/rxjs): >=7.0.0
-- [environment](https://www.npmjs.com/package/@kuoki/environment): >=1.1.0
+- [Angular](https://angular.io) >= 13
+- [rxjs](https://rxjs.dev) >= 7.0.0
+- [@kuoki/environment](https://ricardojbarrios.github.io/kuoki/environment) >= 1.1.0
 
 ## Usage
 
 ```ts
+import { HttpClientModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, Injectable, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import {
+  EnvironmentModule,
+  EnvironmentQuery,
+  EnvironmentSource,
+  EnvironmentState,
+  filterNil
+} from '@kuoki/environment';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
+import { environment } from './../environments/environment';
+
+@Component({
+  selector: 'app-root',
+  template: `<h1>{{ pageTitle$ | async }}</h1>`,
+})
+export class AppComponent {
+  @EnvironmentValue$('pageTitle', { defaultValue: 'My App' })
+  readonly pageTitle$!: Observable<string>;
+}
+
+
+@Injectable({ providedIn: 'root' })
+class AngularEnvironmentSource implements EnvironmentSource {
+  isRequired: true;
+
+  load(): EnvironmentState[] {
+    return [environment];
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+class LocalFileSource implements EnvironmentSource {
+  isRequired: true;
+
+  constructor(protected readonly http: HttpCLient) {}
+
+  load(): Observable<EnvironmentState> {
+    return this.http.get(`assets/env.json`);
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+class PropertiesServerSource implements EnvironmentSource {
+  isRequired: true;
+
+  constructor(
+    protected readonly http: HttpCLient,
+    protected readonly query: EnvironmentQuery
+  ) {}
+
+  load(): Observable<EnvironmentState> {
+    return this.query.get$<string>('basePath')
+      .pipe(
+        filterNil(),
+        switchMap((basePath: string) =>
+          this.http.get(`${basePath}/properties/myapp`))
+      );
+  }
+}
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    EnvironmentModule.forRoot({
+      sources: [AngularEnvironmentSource, PropertiesServerSource]
+    });
+  ],
+  bootstrap: [AppComponent]
+})
+class AppModule {}
 ```
