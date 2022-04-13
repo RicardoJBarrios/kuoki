@@ -12,32 +12,29 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Use input as env
-      shell: bash
-      run: echo hello ${{ env.PROJECT_NAME }}
-
-    - name: Extract package.json version
-      id: extract_version
-      uses: Saionaro/extract-package-version@v1.1.1
+    - name: Extract package.json info
+      id: projectinfo
+      uses: gregoranders/nodejs-project-info@v0.0.18
       with:
-        path: packages/${{ env.PROJECT_NAME }}
-
+        path: packages/${{ env.PROJECT_NAME }}/package.json
     - name: Generate Unit Tests Coverage
       shell: bash
-      run: |
-        yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ env.PROJECT_NAME }}
-        sed -i 's#packages/${{ env.PROJECT_NAME }}/##g' packages/${{ env.PROJECT_NAME }}/lcov.info
+      run: yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ env.PROJECT_NAME }}
+    - name: Modify lcov.info
+      shell: bash
+      run: sed -i 's#packages/${{ env.PROJECT_NAME }}/##g' packages/${{ env.PROJECT_NAME }}/lcov.info
     - name: Generate Lint Report
       shell: bash
-      run: |
-        yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json
-        sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/${{ env.PROJECT_NAME }}/eslint.json
+      run: yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json
+    - name: Modify eslint.json
+      shell: bash
+      run: sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/${{ env.PROJECT_NAME }}/eslint.json
     - name: Analyze in SonarCloud
       uses: SonarSource/sonarcloud-github-action@master
       with:
         projectBaseDir: packages/${{ env.PROJECT_NAME }}
         args: >
-          -Dsonar.projectVersion=${{ steps.extract_version.outputs.version }}
+          -Dsonar.projectVersion=${{ steps.projectinfo.outputs.version }}
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         SONAR_TOKEN: ${{ inputs.sonar_token }}
