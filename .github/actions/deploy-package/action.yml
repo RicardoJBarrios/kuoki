@@ -16,4 +16,4 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
       shell: bash
-      run: npm publish dist/packages/${{ env.PROJECT_NAME }}
+      run: npm publish dist/packages/${{ env.PROJECT_NAME }} --access=public
