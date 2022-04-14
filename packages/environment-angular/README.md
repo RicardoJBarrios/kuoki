@@ -46,13 +46,8 @@ import { HttpClientModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, Injectable, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {
-  EnvironmentModule,
-  EnvironmentQuery,
-  EnvironmentSource,
-  EnvironmentState,
-  filterNil
-} from '@kuoki/environment';
+import { EnvironmentQuery, EnvironmentSource, EnvironmentState, filterNil } from '@kuoki/environment';
+import { EnvironmentModule } from '@kuoki/environment-angular';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -60,50 +55,44 @@ import { environment } from './../environments/environment';
 
 @Component({
   selector: 'app-root',
-  template: `<h1>{{ pageTitle$ | async }}</h1>`,
+  template: `<h1>{{ pageTitle$ | async }}</h1>`
 })
 export class AppComponent {
   @EnvironmentValue$('pageTitle', { defaultValue: 'My App' })
   readonly pageTitle$!: Observable<string>;
 }
 
-
 @Injectable({ providedIn: 'root' })
 class AngularEnvironmentSource implements EnvironmentSource {
-  isRequired: true;
+  isRequired = true;
 
   load(): EnvironmentState[] {
-    return [environment];
+    return [{ production: true }];
   }
 }
 
 @Injectable({ providedIn: 'root' })
 class LocalFileSource implements EnvironmentSource {
-  isRequired: true;
+  isRequired = true;
 
-  constructor(protected readonly http: HttpCLient) {}
+  constructor(protected readonly http: HttpClient) {}
 
   load(): Observable<EnvironmentState> {
-    return this.http.get(`assets/env.json`);
+    return this.http.get<EnvironmentState>(`assets/env.json`);
   }
 }
 
 @Injectable({ providedIn: 'root' })
 class PropertiesServerSource implements EnvironmentSource {
-  isRequired: true;
+  isRequired = true;
 
-  constructor(
-    protected readonly http: HttpCLient,
-    protected readonly query: EnvironmentQuery
-  ) {}
+  constructor(protected readonly http: HttpClient, protected readonly query: EnvironmentQuery) {}
 
   load(): Observable<EnvironmentState> {
-    return this.query.get$<string>('basePath')
-      .pipe(
-        filterNil(),
-        switchMap((basePath: string) =>
-          this.http.get(`${basePath}/properties/myapp`))
-      );
+    return this.query.get$<string>('basePath').pipe(
+      filterNil(),
+      switchMap((basePath: string) => this.http.get<EnvironmentState>(`${basePath}/properties/myapp`))
+    );
   }
 }
 
@@ -113,8 +102,8 @@ class PropertiesServerSource implements EnvironmentSource {
     BrowserModule,
     HttpClientModule,
     EnvironmentModule.forRoot({
-      sources: [AngularEnvironmentSource, PropertiesServerSource]
-    });
+      sources: [AngularEnvironmentSource, LocalFileSource, PropertiesServerSource]
+    })
   ],
   bootstrap: [AppComponent]
 })
