@@ -1,3 +1,4 @@
+import { Type } from '@angular/core';
 import {
   DefaultEnvironmentLoader,
   DefaultEnvironmentQuery,
@@ -42,9 +43,10 @@ export interface EnvironmentModuleConfig {
   /**
    * The enviroment sources to load.
    */
-  sources?: ArrayOrSingle<ProviderValue<EnvironmentSource>>;
+  sources?: ArrayOrSingle<EnvironmentSource | Type<EnvironmentSource>>;
   /**
-   * Load the required environment sources before application initialization. Default is `true`.
+   * Load the required environment sources before application initialization.
+   * Default is `true`.
    */
   loadBeforeInit?: boolean;
 }

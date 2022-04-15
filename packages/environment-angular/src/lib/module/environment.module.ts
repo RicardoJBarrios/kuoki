@@ -6,7 +6,7 @@ import { configProviderFactory } from '../helpers';
 import { DefaultEnvironmentLoader } from '../loader';
 import { DefaultEnvironmentQuery, ENVIRONMENT_QUERY_CONFIG } from '../query';
 import { DefaultEnvironmentService } from '../service';
-import { ENVIRONMENT_SOURCES } from '../source';
+import { ENVIRONMENT_SOURCES, ENVIRONMENT_SOURCES_FACTORY } from '../source';
 import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_STATE } from '../store';
 import { EnvironmentAngularChildConfig, EnvironmentModuleConfig } from './environment-module-config.interface';
 
@@ -65,13 +65,13 @@ export class EnvironmentModule {
         configProviderFactory({
           provide: ENVIRONMENT_SOURCES,
           configValue: config?.sources,
-          defaultValue: []
+          defaultValue: null
         }),
         configProviderFactory({
           provide: EnvironmentLoader,
           configValue: config?.loader,
           defaultValue: DefaultEnvironmentLoader,
-          deps: [EnvironmentService, ENVIRONMENT_SOURCES]
+          deps: [EnvironmentService, ENVIRONMENT_SOURCES_FACTORY]
         }),
         config?.loadBeforeInit ?? true
           ? {
@@ -92,13 +92,13 @@ export class EnvironmentModule {
         configProviderFactory({
           provide: ENVIRONMENT_SOURCES,
           configValue: config?.sources,
-          defaultValue: []
+          defaultValue: null
         }),
         configProviderFactory({
           provide: EnvironmentLoader,
           configValue: config?.loader,
           defaultValue: DefaultEnvironmentLoader,
-          deps: [EnvironmentService, ENVIRONMENT_SOURCES]
+          deps: [EnvironmentService, ENVIRONMENT_SOURCES_FACTORY]
         })
       ]
     };
