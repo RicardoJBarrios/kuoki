@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for helpers/config-provider-factory.function.ts</title>
+    <title>Code coverage report for source/environment-sources-factory.token.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">helpers</a> config-provider-factory.function.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">source</a> environment-sources-factory.token.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
@@ -95,70 +95,82 @@
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">172x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">172x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">42x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">42x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">166x</span>
-<span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">64x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">62x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { InjectionToken, Provider } from '@angular/core';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { EnvironmentSource } from '@kuoki/environment';
+import { ArrayOrSingle } from 'ts-essentials';
 &nbsp;
-import { isClass } from './is-class';
+import { isClass, OrProvider } from '../helpers';
+import { ENVIRONMENT_SOURCES } from './environment-sources.token';
 &nbsp;
 /**
- * Creates a suitable Provider object using a config value and a default value.
- * @param value The provider values.
- * @returns A suitable Provider.
+ * The environment sources as single injected source or array of injected sources.
  */
-export function configProviderFactory(value: {
-  provide: unknown;
-  defaultValue: unknown;
-  configValue?: unknown;
-  deps?: unknown[];
-  multi?: boolean;
-}): Provider {
-  const providerValue: unknown = value.configValue ?? value.defaultValue;
+export const ENVIRONMENT_SOURCES_FACTORY: InjectionToken&lt;EnvironmentSource[]&gt; = new InjectionToken(
+  'ENVIRONMENT_SOURCES_FACTORY',
+  {
+    factory: () =&gt; {
+      const sources: ArrayOrSingle&lt;OrProvider&lt;EnvironmentSource&gt;&gt; | null = inject(
+        ENVIRONMENT_SOURCES,
+        InjectFlags.Optional
+      );
 &nbsp;
-  if (providerValue instanceof InjectionToken) {
-    return { provide: value.provide, useExisting: providerValue, deps: value.deps, multi: value.multi };
+      if (!Array.isArray(sources)) {
+        return sources;
+      }
+&nbsp;
+      const sourceObjects: EnvironmentSource[] = sources
+        .map((source: OrProvider&lt;EnvironmentSource&gt;) =&gt; (isClass(source) ? inject(source) : source))
+        .map((source: OrProvider&lt;EnvironmentSource&gt;) =&gt; source as EnvironmentSource)
+        .filter((source: EnvironmentSource) =&gt; source != null);
+&nbsp;
+      if (sourceObjects.length === 0) {
+        return null;
+      }
+&nbsp;
+      return sourceObjects.length === 1 ? <span class="branch-0 cbranch-no" title="branch not covered" >sourceObjects[0] </span>: sourceObjects;
+    }
   }
-&nbsp;
-  if (isClass(providerValue)) {
-    return { provide: value.provide, useClass: providerValue, deps: value.deps, multi: value.multi };
-  }
-&nbsp;
-  if (typeof providerValue === 'function') {
-    return { provide: value.provide, useFactory: providerValue, deps: value.deps, multi: value.multi };
-  }
-&nbsp;
-  return { provide: value.provide, useValue: providerValue, deps: value.deps, multi: value.multi };
-}
+);
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
