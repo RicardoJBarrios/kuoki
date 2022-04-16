@@ -4,7 +4,7 @@
 
 ## DefaultEnvironmentService
 
-An environment service is an interface that must be implemented to mutate the environment store.
+The default environment service implementation to mutate the environment store.
 
 This service is provided by defaut when running `EnvironmentModule.forRoot()`, but can be provided manually.
 
@@ -26,7 +26,7 @@ Below are examples of the expected behavior and some implementation examples. To
 <details>
   <summary><strong>Table of Contents</strong></summary>
   <ol>
-    <li><a href="#create-a-custom-service"></a>Create a custom service</li>
+    <li><a href="#create-a-custom-service">Create a custom service</a></li>
   </ol>
 </details>
 
