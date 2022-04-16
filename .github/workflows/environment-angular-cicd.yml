@@ -22,7 +22,7 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/sonar
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
   deploy_package:
@@ -45,4 +45,4 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-docs
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}

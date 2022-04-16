@@ -47,12 +47,12 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Version Affected
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: npx nx affected --target=version --parallel=1
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}
           branch: ${{ github.ref }}
           force: true
           tags: true
