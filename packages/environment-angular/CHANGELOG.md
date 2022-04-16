@@ -2,6 +2,26 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.2.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v0.1.0...environment-angular-v0.2.0) (2022-04-16)
+
+
+### Bug Fixes
+
+* **environment-angular:** add missing import ([e5eda3f](https://github.com/RicardoJBarrios/kuoki/commit/e5eda3fcf9046dc8812616a0a32c15fdec3ddca6))
+* **environment-angular:** fix multiple sources injection ([f31f2a1](https://github.com/RicardoJBarrios/kuoki/commit/f31f2a1b310d0b2b8a07c21ec95d66d1df6d53c0))
+* **environment-angular:** fix source tokens behavior and docs ([8e6b347](https://github.com/RicardoJBarrios/kuoki/commit/8e6b347e7a343890572dfc3d6f6ca12cbe88ac43))
+* **environment-angular:** temp fix lint ([54c5cd0](https://github.com/RicardoJBarrios/kuoki/commit/54c5cd098377b23fd1c3796950f94a6e83290496))
+
+
+### Features
+
+* **environment-angular:** add OrType type to helpers ([a743dad](https://github.com/RicardoJBarrios/kuoki/commit/a743dadafe87fbc1f1ee7ac5b05b28d3ec57412b))
+* **environment-angular:** rename OrType to OrProvider ([ce208df](https://github.com/RicardoJBarrios/kuoki/commit/ce208df527469ea3b83c9f193b6c629c74e34925))
+* **environment-angular:** update module to add source factory changes ([be62311](https://github.com/RicardoJBarrios/kuoki/commit/be62311c5d181f83c065c7d799601db3f33fa93a))
+* **environment-angular:** update source token factory and update tests and docs ([fede127](https://github.com/RicardoJBarrios/kuoki/commit/fede127c22794a37a9f139d4ebd51d04a8c80362))
+
+
+
 # 0.1.0 (2022-04-10)
 
 
