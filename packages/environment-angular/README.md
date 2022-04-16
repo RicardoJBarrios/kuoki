@@ -109,3 +109,5 @@ class PropertiesServerSource implements EnvironmentSource {
 })
 class AppModule {}
 ```
+
+See in [Stackblitz](https://basic-kuoki-environment-angular.stackblitz.io).
