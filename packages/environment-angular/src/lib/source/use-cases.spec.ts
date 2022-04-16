@@ -19,87 +19,108 @@ export class Source2 extends EnvironmentSource {
   }
 }
 
+const sourceObj = { load: () => [{ a: 0 }] };
+
 describe('Angular Environment Sources Use Cases', () => {
-  describe('use with single source', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        providers: [{ provide: ENVIRONMENT_SOURCES, useClass: Source2 }]
-      });
+  it(`use with single source`, () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ENVIRONMENT_SOURCES, useClass: Source2 }]
     });
 
-    it(`ENVIRONMENT_SOURCES_FACTORY returns a valid EnvironmentSource object`, () => {
-      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+    const sources = TestBed.inject(ENVIRONMENT_SOURCES);
 
-      expect(sourcesFactory).toBeObject();
-      expect(sourcesFactory).toBeInstanceOf(Source2);
-      expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
-    });
+    expect(sources).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sources)).toBeTrue();
+
+    const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+
+    expect(sourcesFactory).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
   });
 
-  describe('use with multiple sources', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        providers: [{ provide: ENVIRONMENT_SOURCES, useValue: [Source1, { load: () => [{ a: 0 }] }, new Source2()] }]
-      });
+  it(`use with multiple sources`, () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ENVIRONMENT_SOURCES, useValue: [Source1, sourceObj, new Source2()] }]
     });
 
-    it(`ENVIRONMENT_SOURCES_FACTORY returns an array of valid EnvironmentSource objects`, () => {
-      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+    const sources: any = TestBed.inject(ENVIRONMENT_SOURCES);
 
-      expect(sourcesFactory).toBeArrayOfSize(3);
+    expect(sources).toBeArrayOfSize(3);
+    expect(sources[0]).toBeFunction();
+    expect(isEnvironmentSource(sources[0])).toBeFalse();
+    expect(sources[1]).toBeObject();
+    expect(isEnvironmentSource(sources[1])).toBeTrue();
+    expect(sources[2]).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sources[2])).toBeTrue();
 
-      expect(sourcesFactory[0]).toBeObject();
-      expect(sourcesFactory[0]).toBeInstanceOf(Source1);
-      expect(isEnvironmentSource(sourcesFactory[0])).toBeTrue();
+    const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
 
-      expect(sourcesFactory[1]).toBeObject();
-      expect(isEnvironmentSource(sourcesFactory[1])).toBeTrue();
-
-      expect(sourcesFactory[2]).toBeObject();
-      expect(sourcesFactory[2]).toBeInstanceOf(Source2);
-      expect(isEnvironmentSource(sourcesFactory[2])).toBeTrue();
-    });
+    expect(sourcesFactory).toBeArrayOfSize(3);
+    expect(sourcesFactory[0]).toBeInstanceOf(Source1);
+    expect(isEnvironmentSource(sourcesFactory[0])).toBeTrue();
+    expect(sourcesFactory[1]).toBeObject();
+    expect(isEnvironmentSource(sourcesFactory[1])).toBeTrue();
+    expect(sourcesFactory[2]).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sourcesFactory[2])).toBeTrue();
   });
 
-  describe('using .forRoot({sources}) with single source', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot({ sources: Source2 })]
-      });
+  it(`.forRoot({sources}) with single source`, () => {
+    TestBed.configureTestingModule({
+      imports: [EnvironmentModule.forRoot({ sources: Source1 })]
     });
 
-    it(`ENVIRONMENT_SOURCES_FACTORY returns a valid EnvironmentSource object`, () => {
-      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+    const sources = TestBed.inject(ENVIRONMENT_SOURCES);
 
-      expect(sourcesFactory).toBeObject();
-      expect(sourcesFactory).toBeInstanceOf(Source2);
-      expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
-    });
+    expect(sources).toBeInstanceOf(Source1);
+    expect(isEnvironmentSource(sources)).toBeTrue();
+
+    const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+
+    expect(sourcesFactory).toBeObject();
+    expect(sourcesFactory).toBeInstanceOf(Source1);
+    expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
   });
 
-  describe('using .forRoot({sources}) with multiple sources', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot({ sources: [Source1, { load: () => [{ a: 0 }] }, new Source2()] })]
-      });
+  it(`.forRoot({sources}) with multiple sources`, () => {
+    TestBed.configureTestingModule({
+      imports: [EnvironmentModule.forRoot({ sources: [Source1, sourceObj, new Source2()] })]
     });
 
-    it(`ENVIRONMENT_SOURCES_FACTORY returns an array of valid EnvironmentSource objects`, () => {
-      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+    const sources: any = TestBed.inject(ENVIRONMENT_SOURCES);
 
-      expect(sourcesFactory).toBeArrayOfSize(3);
+    expect(sources).toBeArrayOfSize(3);
+    expect(sources[0]).toBeFunction();
+    expect(isEnvironmentSource(sources[0])).toBeFalse();
+    expect(sources[1]).toBeObject();
+    expect(isEnvironmentSource(sources[1])).toBeTrue();
+    expect(sources[2]).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sources[2])).toBeTrue();
 
-      console.log(sourcesFactory[0]);
-      expect(sourcesFactory[0]).toBeObject();
-      expect(sourcesFactory[0]).toBeInstanceOf(Source1);
-      expect(isEnvironmentSource(sourcesFactory[0])).toBeTrue();
+    const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
 
-      expect(sourcesFactory[1]).toBeObject();
-      expect(isEnvironmentSource(sourcesFactory[1])).toBeTrue();
+    expect(sourcesFactory).toBeArrayOfSize(3);
+    expect(sourcesFactory[0]).toBeInstanceOf(Source1);
+    expect(isEnvironmentSource(sourcesFactory[0])).toBeTrue();
+    expect(sourcesFactory[1]).toBeObject();
+    expect(isEnvironmentSource(sourcesFactory[1])).toBeTrue();
+    expect(sourcesFactory[2]).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sourcesFactory[2])).toBeTrue();
+  });
 
-      expect(sourcesFactory[2]).toBeObject();
-      expect(sourcesFactory[2]).toBeInstanceOf(Source2);
-      expect(isEnvironmentSource(sourcesFactory[2])).toBeTrue();
+  it(`.forChild({sources}) sets new sources`, () => {
+    TestBed.configureTestingModule({
+      imports: [EnvironmentModule.forRoot({ sources: Source1 }), EnvironmentModule.forChild({ sources: new Source2() })]
     });
+
+    const sources = TestBed.inject(ENVIRONMENT_SOURCES);
+
+    expect(sources).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sources)).toBeTrue();
+
+    const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+
+    expect(sourcesFactory).toBeObject();
+    expect(sourcesFactory).toBeInstanceOf(Source2);
+    expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
   });
 });

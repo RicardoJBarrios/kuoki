@@ -59,6 +59,7 @@ Can be used with single source.
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
 import { EnvironmentModule } from '@kuoki/environment-angular';
 
+@Injectable({ providedIn: 'root' })
 export class Source1 extends EnvironmentSource {
   load(): EnvironmentState[] {
     return [{ a: 0 }];

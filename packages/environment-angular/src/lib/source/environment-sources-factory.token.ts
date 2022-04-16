@@ -1,24 +1,30 @@
-import { inject, InjectionToken } from '@angular/core';
+import { inject, InjectFlags, InjectionToken } from '@angular/core';
 import { EnvironmentSource } from '@kuoki/environment';
 import { ArrayOrSingle } from 'ts-essentials';
 
-import { isClass, OrType } from '../helpers';
+import { isClass, OrProvider } from '../helpers';
 import { ENVIRONMENT_SOURCES } from './environment-sources.token';
 
+/**
+ * The environment sources as single injected source or array of injected sources.
+ */
 export const ENVIRONMENT_SOURCES_FACTORY: InjectionToken<EnvironmentSource[]> = new InjectionToken(
   'ENVIRONMENT_SOURCES_FACTORY',
   {
     factory: () => {
-      const sources: ArrayOrSingle<OrType<EnvironmentSource>> | null = inject(ENVIRONMENT_SOURCES);
+      const sources: ArrayOrSingle<OrProvider<EnvironmentSource>> | null = inject(
+        ENVIRONMENT_SOURCES,
+        InjectFlags.Optional
+      );
 
-      if (sources == null) {
-        return null;
+      if (!Array.isArray(sources)) {
+        return sources;
       }
 
-      const arraySources: OrType<EnvironmentSource>[] = Array.isArray(sources) ? sources : [sources];
-      const sourceObjects: EnvironmentSource[] = arraySources
-        .map((source: OrType<EnvironmentSource>) => (isClass(source) ? inject(source) : source))
-        .filter((source: EnvironmentSource | null) => source != null);
+      const sourceObjects: EnvironmentSource[] = sources
+        .map((source: OrProvider<EnvironmentSource>) => (isClass(source) ? inject(source) : source))
+        .map((source: OrProvider<EnvironmentSource>) => source as EnvironmentSource)
+        .filter((source: EnvironmentSource) => source != null);
 
       if (sourceObjects.length === 0) {
         return null;
