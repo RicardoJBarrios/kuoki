@@ -136,7 +136,7 @@ EnvironmentModule.forChild({ sources: Source3 });
 
 ## Use cases
 
-Below are examples of the expected behavior and some implementation examples.
+Below are examples of the expected behavior and some implementation examples. To learn more about environment sources and how to create them you can read the [documentation](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentSource.html).
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
