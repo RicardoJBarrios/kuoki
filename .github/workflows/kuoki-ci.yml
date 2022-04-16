@@ -9,7 +9,7 @@ on:
       - packages/**
 
 concurrency:
-  group: ci-test-${{ github.ref }}-1
+  group: ci-kuoki-${{ github.ref }}-1
   cancel-in-progress: true
 
 jobs:

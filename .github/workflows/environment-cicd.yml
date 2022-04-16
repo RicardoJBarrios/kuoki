@@ -10,7 +10,7 @@ env:
   PROJECT_NAME: environment
 
 concurrency:
-  group: ci-test-${{ github.ref }}-1
+  group: ci-environment-${{ github.ref }}-1
   cancel-in-progress: true
 
 jobs:
