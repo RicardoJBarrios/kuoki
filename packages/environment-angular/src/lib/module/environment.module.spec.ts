@@ -7,28 +7,27 @@ import {
   EnvironmentService,
   EnvironmentSource,
   EnvironmentState,
-  EnvironmentStore
+  EnvironmentStore,
+  isEnvironmentSource
 } from '@kuoki/environment';
-import { Observable } from 'rxjs';
 import { ArrayOrSingle } from 'ts-essentials';
 
 import { DefaultEnvironmentLoader } from '../loader';
 import { DefaultEnvironmentQuery, ENVIRONMENT_QUERY_CONFIG } from '../query';
 import { DefaultEnvironmentService } from '../service';
-import { ENVIRONMENT_SOURCES } from '../source';
+import { ENVIRONMENT_SOURCES, ENVIRONMENT_SOURCES_FACTORY } from '../source';
 import { DefaultEnvironmentStore, ENVIRONMENT_INITIAL_STATE } from '../store';
 import { EnvironmentModule } from './environment.module';
 
 @Injectable()
-export class CustomEnvironmentStore implements EnvironmentStore {
-  getAll$(): Observable<EnvironmentState> {
-    throw new Error('Method not implemented.');
+export class CustomEnvironmentStore extends DefaultEnvironmentStore {
+  constructor(
+    @Optional()
+    @Inject(ENVIRONMENT_INITIAL_STATE)
+    protected override readonly _initialState?: EnvironmentState
+  ) {
+    super(_initialState);
   }
-  getAll(): EnvironmentState {
-    throw new Error('Method not implemented.');
-  }
-  update(environment: EnvironmentState): void {}
-  reset(): void {}
 }
 
 @Injectable()
@@ -55,162 +54,202 @@ export class CustomEnvironmentLoader extends DefaultEnvironmentLoader {
   constructor(
     protected override readonly service: EnvironmentService,
     @Optional()
-    @Inject(ENVIRONMENT_SOURCES)
+    @Inject(ENVIRONMENT_SOURCES_FACTORY)
     protected override readonly sources?: ArrayOrSingle<EnvironmentSource> | null
   ) {
     super(service, sources);
   }
 }
 
-const errorMessage = `An instance of EnvironmentQuery is required. Use EnvironmentModule.forRoot() or provide the EnvironmentQuery service`;
+@Injectable({ providedIn: 'root' })
+export class RequiredSource extends EnvironmentSource {
+  override id = 'RequiredSource';
+  override isRequired = true;
+  load(): EnvironmentState[] {
+    return [{ a: 0 }];
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class NoRequiredSource extends EnvironmentSource {
+  override id = 'NoRequiredSource';
+  load(): EnvironmentState[] {
+    return [{ b: 0 }];
+  }
+}
+
+export class NoInjectableSource extends EnvironmentSource {
+  override id = 'NoInjectableSource';
+  load(): EnvironmentState[] {
+    return [{ c: 0 }];
+  }
+}
 
 describe('EnvironmentModule', () => {
-  describe('', () => {
+  describe('without providers', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [EnvironmentModule]
       });
     });
 
-    it('throws if no EnvironmentModule provided', () => {
-      expect(() => TestBed.inject(EnvironmentModule)).toThrow(errorMessage);
+    it('throws because no EnvironmentQuery provided', () => {
+      expect(() => TestBed.inject(EnvironmentModule)).toThrow(
+        'An instance of EnvironmentQuery is required. ' +
+          'Use EnvironmentModule.forRoot() or provide the EnvironmentQuery service'
+      );
+    });
+
+    it(`.query returns undefined`, () => {
+      expect(EnvironmentModule.query).toBeUndefined();
     });
   });
 
-  describe('forRoot()', () => {
+  describe('with store and query providers', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [EnvironmentModule],
+        providers: [
+          { provide: EnvironmentStore, useClass: DefaultEnvironmentStore },
+          { provide: EnvironmentQuery, useClass: DefaultEnvironmentQuery }
+        ]
+      });
+    });
+
+    it(`doesn't throw`, () => {
+      expect(() => TestBed.inject(EnvironmentModule)).not.toThrow();
+    });
+
+    it(`.query exposes the injected EnvironmentQuery `, () => {
+      TestBed.inject(EnvironmentModule);
+      expect(EnvironmentModule.query).toBeInstanceOf(DefaultEnvironmentQuery);
+    });
+  });
+
+  describe('.forRoot() ', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [EnvironmentModule.forRoot()]
       });
     });
 
-    it(`Injects the module`, () => {
-      expect(() => TestBed.inject(EnvironmentModule)).not.toThrow();
-    });
-
-    it('provides ENVIRONMENT_INITIAL_VALUE as {}', () => {
+    it(`injects all default implementations`, () => {
       expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
-    });
-
-    it('provides DefaultEnvironmentStore', () => {
       expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(DefaultEnvironmentStore);
-    });
-
-    it('provides DefaultEnvironmentService', () => {
       expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(DefaultEnvironmentService);
-    });
-
-    it('provides ENVIRONMENT_QUERY_CONFIG as {}', () => {
       expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual({});
-    });
-
-    it('provides DefaultEnvironmentQuery', () => {
       expect(TestBed.inject(EnvironmentQuery)).toBeInstanceOf(DefaultEnvironmentQuery);
-    });
-
-    it('provides ENVIRONMENT_SOURCES as []', () => {
-      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual([]);
-    });
-
-    it('provides DefaultEnvironmentLoader', () => {
       expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
     });
 
-    it('sets EnvironmentModule.query', () => {
-      expect(EnvironmentModule.query).toBeInstanceOf(DefaultEnvironmentQuery);
+    it(`sources is null`, () => {
+      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toBeNull();
+      expect(TestBed.inject(ENVIRONMENT_SOURCES_FACTORY)).toBeNull();
     });
   });
 
-  describe('forRoot({initialState,store,service,queryConfig,query,sources,loader})', () => {
-    const initialState = { a: 0 };
-    const sources = [{ load: () => [{ b: 0 }] }];
+  describe('.forRoot(config) ', () => {
+    const initialState = { initialState: 0 };
     const queryConfig = { transpileEnvironment: true };
 
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [
           EnvironmentModule.forRoot({
-            initialState: initialState,
+            initialState,
             store: CustomEnvironmentStore,
             service: CustomEnvironmentService,
             queryConfig,
             query: CustomEnvironmentQuery,
-            sources,
             loader: CustomEnvironmentLoader
           })
         ]
       });
     });
 
-    it('provides custom ENVIRONMENT_INITIAL_VALUE', () => {
+    it(`injects all custom injected objects`, () => {
       expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual(initialState);
-    });
-
-    it('provides custom EnvironmentStore', () => {
       expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(CustomEnvironmentStore);
-    });
-
-    it('provides custom EnvironmentService', () => {
       expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(CustomEnvironmentService);
-    });
-
-    it('provides custom ENVIRONMENT_QUERY_CONFIG', () => {
       expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual(queryConfig);
-    });
-
-    it('provides custom EnvironmentQuery', () => {
       expect(TestBed.inject(EnvironmentQuery)).toBeInstanceOf(CustomEnvironmentQuery);
-    });
-
-    it('provides custom ENVIRONMENT_SOURCES', () => {
-      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual(sources);
-    });
-
-    it('provides custom EnvironmentLoader', () => {
       expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(CustomEnvironmentLoader);
     });
+  });
 
-    it('sets EnvironmentModule.query', () => {
-      expect(EnvironmentModule.query).toBeInstanceOf(CustomEnvironmentQuery);
+  describe('.forRoot({sources:source}) ', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [EnvironmentModule.forRoot({ sources: RequiredSource })]
+      });
+    });
+
+    it(`ENVIRONMENT_SOURCES contains EnvironmentSource injected object`, () => {
+      const sources = TestBed.inject(ENVIRONMENT_SOURCES);
+
+      expect(sources).toBeObject();
+      expect(sources).toBeInstanceOf(RequiredSource);
+      expect(isEnvironmentSource(sources)).toBeTrue();
+    });
+
+    it(`ENVIRONMENT_SOURCES_FACTORY contains EnvironmentSource injected objects array`, () => {
+      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+
+      expect(sourcesFactory).toBeObject();
+      expect(sourcesFactory).toBeInstanceOf(RequiredSource);
+      expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
     });
   });
 
-  describe('forRoot({sources})', () => {
-    const sources = [{ load: () => [{ b: 0 }] }];
-
+  describe('.forRoot({sources:source[]}) ', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot({ sources })]
+        imports: [
+          EnvironmentModule.forRoot({
+            sources: [RequiredSource, { load: () => [{ a: 0 }] }, new NoInjectableSource()]
+          })
+        ]
+      });
+    });
+
+    it(`ENVIRONMENT_SOURCES contains EnvironmentSource class or object`, () => {
+      const sources: any = TestBed.inject(ENVIRONMENT_SOURCES);
+
+      expect(sources).toBeArrayOfSize(3);
+      expect(sources[0]).toBeFunction();
+      expect(sources[1]).toBeObject();
+      expect(sources[2]).toBeObject();
+    });
+
+    it(`ENVIRONMENT_SOURCES_FACTORY contains EnvironmentSource injected objects array`, () => {
+      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+
+      expect(sourcesFactory).toBeArrayOfSize(3);
+      expect(sourcesFactory[0]).toBeObject();
+      expect(sourcesFactory[0]).toBeInstanceOf(RequiredSource);
+      expect(sourcesFactory[1]).toBeObject();
+      expect(sourcesFactory[2]).toBeObject();
+      expect(sourcesFactory.every((s) => isEnvironmentSource(s))).toBeTrue();
+    });
+  });
+
+  describe('.forRoot({loadBeforeInit:true}) ', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [EnvironmentModule.forRoot({ sources: RequiredSource })]
       });
     });
 
     it('loads the sources on app initializer', () => {
       const store = TestBed.inject(EnvironmentStore);
-      expect(store.getAll()).toEqual({ b: 0 });
+      expect(store.getAll()).toEqual({ a: 0 });
     });
   });
 
-  describe('forRoot({sources,loadBeforeInit:true})', () => {
-    const sources = [{ load: () => [{ b: 0 }] }];
-
+  describe('.forRoot({loadBeforeInit:false}) ', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot({ sources, loadBeforeInit: true })]
-      });
-    });
-
-    it('loads the sources on app initializer', () => {
-      const store = TestBed.inject(EnvironmentStore);
-      expect(store.getAll()).toEqual({ b: 0 });
-    });
-  });
-
-  describe('forRoot({sources,loadBeforeInit:false})', () => {
-    const sources = [{ load: () => [{ b: 0 }] }];
-
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot({ sources, loadBeforeInit: false })]
+        imports: [EnvironmentModule.forRoot({ sources: RequiredSource, loadBeforeInit: false })]
       });
     });
 
@@ -220,99 +259,94 @@ describe('EnvironmentModule', () => {
     });
   });
 
-  describe('forChild()', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot(), EnvironmentModule.forChild()]
-      });
-    });
-
-    it(`Injects the module`, () => {
-      expect(() => TestBed.inject(EnvironmentModule)).not.toThrow();
-    });
-
-    it('provides custom ENVIRONMENT_SOURCES', () => {
-      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual([]);
-    });
-
-    it('provides DefaultEnvironmentLoader', () => {
-      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
-    });
-  });
-
-  describe('forChild({loader,sources})', () => {
-    const sources = [{ id: 'a', load: () => [{ a: 0 }] }];
+  describe('.forRoot(config) and providers', () => {
+    const initialState = { initialState: 0 };
+    const provInitialState = { provInitialState: 0 };
+    const queryConfig = { transpileEnvironment: true };
+    const provQueryConfig = { transpileEnvironment: false };
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot(), EnvironmentModule.forChild({ loader: CustomEnvironmentLoader, sources })]
-      });
-    });
-
-    it('provides custom ENVIRONMENT_SOURCES', () => {
-      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual(sources);
-    });
-
-    it('provides custom EnvironmentLoader', () => {
-      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(CustomEnvironmentLoader);
-    });
-  });
-
-  describe('using custom providers', () => {
-    const sources = [{ load: () => [{ b: 0 }] }];
-
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [EnvironmentModule],
+        imports: [
+          EnvironmentModule.forRoot({
+            initialState,
+            store: CustomEnvironmentStore,
+            service: CustomEnvironmentService,
+            queryConfig,
+            query: CustomEnvironmentQuery,
+            sources: [RequiredSource, NoRequiredSource],
+            loader: CustomEnvironmentLoader
+          })
+        ],
         providers: [
-          { provide: ENVIRONMENT_INITIAL_STATE, useValue: {} },
-          { provide: EnvironmentStore, useClass: CustomEnvironmentStore },
-          { provide: EnvironmentService, useClass: CustomEnvironmentService },
-          { provide: ENVIRONMENT_QUERY_CONFIG, useValue: {} },
-          { provide: EnvironmentQuery, useClass: CustomEnvironmentQuery },
-          { provide: ENVIRONMENT_SOURCES, useValue: sources },
-          { provide: EnvironmentLoader, useClass: CustomEnvironmentLoader }
+          { provide: ENVIRONMENT_INITIAL_STATE, useValue: provInitialState },
+          { provide: EnvironmentStore, useClass: DefaultEnvironmentStore },
+          { provide: EnvironmentService, useClass: DefaultEnvironmentService },
+          { provide: ENVIRONMENT_QUERY_CONFIG, useValue: provQueryConfig },
+          { provide: EnvironmentQuery, useClass: DefaultEnvironmentQuery },
+          { provide: ENVIRONMENT_SOURCES, useClass: NoInjectableSource },
+          { provide: EnvironmentLoader, useClass: DefaultEnvironmentLoader }
         ]
       });
     });
 
-    it(`Injects the module`, () => {
-      expect(() => TestBed.inject(EnvironmentModule)).not.toThrow();
-    });
-
-    it('uses provided services', () => {
-      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
-      expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(CustomEnvironmentStore);
-      expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(CustomEnvironmentService);
-      expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual({});
-      expect(TestBed.inject(EnvironmentQuery)).toBeInstanceOf(CustomEnvironmentQuery);
-      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual(sources);
-      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(CustomEnvironmentLoader);
-      expect(EnvironmentModule.query).toBeInstanceOf(CustomEnvironmentQuery);
+    it(`providers has preference over .forRoot(config)`, () => {
+      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual(provInitialState);
+      expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(DefaultEnvironmentStore);
+      expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(DefaultEnvironmentService);
+      expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual(provQueryConfig);
+      expect(TestBed.inject(EnvironmentQuery)).toBeInstanceOf(DefaultEnvironmentQuery);
+      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toBeInstanceOf(NoInjectableSource);
+      expect(TestBed.inject(ENVIRONMENT_SOURCES_FACTORY)).toBeInstanceOf(NoInjectableSource);
+      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
     });
   });
 
-  describe('mixing forRoot() and custom providers', () => {
+  describe('.forChild() ', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [EnvironmentModule.forRoot()],
-        providers: [{ provide: EnvironmentStore, useClass: CustomEnvironmentStore }]
+        imports: [
+          EnvironmentModule.forRoot({ loader: CustomEnvironmentLoader, sources: RequiredSource }),
+          EnvironmentModule.forChild()
+        ]
       });
     });
 
-    it(`Injects the module`, () => {
-      expect(() => TestBed.inject(EnvironmentModule)).not.toThrow();
+    it(`injects loader default implementation for this module`, () => {
+      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
     });
 
-    it('uses provided services', () => {
-      expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
-      expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(CustomEnvironmentStore);
-      expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(DefaultEnvironmentService);
-      expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual({});
-      expect(TestBed.inject(EnvironmentQuery)).toBeInstanceOf(DefaultEnvironmentQuery);
-      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toEqual([]);
-      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
-      expect(EnvironmentModule.query).toBeInstanceOf(DefaultEnvironmentQuery);
+    it(`sources is null for this module`, () => {
+      expect(TestBed.inject(ENVIRONMENT_SOURCES)).toBeNull();
+      expect(TestBed.inject(ENVIRONMENT_SOURCES_FACTORY)).toBeNull();
+    });
+  });
+
+  describe('.forChild(config) ', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [
+          EnvironmentModule.forRoot({ sources: RequiredSource }),
+          EnvironmentModule.forChild({ loader: CustomEnvironmentLoader, sources: NoRequiredSource })
+        ]
+      });
+    });
+
+    it(`injects customn loader implementation for this module`, () => {
+      expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(CustomEnvironmentLoader);
+    });
+
+    it(`sources are defined for this module`, () => {
+      const sources = TestBed.inject(ENVIRONMENT_SOURCES);
+      const sourcesFactory = TestBed.inject(ENVIRONMENT_SOURCES_FACTORY);
+
+      expect(sources).toBeObject();
+      expect(sources).toBeInstanceOf(NoRequiredSource);
+      expect(isEnvironmentSource(sources)).toBeTrue();
+
+      expect(sourcesFactory).toBeObject();
+      expect(sourcesFactory).toBeInstanceOf(NoRequiredSource);
+      expect(isEnvironmentSource(sourcesFactory)).toBeTrue();
     });
   });
 });

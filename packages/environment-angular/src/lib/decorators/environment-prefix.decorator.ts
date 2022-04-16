@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { isPath, Path } from '@kuoki/environment';
 
 /* eslint-disable @typescript-eslint/ban-types */

@@ -45,7 +45,7 @@ EnvironmentModule.forRoot({ initialState: { a: 0 } });
 
 ## Use cases
 
-Below are examples of the expected behavior and some implementation examples.
+Below are examples of the expected behavior and some implementation examples. To learn more about environment store and how to create them you can read the [documentation](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentStore.html).
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
@@ -57,7 +57,7 @@ Below are examples of the expected behavior and some implementation examples.
 
 ### Create a custom store
 
-To create a custom environment store that uses `ENVIRONMENT_INITIAL_STATE` simply complete the next class. Remember to check the `EnvironmentStore` [documentation](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentStore.html) to discover how to implement this interface and common use cases.
+To create a custom environment store that uses `ENVIRONMENT_INITIAL_STATE` simply complete the next class.
 
 ```ts
 import { Inject, Injectable, Optional } from '@angular/core';
