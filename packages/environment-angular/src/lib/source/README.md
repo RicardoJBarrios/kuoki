@@ -25,7 +25,7 @@ export const ENVIRONMENT_SOURCES_PROVIDERS: Provider = {
 };
 ```
 
-If there are multiple sources inject the Array using `useValue`.
+If there are multiple sources inject an Array using `useValue`. The array can contain injectable classes or `EnvironmentSource` instances.
 
 ```ts
 import { Injectable, Provider } from '@angular/core';
@@ -51,9 +51,9 @@ export const ENVIRONMENT_SOURCES_PROVIDERS: Provider = {
 };
 ```
 
-The default value provided by `EnvironmentModule.forRoot()` is `null`, but can be set in configuration.
+The default value provided by `EnvironmentModule.forRoot()` is `null`, but can be set in configuration using:
 
-Can be used with single source.
+1. A single source.
 
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
@@ -69,7 +69,7 @@ export class Source1 extends EnvironmentSource {
 EnvironmentModule.forRoot({ sources: Source1 });
 ```
 
-Can also be used with multiple sources.
+2. Multiple sources.
 
 ```ts
 import { Injectable } from '@angular/core';
@@ -94,7 +94,7 @@ EnvironmentModule.forRoot({ sources: [Source1, { load: () => [{ a: 0 }] }, new S
 
 ## ENVIRONMENT_SOURCES_FACTORY
 
-In order to be able to override the `ENVIRONMENT_SOURCES` injection token in feature modules and allow the use of multiple sources, the module provides the `ENVIRONMENT_SOURCES_FACTORY` injection token, that uses a factory to inject all source objects in an Array.
+In order to be able to override the `ENVIRONMENT_SOURCES` injection token in feature modules and allow the use of multiple sources, the module provides the `ENVIRONMENT_SOURCES_FACTORY` injection token, that uses a factory to inject all source objects in an Array. If the provided class is not injectable the factory will throw. This is the token used by the environment loader.
 
 ```ts
 import { Injectable } from '@angular/core';
@@ -124,13 +124,13 @@ export class Source3 extends EnvironmentSource {
 
 EnvironmentModule.forRoot({ sources: [Source1, Source2] });
 // ENVIRONMENT_SOURCES_FACTORY = [
-//    Source1 { id: ...},
-//    Source2 { id: ...}
+//    Source1 { load: ...},
+//    Source2 { load: ...}
 // ]
 
 EnvironmentModule.forChild({ sources: Source3 });
 // ENVIRONMENT_SOURCES_FACTORY = [
-//    Source3 { id: ...},
+//    Source3 { load: ...},
 // ]
 ```
 
