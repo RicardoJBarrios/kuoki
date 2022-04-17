@@ -36,6 +36,7 @@ To create a custom environment service simply complete the next class.
 
 ```ts
 import { Injectable } from '@angular/core';
+import { EnvironmentStore } from '@kuoki/environment';
 import { DefaultEnvironmentService } from '@kuoki/environment-angular';
 
 @Injectable()
@@ -59,7 +60,7 @@ import { CustomEnvironmentService } from './custom-environment.service.ts';
 EnvironmentModule.forRoot({ service: CustomEnvironmentService });
 ```
 
-2. Or using a provider.
+2. Using a provider.
 
 ```ts
 import { Provider } from '@angular/core';

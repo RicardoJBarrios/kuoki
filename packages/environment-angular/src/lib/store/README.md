@@ -89,7 +89,7 @@ import { CustomEnvironmentStore } from './custom-environment.store.ts';
 EnvironmentModule.forRoot({ store: CustomEnvironmentStore });
 ```
 
-2. Or using a provider.
+2. Using a provider.
 
 ```ts
 import { Provider } from '@angular/core';
