@@ -7,7 +7,6 @@ describe('DefaultEnvironmentStore', () => {
   let spectator: SpectatorService<DefaultEnvironmentStore>;
 
   describe('with default ENVIRONMENT_INITIAL_STATE', () => {
-    const initialState = {};
     const createService = createServiceFactory(DefaultEnvironmentStore);
 
     beforeEach(() => {
@@ -15,7 +14,7 @@ describe('DefaultEnvironmentStore', () => {
     });
 
     it(`is created with default initial value`, () => {
-      expect(spectator.service['initialState']).toEqual(initialState);
+      expect(spectator.service['initialState']).toEqual({});
     });
   });
 
