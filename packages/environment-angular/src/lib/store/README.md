@@ -104,7 +104,7 @@ export const ENVIRONMENT_STORE_PROVIDER: Provider = {
 
 ### Provide the initial state from local storage
 
-The `ENVIRONMENT_INITIAL_STATE` injection token can be used to load the initial state from the local storage, or any other local persistente layer.
+The `ENVIRONMENT_INITIAL_STATE` injection token can be used to load the initial state from the local storage, or any other local persistence layer.
 
 ```ts
 import { Provider } from '@angular/core';
