@@ -13,13 +13,13 @@ import { Provider } from '@angular/core';
 import { EnvironmentLoader } from '@kuoki/environment';
 import { DefaultEnvironmentLoader } from '@kuoki/environment-angular';
 
-export const ENVIRONMENT_QUERY_PROVIDER: Provider = {
+export const ENVIRONMENT_LOADER_PROVIDER: Provider = {
   provide: EnvironmentLoader,
   useClass: DefaultEnvironmentLoader
 };
 ```
 
-Unless `ENVIRONMENT_SOURCES_FACTORY` is provided, the initial query config is `null`. To know more abour the environment sources factory read the sources [documentation](https://ricardojbarrios.github.io/kuoki/environment-angular/modules/EnvironmentSource.html).
+Unless `ENVIRONMENT_SOURCES` is provided, the initial sources value is `null`. To know more about the environment sources and its factory read the source tokens [documentation](https://ricardojbarrios.github.io/kuoki/environment-angular/modules/EnvironmentSource.html) or the sources [documentation](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentSource.html).
 
 ## Use cases
 
@@ -40,7 +40,6 @@ To create a custom environment loader that uses `ENVIRONMENT_SOURCES_FACTORY` si
 import { Inject, Injectable, Optional } from '@angular/core';
 import { EnvironmentService, EnvironmentSource } from '@kuoki/environment';
 import { DefaultEnvironmentLoader, ENVIRONMENT_SOURCES_FACTORY } from '@kuoki/environment-angular';
-import { ArrayOrSingle } from 'ts-essentials';
 
 @Injectable()
 export class CustomEnvironmentLoader extends DefaultEnvironmentLoader {
@@ -49,7 +48,7 @@ export class CustomEnvironmentLoader extends DefaultEnvironmentLoader {
 
     @Optional()
     @Inject(ENVIRONMENT_SOURCES_FACTORY)
-    protected override readonly sources?: ArrayOrSingle<EnvironmentSource> | null
+    protected override readonly sources?: EnvironmentSource | EnvironmentSource[] | null
   ) {
     super(service, sources);
   }
@@ -67,7 +66,7 @@ import { CustomEnvironmentLoader } from './custom-environment.loader.ts';
 EnvironmentModule.forRoot({ loader: CustomEnvironmentLoader });
 ```
 
-2. Or using a provider.
+2. Using a provider.
 
 ```ts
 import { Provider } from '@angular/core';
