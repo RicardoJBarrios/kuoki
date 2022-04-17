@@ -23,7 +23,7 @@ Unless `ENVIRONMENT_QUERY_CONFIG` is provided, the initial query config is `null
 
 ## ENVIRONMENT_QUERY_CONFIG
 
-The `ENVIRONMENT_QUERY_CONFIG` injection token contains the configuration parameters for the EnvironmentQuery.
+The `ENVIRONMENT_QUERY_CONFIG` injection token contains the [configuration parameters](https://ricardojbarrios.github.io/kuoki/environment/interfaces/EnvironmentQuery.EnvironmentQueryConfig.html) for the environment query.
 
 ```ts
 import { Provider } from '@angular/core';
@@ -35,7 +35,7 @@ export const ENVIRONMENT_QUERY_CONFIG_PROVIDER: Provider = {
 };
 ```
 
-The default value provided by `EnvironmentModule.forRoot()` is `{}`, but can be set in configuration.
+The default value provided by `EnvironmentModule.forRoot()` is `null`, but can be set in configuration.
 
 ```ts
 import { EnvironmentModule } from '@kuoki/environment-angular';
@@ -89,7 +89,7 @@ import { CustomEnvironmentQuery } from './custom-environment.query.ts';
 EnvironmentModule.forRoot({ query: CustomEnvironmentQuery });
 ```
 
-2. Or using a provider.
+2. Using a provider.
 
 ```ts
 import { Provider } from '@angular/core';
