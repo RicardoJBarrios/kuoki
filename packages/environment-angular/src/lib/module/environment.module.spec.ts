@@ -137,7 +137,7 @@ describe('EnvironmentModule', () => {
       expect(TestBed.inject(ENVIRONMENT_INITIAL_STATE)).toEqual({});
       expect(TestBed.inject(EnvironmentStore)).toBeInstanceOf(DefaultEnvironmentStore);
       expect(TestBed.inject(EnvironmentService)).toBeInstanceOf(DefaultEnvironmentService);
-      expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual({});
+      expect(TestBed.inject(ENVIRONMENT_QUERY_CONFIG)).toEqual(null);
       expect(TestBed.inject(EnvironmentQuery)).toBeInstanceOf(DefaultEnvironmentQuery);
       expect(TestBed.inject(EnvironmentLoader)).toBeInstanceOf(DefaultEnvironmentLoader);
     });

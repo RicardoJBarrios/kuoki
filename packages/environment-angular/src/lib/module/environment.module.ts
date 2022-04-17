@@ -54,7 +54,7 @@ export class EnvironmentModule {
         configProviderFactory({
           provide: ENVIRONMENT_QUERY_CONFIG,
           configValue: config?.queryConfig,
-          defaultValue: {}
+          defaultValue: null
         }),
         configProviderFactory({
           provide: EnvironmentQuery,

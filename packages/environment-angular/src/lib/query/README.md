@@ -19,7 +19,7 @@ export const ENVIRONMENT_QUERY_PROVIDER: Provider = {
 };
 ```
 
-Unless `ENVIRONMENT_QUERY_CONFIG` is provided, the initial query config is `{}`.
+Unless `ENVIRONMENT_QUERY_CONFIG` is provided, the initial query config is `null`.
 
 ## ENVIRONMENT_QUERY_CONFIG
 
