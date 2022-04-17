@@ -85,4 +85,12 @@ describe('ENVIRONMENT_SOURCES_FACTORY', () => {
     expect(sourcesFactory[0]).toBeInstanceOf(SourceInj);
     expect(sourcesFactory[1]).toBeInstanceOf(SourceNoInj);
   });
+
+  it(`throws if the class is not injectable`, () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ENVIRONMENT_SOURCES, useValue: [SourceNoInj] }]
+    });
+
+    expect(() => TestBed.inject(ENVIRONMENT_SOURCES_FACTORY)).toThrow();
+  });
 });
