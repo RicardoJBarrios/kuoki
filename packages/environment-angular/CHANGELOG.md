@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.3.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v0.2.1...environment-angular-v0.3.0) (2022-04-24)
+
+
+### Features
+
+* **environment-angular:** make default query config null ([5ae6043](https://github.com/RicardoJBarrios/kuoki/commit/5ae604312d40dc05e108289bff2b570b5ee05fd4))
+
+
+
 ## [0.2.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v0.2.0...environment-angular-v0.2.1) (2022-04-16)
 
 
