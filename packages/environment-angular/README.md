@@ -67,7 +67,7 @@ class AngularEnvironmentSource implements EnvironmentSource {
   isRequired = true;
 
   load(): EnvironmentState[] {
-    return [{ production: true }];
+    return [environment];
   }
 }
 
