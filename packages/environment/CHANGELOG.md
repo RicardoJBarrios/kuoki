@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.2](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.1.1...environment-v1.1.2) (2022-04-24)
+
+
+
 ## [1.1.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.1.0...environment-v1.1.1) (2022-04-16)
 
 
