@@ -61,6 +61,14 @@ describe('ENVIRONMENT_SOURCES_FACTORY', () => {
     expect(TestBed.inject(ENVIRONMENT_SOURCES_FACTORY)).toBeInstanceOf(SourceNoInj);
   });
 
+  it(`returns object instance if ENVIRONMENT_SOURCES is an array on 1 element`, () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ENVIRONMENT_SOURCES, useValue: [new SourceNoInj()] }]
+    });
+
+    expect(TestBed.inject(ENVIRONMENT_SOURCES_FACTORY)).toBeInstanceOf(SourceNoInj);
+  });
+
   it(`returns array of object instances if ENVIRONMENT_SOURCES is array of injectable classes or objects`, () => {
     TestBed.configureTestingModule({
       providers: [{ provide: ENVIRONMENT_SOURCES, useValue: [SourceInj, sourceObj, new SourceNoInj()] }]
