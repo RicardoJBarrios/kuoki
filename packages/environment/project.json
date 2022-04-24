@@ -24,7 +24,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["docs/environment/coverage/lcov-report"],
       "options": {
-        "jestConfig": "packages/environment/jest.config.js",
+        "jestConfig": "packages/environment/jest.config.ts",
         "passWithNoTests": true
       }
     },

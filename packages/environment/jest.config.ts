@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'environment',
-  preset: '../../jest.preset.js',
+
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
     'ts-jest': {
@@ -24,5 +24,6 @@ module.exports = {
         hideIcon: true
       }
     ]
-  ]
+  ],
+  preset: '../../jest.preset.ts'
 };

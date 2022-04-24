@@ -24,7 +24,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["docs/environment-angular/coverage/lcov-report"],
       "options": {
-        "jestConfig": "packages/environment-angular/jest.config.js",
+        "jestConfig": "packages/environment-angular/jest.config.ts",
         "passWithNoTests": true
       }
     },
