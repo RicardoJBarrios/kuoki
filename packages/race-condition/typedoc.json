@@ -1,0 +1,11 @@
+{
+  "out": "../../docs/race-condition",
+  "entryPoints": ["./src/index.ts"],
+  "includes": "./src/lib",
+  "tsconfig": "./tsconfig.lib.json",
+  "exclude": "**/*+(index|.spec|.e2e).ts",
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "plugin": ["typedoc-plugin-missing-exports"]
+}
