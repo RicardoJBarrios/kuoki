@@ -20,10 +20,10 @@ A basic implementation that can be instantiated from...
 
 ```js
 import {
-  createEnvironmentLoader
+  createEnvironmentLoader,
   createEnvironmentService,
   createEnvironmentStore,
-  EnvironmentLoader
+  EnvironmentLoader,
   EnvironmentService,
   EnvironmentSource,
   EnvironmentStore
@@ -42,10 +42,10 @@ const environmentLoader: EnvironmentLoader = createEnvironmentLoader(environment
 
 ```js
 import {
-  DefaultEnvironmentLoader
+  DefaultEnvironmentLoader,
   DefaultEnvironmentService,
   DefaultEnvironmentStore,
-  EnvironmentLoader
+  EnvironmentLoader,
   EnvironmentService,
   EnvironmentSource,
   EnvironmentStore
