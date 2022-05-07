@@ -1,1 +1,1 @@
-export * from './lib/race-condition';
+export * from './lib/race-condition-safe-subscription';

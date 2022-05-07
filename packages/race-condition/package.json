@@ -1,5 +1,11 @@
 {
   "name": "@kukoki/race-condition",
   "version": "0.0.1",
-  "type": "commonjs"
+  "type": "commonjs",
+  "peerDependencies": {
+    "rxjs": ">=7.0.0"
+  },
+  "dependencies": {
+    "lodash-es": ">=4.0.0"
+  }
 }
