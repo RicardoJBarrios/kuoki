@@ -52,7 +52,7 @@
         "tagPrefix": "${projectName}-v",
         "noVerify": true,
         "push": true,
-        "postTargets": ["environment:github"]
+        "postTargets": ["environment-angular:github"]
       }
     },
     "github": {
