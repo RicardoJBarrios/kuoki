@@ -1,6 +1,5 @@
 {
   "projectType": "library",
-  "root": "packages/environment-angular",
   "sourceRoot": "packages/environment-angular/src",
   "prefix": "kuoki",
   "targets": {

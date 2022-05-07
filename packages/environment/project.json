@@ -1,5 +1,4 @@
 {
-  "root": "packages/environment",
   "sourceRoot": "packages/environment/src",
   "projectType": "library",
   "targets": {
