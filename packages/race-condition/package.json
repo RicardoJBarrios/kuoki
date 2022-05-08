@@ -1,6 +1,6 @@
 {
   "name": "@kukoki/race-condition",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "commonjs",
   "peerDependencies": {
     "rxjs": ">=7.0.0"
