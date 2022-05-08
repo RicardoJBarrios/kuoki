@@ -1,29 +1,28 @@
 {
-  "sourceRoot": "packages/environment/src",
-  "projectType": "library",
+  "sourceRoot": "packages/race-condition/src",
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/environment",
-        "main": "packages/environment/src/index.ts",
-        "tsConfig": "packages/environment/tsconfig.lib.json",
-        "assets": ["packages/environment/*.md"]
+        "outputPath": "dist/packages/race-condition",
+        "main": "packages/race-condition/src/index.ts",
+        "tsConfig": "packages/race-condition/tsconfig.lib.json",
+        "assets": ["packages/race-condition/*.md"]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/environment/**/*.ts"]
+        "lintFilePatterns": ["packages/race-condition/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["docs/environment/coverage/lcov-report"],
+      "outputs": ["coverage/packages/race-condition"],
       "options": {
-        "jestConfig": "packages/environment/jest.config.ts",
+        "jestConfig": "packages/race-condition/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -31,8 +30,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "npx typedoc --options packages/environment/typedoc.json",
-          "nx test environment --code-coverage --skip-nx-cache"
+          "npx typedoc --options packages/race-condition/typedoc.json",
+          "nx test race-condition --code-coverage --skip-nx-cache"
         ],
         "parallel": false
       }
@@ -44,7 +43,7 @@
         "tagPrefix": "${projectName}-v",
         "noVerify": true,
         "push": true,
-        "postTargets": ["environment:github"]
+        "postTargets": ["race-condition:github"]
       }
     },
     "github": {

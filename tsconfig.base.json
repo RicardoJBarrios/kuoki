@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@kukoki/race-condition": ["packages/race-condition/src/index.ts"],
       "@kuoki/environment": ["packages/environment/src/index.ts"],
       "@kuoki/environment-angular": ["packages/environment-angular/src/index.ts"]
     }

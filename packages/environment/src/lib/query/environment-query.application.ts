@@ -32,7 +32,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
   ) {}
 
   getAll$(): Observable<EnvironmentState> {
-    return this.store.getAll$().pipe(distinctUntilChanged(isEqual), shareReplay(1));
+    return this.store.getAll$().pipe(distinctUntilChanged(isEqual), shareReplay({ bufferSize: 1, refCount: true }));
   }
 
   async getAllAsync(): Promise<EnvironmentState> {
