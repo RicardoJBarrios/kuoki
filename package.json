@@ -10,7 +10,6 @@
   },
   "scripts": {
     "audit:deploy": "yarn audit --groups dependencies",
-    "audit:deploy:report": "yarn audit:deploy --json | yarn yarn-audit-html --output docs/audit-deploy.html 2>/dev/null",
     "audit:fix": "yarn-audit-fix",
     "commit": "cz",
     "format:all": "nx format:write --all",
