@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayName: 'environment',
 
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
@@ -25,5 +25,5 @@ module.exports = {
       }
     ]
   ],
-  preset: '../../jest.preset.ts'
+  preset: '../../jest.preset.js'
 };

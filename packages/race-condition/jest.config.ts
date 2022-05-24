@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayName: 'race-condition',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -24,5 +24,5 @@ module.exports = {
       }
     ]
   ],
-  preset: '../../jest.preset.ts'
+  preset: '../../jest.preset.js'
 };
