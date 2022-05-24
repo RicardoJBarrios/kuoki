@@ -61,7 +61,7 @@ describe('EnvironmentLoader', () => {
     expect(loader['loaderSources'][1]).toEqual(source2);
   });
 
-  it(`.loaderSources sets source id with UUID if undefined`, () => {
+  it(`.loaderSources sets source id with random id if undefined`, () => {
     const source1: EnvironmentSource = { load: () => [{}] };
     loader = new DefaultEnvironmentLoader(service, source1);
 

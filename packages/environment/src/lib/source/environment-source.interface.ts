@@ -10,7 +10,7 @@ import { SourceStrategy } from './source-strategy.enum';
 export abstract class EnvironmentSource {
   /**
    * Used by the loader to manage sources, so it must never be duplicated.
-   * If not defined, the loader will assign a random UUID.
+   * If not defined, the loader will assign a random id.
    */
   id?: string;
 
