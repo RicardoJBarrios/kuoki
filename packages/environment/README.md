@@ -2,7 +2,12 @@
 
 > An Asynchronous Environment Manager for JavaScript and TypeScript Applications.
 
-[![npm](https://img.shields.io/npm/v/@kuoki/environment?logo=npm&style=flat-square)](https://www.npmjs.com/package/@kuoki/environment) [![GitHub watchers](https://img.shields.io/github/watchers/ricardojbarrios/kuoki?logo=github&style=flat-square)](https://github.com/RicardoJBarrios/kuoki) [![Documentation](https://img.shields.io/badge/documentation-done-blue?style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/) [![Coverage](https://img.shields.io/sonar/coverage/kuoki-environment/master?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/coverage/) [![Quality Gate Status](https://img.shields.io/sonar/quality_gate/kuoki-environment?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/overview?id=kuoki-environment) [![GitHub](https://img.shields.io/github/license/ricardojbarrios/kuoki?style=flat-square)](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md) [![GitHub issues environment](https://img.shields.io/github/issues/ricardojbarrios/kuoki/environment?logo=github&label=issues&style=flat-square)](https://github.com/RicardoJBarrios/kuoki/labels/environment)
+[![npm](https://img.shields.io/npm/v/@kuoki/environment?logo=npm&style=flat-square)](https://www.npmjs.com/package/@kuoki/environment)
+[![Documentation](https://img.shields.io/badge/documentation-done-blue?style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/)
+[![Coverage](https://img.shields.io/sonar/coverage/kuoki-environment/master?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment/coverage/)
+[![Quality Gate Status](https://img.shields.io/sonar/quality_gate/kuoki-environment?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/overview?id=kuoki-environment)
+[![GitHub](https://img.shields.io/github/license/ricardojbarrios/kuoki?style=flat-square)](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md)
+[![GitHub issues environment](https://img.shields.io/github/issues/ricardojbarrios/kuoki/environment?logo=github&label=issues&style=flat-square)](https://github.com/RicardoJBarrios/kuoki/labels/environment)
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
@@ -81,13 +86,3 @@ export const env: EnvironmentQuery = environmentModule.query;
 
 env.getAll(); // {name:'John Doe',userName:'JohnDoe01'}
 ```
-
-## Contributing
-
-In order to better manage all the contributions it is important that, when creating a new issue or discussion, the label `environment` is added (as well any other required) and to follow the [Code of Conduct](https://github.com/RicardoJBarrios/kuoki/blob/dca1a8b10dec511585324873e52377a347454d54/CODE_OF_CONDUCT.md).
-
-- :bug:` `If you want to track or report an issue in the code or documentation use the [Environment Issues](https://github.com/RicardoJBarrios/kuoki/labels/environment).
-- :bulb:` `If you want to track or discuss new features or share new ideas use the [Environment Ideas](https://github.com/RicardoJBarrios/kuoki/discussions/categories/ideas?discussions_q=category%3AIdeas+label%3Aenvironment) discussion forum.
-- :pray:` `If you want to track or get support use the [Environment Q&A](https://github.com/RicardoJBarrios/kuoki/discussions/categories/q-a?discussions_q=label%3Aenvironment+category%3AQ%26A) discussion forum.
-- :raised_hands:` `If you want to track or show off what you have been able to do use the [Environment Show and tell](https://github.com/RicardoJBarrios/kuoki/discussions/categories/show-and-tell?discussions_q=label%3Aenvironment+category%3A%22Show+and+tell%22) discussion forum.
-- :handshake:` ` If you want to contribute fixing issues or with new features you can create a [pull request](https://docs.github.com/es/github-ae@latest/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) with the new code.
