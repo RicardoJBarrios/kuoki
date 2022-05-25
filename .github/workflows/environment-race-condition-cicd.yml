@@ -1,4 +1,4 @@
-name: Environment Continuous Integration and Deployment
+name: Race Condition Continuous Integration and Deployment
 
 on:
   workflow_dispatch:
