@@ -2,7 +2,12 @@
 
 > An Asynchronous Environment Manager for Angular Applications.
 
-[![npm](https://img.shields.io/npm/v/@kuoki/environment-angular?logo=npm&style=flat-square)](https://www.npmjs.com/package/@kuoki/environment-angular) [![GitHub watchers](https://img.shields.io/github/watchers/ricardojbarrios/kuoki?logo=github&style=flat-square)](https://github.com/RicardoJBarrios/kuoki) [![Documentation](https://img.shields.io/badge/documentation-done-blue?style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment-angular/) [![Coverage](https://img.shields.io/sonar/coverage/kuoki-environment-angular/master?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment-angular/coverage/) [![Quality Gate Status](https://img.shields.io/sonar/quality_gate/kuoki-environment-angular?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/overview?id=kuoki-environment-angular) [![GitHub](https://img.shields.io/github/license/ricardojbarrios/kuoki?style=flat-square)](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md) [![GitHub issues environment](https://img.shields.io/github/issues/ricardojbarrios/kuoki/environment-angular?logo=github&label=issues&style=flat-square)](https://github.com/RicardoJBarrios/kuoki/labels/environment-angular)
+[![npm](https://img.shields.io/npm/v/@kuoki/environment-angular?logo=npm&style=flat-square)](https://www.npmjs.com/package/@kuoki/environment-angular)
+[![Documentation](https://img.shields.io/badge/documentation-done-blue?style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment-angular/)
+[![Coverage](https://img.shields.io/sonar/coverage/kuoki-environment-angular/master?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://ricardojbarrios.github.io/kuoki/environment-angular/coverage/)
+[![Quality Gate Status](https://img.shields.io/sonar/quality_gate/kuoki-environment-angular?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/overview?id=kuoki-environment-angular)
+[![GitHub](https://img.shields.io/github/license/ricardojbarrios/kuoki?style=flat-square)](https://github.com/RicardoJBarrios/kuoki/blob/main/LICENSE.md)
+[![GitHub issues environment](https://img.shields.io/github/issues/ricardojbarrios/kuoki/environment-angular?logo=github&label=issues&style=flat-square)](https://github.com/RicardoJBarrios/kuoki/labels/environment-angular)
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
