@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.3](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.1.2...environment-v1.1.3) (2022-05-25)
+
+
+### Bug Fixes
+
+* **environment:** avoid memory leak in query ([b65ea65](https://github.com/RicardoJBarrios/kuoki/commit/b65ea6577c74866c4db03b3f33d5dbefb85caea7))
+
+
+
 ## [1.1.2](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.1.1...environment-v1.1.2) (2022-04-24)
 
 
