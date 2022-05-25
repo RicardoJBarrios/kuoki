@@ -6,10 +6,10 @@ import { RaceConditionFreeSubscription } from './race-condition-free-subscriptio
  * Avoid race conditions when store disposable resources, such as the execution of an Observable.
  */
 export function RaceConditionFree(): MethodDecorator {
-  return (_target: object, propertyKey: PropertyKey, descriptor?: PropertyDescriptor) => {
-    const originalMethod = descriptor?.value;
+  return (_target: object, propertyKey: PropertyKey, descriptor: PropertyDescriptor) => {
+    const originalMethod: unknown = descriptor.value;
 
-    if (descriptor != null && originalMethod != null) {
+    if (typeof originalMethod === 'function') {
       const subscription: RaceConditionFreeSubscription = new RaceConditionFreeSubscription();
       const key = String(propertyKey);
 
