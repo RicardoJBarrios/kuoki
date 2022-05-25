@@ -1,40 +1,32 @@
 import { isEqual } from 'lodash-es';
 import { Subscription } from 'rxjs';
 
-interface RaceConditionSafeSubscribe {
-  readonly subscription: Subscription;
-  readonly args?: unknown[];
-}
-
-/**
- * A function that returns a `Subscription`.
- */
-export type SubscriptionFn = () => Subscription;
+import { RaceConditionFreeSubscribe } from './race-condition-free-subscribe.type';
 
 /**
  * Avoid race conditions when store disposable resources, such as the execution of an Observable.
  */
-export class RaceConditionSafeSubscription {
-  private readonly _safeSubscriptions: Map<PropertyKey, RaceConditionSafeSubscribe> = new Map();
+export class RaceConditionFreeSubscription {
+  private readonly _safeSubscriptions: Map<PropertyKey, RaceConditionFreeSubscribe> = new Map();
 
   /**
-   * Creates a race condition safe disposable resource, such as the execution of an Observable
+   * Creates a race condition free disposable resource, such as the execution of an Observable
    * associated with a `key` that will be unsubscribed before subscribing again if the `key` and `args`
    * are used again or the subscription is closed.
    * @param key The unique key associated to the Subscription.
    * @param subscriptionFn A function that returns a disposable resource, such as the execution of an Observable.
    * @param [args] Arguments required to create the disposable resource.
    */
-  add(key: string, subscriptionFn: SubscriptionFn, ...args: unknown[]) {
-    const safeSubscription: RaceConditionSafeSubscribe | undefined = this._safeSubscriptions.get(key);
+  add(key: string, subscriptionFn: () => Subscription, ...args: unknown[]) {
+    const safeSubscription: RaceConditionFreeSubscribe | undefined = this._safeSubscriptions.get(key);
 
-    if (!this.isActiveSubscription(safeSubscription, ...args)) {
+    if (!this._isActiveSubscription(safeSubscription, ...args)) {
       safeSubscription?.subscription.unsubscribe();
       this._safeSubscriptions.set(key, { subscription: subscriptionFn(), args });
     }
   }
 
-  protected isActiveSubscription(safeSubscription?: RaceConditionSafeSubscribe, ...args: unknown[]): boolean {
+  private _isActiveSubscription(safeSubscription?: RaceConditionFreeSubscribe, ...args: unknown[]): boolean {
     return safeSubscription != null && !safeSubscription.subscription.closed && isEqual(safeSubscription.args, args);
   }
 
@@ -45,7 +37,7 @@ export class RaceConditionSafeSubscription {
    * @returns A disposable resource, such as the execution of an Observable, or undefined if the key does not exist.
    */
   get(key: string): Subscription | undefined {
-    const safeSubscribe: RaceConditionSafeSubscribe | undefined = this._safeSubscriptions.get(key);
+    const safeSubscribe: RaceConditionFreeSubscribe | undefined = this._safeSubscriptions.get(key);
     return safeSubscribe != null ? safeSubscribe.subscription : undefined;
   }
 
@@ -65,7 +57,7 @@ export class RaceConditionSafeSubscription {
   }
 
   private _unsubscribeAll() {
-    this._safeSubscriptions.forEach((safeSubscribable: RaceConditionSafeSubscribe, key: PropertyKey) => {
+    this._safeSubscriptions.forEach((safeSubscribable: RaceConditionFreeSubscribe, key: PropertyKey) => {
       safeSubscribable.subscription.unsubscribe();
       this._safeSubscriptions.delete(key);
     });

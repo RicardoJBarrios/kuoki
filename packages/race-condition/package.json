@@ -1,11 +1,29 @@
 {
-  "name": "@kukoki/race-condition",
+  "name": "@kuoki/race-condition",
   "version": "0.0.1",
+  "keywords": [
+    "kuoki",
+    "race-condition",
+    "RxJS",
+    "JavaScript",
+    "TypeScript"
+  ],
+  "homepage": "https://ricardojbarrios.github.io/kuoki/race-condition/",
+  "bugs": {
+    "url": "https://github.com/RicardoJBarrios/kuoki/labels/race-condition"
+  },
+  "license": "MIT",
   "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RicardoJBarrios/kuoki.git",
+    "directory": "packages/race-condition"
+  },
   "peerDependencies": {
     "rxjs": ">=7.0.0"
   },
   "dependencies": {
     "lodash-es": ">=4.0.0"
-  }
+  },
+  "private": false
 }

@@ -1,14 +1,14 @@
 import { interval, Subscription } from 'rxjs';
 
-import { RaceConditionSafeSubscription } from './race-condition-safe-subscription';
+import { RaceConditionFreeSubscription } from './race-condition-free-subscription';
 
 const subscriptionFn: () => Subscription = () => interval(10).subscribe();
 
-describe('RaceConditionSafeSubscription', () => {
-  let subscription: RaceConditionSafeSubscription;
+describe('RaceConditionFreeSubscription', () => {
+  let subscription: RaceConditionFreeSubscription;
 
   beforeEach(() => {
-    subscription = new RaceConditionSafeSubscription();
+    subscription = new RaceConditionFreeSubscription();
   });
 
   it(`#add(key, subscriptionFn) adds if new key`, () => {
