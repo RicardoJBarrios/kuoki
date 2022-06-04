@@ -2,13 +2,35 @@
   "sourceRoot": "packages/race-condition/src",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nrwl/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "project": "packages/race-condition/package.json",
         "outputPath": "dist/packages/race-condition",
-        "main": "packages/race-condition/src/index.ts",
+        "entryFile": "packages/race-condition/src/index.ts",
         "tsConfig": "packages/race-condition/tsconfig.lib.json",
-        "assets": ["packages/race-condition/*.md"]
+        "format": ["esm", "umd"],
+        "globals": [
+          {
+            "global": "Rx",
+            "moduleId": "rxjs"
+          },
+          {
+            "global": "Rx",
+            "moduleId": "rxjs/operators"
+          },
+          {
+            "global": "lodash-es",
+            "moduleId": "lodash-es"
+          }
+        ],
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "./packages/environment/",
+            "output": "."
+          }
+        ]
       }
     },
     "lint": {
