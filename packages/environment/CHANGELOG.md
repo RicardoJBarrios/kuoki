@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.2.0...environment-v1.2.1) (2022-06-04)
+
+
+### Bug Fixes
+
+* **environment:** fix circular dependency and export as esm and umd ([8d96d95](https://github.com/RicardoJBarrios/kuoki/commit/8d96d95b0d1c58063902b7300b1386d72a390829))
+
+
+
 # [1.2.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.1.2...environment-v1.2.0) (2022-05-25)
 
 
