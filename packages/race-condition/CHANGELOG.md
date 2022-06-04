@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.1](https://github.com/RicardoJBarrios/kuoki/compare/race-condition-v1.0.0...race-condition-v1.0.1) (2022-06-04)
+
+
+### Bug Fixes
+
+* **race-condition:** export as esm and umd ([65a3865](https://github.com/RicardoJBarrios/kuoki/commit/65a3865f3c7bd08ec7cd7666ef3114f8e84e49d4))
+
+
+
 # [1.0.0](https://github.com/RicardoJBarrios/kuoki/compare/race-condition-v0.0.1...race-condition-v1.0.0) (2022-05-25)
 
 
