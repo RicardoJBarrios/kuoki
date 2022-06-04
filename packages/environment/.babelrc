@@ -1,0 +1,5 @@
+{
+  "presets": ["@nrwl/web/babel", "minify"],
+  "ignore": ["**/test-setup.ts"],
+  "comments": false
+}

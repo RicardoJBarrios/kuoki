@@ -3,13 +3,35 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nrwl/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "project": "packages/environment/package.json",
         "outputPath": "dist/packages/environment",
-        "main": "packages/environment/src/index.ts",
+        "entryFile": "packages/environment/src/index.ts",
         "tsConfig": "packages/environment/tsconfig.lib.json",
-        "assets": ["packages/environment/*.md"]
+        "format": ["esm", "umd"],
+        "globals": [
+          {
+            "global": "Rx",
+            "moduleId": "rxjs"
+          },
+          {
+            "global": "Rx",
+            "moduleId": "rxjs/operators"
+          },
+          {
+            "global": "lodash-es",
+            "moduleId": "lodash-es"
+          }
+        ],
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "./packages/environment/",
+            "output": "."
+          }
+        ]
       }
     },
     "lint": {
