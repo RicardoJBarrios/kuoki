@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.2](https://github.com/RicardoJBarrios/kuoki/compare/race-condition-v1.0.1...race-condition-v1.0.2) (2022-06-05)
+
+
+### Bug Fixes
+
+* **race-condition:** fix documentation export ([3b831d5](https://github.com/RicardoJBarrios/kuoki/commit/3b831d531bf4874e26ebd768a87d11b910086451))
+* **race-condition:** mark as side effect free and lower rxjs requirements ([1e13668](https://github.com/RicardoJBarrios/kuoki/commit/1e136685ab5e990bdef2f358f62d47d2b84c2250))
+
+
+
 ## [1.0.1](https://github.com/RicardoJBarrios/kuoki/compare/race-condition-v1.0.0...race-condition-v1.0.1) (2022-06-04)
 
 
