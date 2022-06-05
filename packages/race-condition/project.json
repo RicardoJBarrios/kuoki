@@ -27,7 +27,7 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "./packages/environment/",
+            "input": "./packages/race-condition/",
             "output": "."
           }
         ]

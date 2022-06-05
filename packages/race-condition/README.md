@@ -20,7 +20,7 @@
 
 ## About The Project
 
-The usual way to avoid race conditions in RxJS is to use `switchMap`, but this method is quite cumbersome and doesn't prevent unnecessary calls. This class allows to manage this problem in a simpler way and avoiding unnecessary calls.
+The usual way to avoid race conditions in RxJS is to use `switchMap`.
 
 ```ts
 import { HttpCLient, Params } from '...';
@@ -43,6 +43,8 @@ class TestClass {
 }
 ```
 
+This method is quite cumbersome and doesn't prevent unnecessary calls. This library allows to manage this problem in a simpler way, avoiding unnecessary calls.
+
 ## Getting Started
 
 ### Installation
@@ -61,7 +63,7 @@ yarn add @kuoki/race-condition
 
 Dependencies
 
-- [rxjs](https://rxjs.dev) >= 7.0.0
+- [rxjs](https://rxjs.dev) >= 6.0.0
 
 ## Usage
 
