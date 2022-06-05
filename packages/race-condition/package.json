@@ -20,10 +20,11 @@
     "directory": "packages/race-condition"
   },
   "peerDependencies": {
-    "rxjs": ">=7.0.0"
+    "rxjs": ">=6.0.0"
   },
   "dependencies": {
     "lodash-es": ">=4.0.0"
   },
+  "sideEffects": false,
   "private": false
 }
