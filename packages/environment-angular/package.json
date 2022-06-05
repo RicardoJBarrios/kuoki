@@ -33,5 +33,6 @@
   "devDependencies": {
     "ts-essentials": ">=9.1.0"
   },
+  "sideEffects": false,
   "private": false
 }
