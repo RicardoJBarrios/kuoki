@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.0...environment-angular-v1.0.1) (2022-06-05)
+
+
+### Bug Fixes
+
+* **environment-angular:** mark as side effect free ([cf7b882](https://github.com/RicardoJBarrios/kuoki/commit/cf7b882a61f641bce013f95cc53df049f603312f))
+
+
+
 # [1.0.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v0.3.1...environment-angular-v1.0.0) (2022-05-25)
 
 
