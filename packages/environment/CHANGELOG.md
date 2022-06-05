@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.2](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.2.1...environment-v1.2.2) (2022-06-05)
+
+
+### Bug Fixes
+
+* **environment:** mark as side effect free ([70490c3](https://github.com/RicardoJBarrios/kuoki/commit/70490c35762c5e5c7a404208714ba8310bb43ff3))
+
+
+
 ## [1.2.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.2.0...environment-v1.2.1) (2022-06-04)
 
 
