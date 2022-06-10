@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash-es';
+import { isEqual, isPlainObject } from 'lodash-es';
 import {
   BehaviorSubject,
   catchError,
@@ -10,6 +10,7 @@ import {
   map,
   merge,
   Observable,
+  ObservableInput,
   of,
   ReplaySubject,
   take,
@@ -115,8 +116,9 @@ export class DefaultEnvironmentLoader implements EnvironmentLoader {
     return sources.map((source: LoaderSource) => {
       return defer(() => {
         lifecycleHook(this, 'onBeforeSourceLoad', source);
+        const load = source.load();
 
-        return source.load();
+        return (isPlainObject(load) ? [load] : load) as ObservableInput<EnvironmentState>;
       }).pipe(
         catchError(<E>(error: E) => this.checkErrorHandler(error, source)),
         tap((properties: EnvironmentState) => lifecycleHook(this, 'onBeforeSourceAdd', properties, source)),

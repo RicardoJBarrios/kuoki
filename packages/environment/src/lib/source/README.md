@@ -189,6 +189,7 @@ loader.load(); // resolves at 0ms
 const source1 = { load: () => Promise.resolve({ a: 0 }) };
 const source2 = { load: () => of({ a: 0 }) };
 const source3 = { load: () => [{ a: 0 }] };
+const source4 = { load: () => ({ a: 0 }) };
 ```
 
 ### mapFn()

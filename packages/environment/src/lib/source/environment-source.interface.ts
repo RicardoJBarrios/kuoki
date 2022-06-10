@@ -50,9 +50,9 @@ export abstract class EnvironmentSource {
   path?: Path;
 
   /**
-   * Asynchronously loads the environment properties from the source.
+   * Loads the environment properties from the source.
    */
-  abstract load(): ObservableInput<EnvironmentState>;
+  abstract load(): EnvironmentState | ObservableInput<EnvironmentState>;
 
   /**
    * A function to map the value returned by `load()` before store it.

@@ -429,4 +429,58 @@ describe('EnvironmentSource integration with EnvironmentLoader', () => {
       await expect(loader.load()).rejects.toThrow(`The environment source "a" failed to load: new`);
     });
   });
+
+  describe('load() returned types', () => {
+    it(`supports Promise`, async () => {
+      const state: EnvironmentState = { a: 0 };
+      const source: EnvironmentSource = {
+        load: () => Promise.resolve(state)
+      };
+      loader = createEnvironmentLoader(service, source);
+      loader.load().then(() => load());
+
+      await clock.runAllAsync();
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.add).toHaveBeenNthCalledWith(1, state, undefined);
+    });
+
+    it(`supports Observable`, async () => {
+      const state: EnvironmentState = { a: 0 };
+      const source: EnvironmentSource = {
+        load: () => of(state)
+      };
+      loader = createEnvironmentLoader(service, source);
+      loader.load().then(() => load());
+
+      await clock.runAllAsync();
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.add).toHaveBeenNthCalledWith(1, state, undefined);
+    });
+
+    it(`supports Array`, async () => {
+      const state: EnvironmentState = { a: 0 };
+      const source: EnvironmentSource = {
+        load: () => [state]
+      };
+      loader = createEnvironmentLoader(service, source);
+      loader.load().then(() => load());
+
+      await clock.runAllAsync();
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.add).toHaveBeenNthCalledWith(1, state, undefined);
+    });
+
+    it(`supports EnvironmentState`, async () => {
+      const state: EnvironmentState = { a: 0 };
+      const source: EnvironmentSource = {
+        load: () => state
+      };
+      loader = createEnvironmentLoader(service, source);
+      loader.load().then(() => load());
+
+      await clock.runAllAsync();
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(service.add).toHaveBeenNthCalledWith(1, state, undefined);
+    });
+  });
 });
