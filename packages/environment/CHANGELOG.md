@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.3.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.2.2...environment-v1.3.0) (2022-06-10)
+
+
+### Features
+
+* **environment:** allow return simple EnvironmentState on load() ([e540cee](https://github.com/RicardoJBarrios/kuoki/commit/e540cee66475d9fcfcac3bdc2916f9beb5195ee5))
+
+
+
 ## [1.2.2](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.2.1...environment-v1.2.2) (2022-06-05)
 
 
