@@ -53,8 +53,7 @@ import { Component, Injectable, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { EnvironmentQuery, EnvironmentSource, EnvironmentState, filterNil } from '@kuoki/environment';
 import { EnvironmentModule } from '@kuoki/environment-angular';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, switchMap, take } from 'rxjs';
 
 import { environment } from './../environments/environment';
 
@@ -71,15 +70,13 @@ export class AppComponent {
 class AngularEnvironmentSource implements EnvironmentSource {
   isRequired = true;
 
-  load(): EnvironmentState[] {
-    return [environment];
+  load(): EnvironmentState {
+    return environment;
   }
 }
 
 @Injectable({ providedIn: 'root' })
 class LocalFileSource implements EnvironmentSource {
-  isRequired = true;
-
   constructor(protected readonly http: HttpClient) {}
 
   load(): Observable<EnvironmentState> {
@@ -96,7 +93,8 @@ class PropertiesServerSource implements EnvironmentSource {
   load(): Observable<EnvironmentState> {
     return this.query.get$<string>('basePath').pipe(
       filterNil(),
-      switchMap((basePath: string) => this.http.get<EnvironmentState>(`${basePath}/properties/myapp`))
+      switchMap((basePath: string) => this.http.get<EnvironmentState>(`${basePath}/properties/myapp`)),
+      take(1)
     );
   }
 }
@@ -115,4 +113,4 @@ class PropertiesServerSource implements EnvironmentSource {
 class AppModule {}
 ```
 
-See in [Stackblitz](https://basic-kuoki-environment-angular.stackblitz.io).
+See the module in action in [Stackblitz](https://stackblitz.com/edit/basic-kuoki-environment-angular?file=src/app/app.component.ts).
