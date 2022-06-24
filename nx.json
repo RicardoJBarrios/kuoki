@@ -26,5 +26,6 @@
       "unitTestRunner": "jest"
     },
     "@nrwl/angular:component": {}
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json"
 }

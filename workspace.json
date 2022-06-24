@@ -4,5 +4,6 @@
     "environment": "packages/environment",
     "environment-angular": "packages/environment-angular",
     "race-condition": "packages/race-condition"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }
