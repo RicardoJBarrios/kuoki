@@ -11,7 +11,7 @@
         "outputPath": "dist/packages/environment",
         "entryFile": "packages/environment/src/index.ts",
         "tsConfig": "packages/environment/tsconfig.lib.json",
-        "format": ["esm", "umd"],
+        "format": ["esm", "cjs"],
         "globals": [
           {
             "global": "Rx",
