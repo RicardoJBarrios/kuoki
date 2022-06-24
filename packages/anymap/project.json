@@ -1,0 +1,68 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/anymap/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "project": "packages/anymap/package.json",
+        "outputPath": "dist/packages/anymap",
+        "entryFile": "packages/anymap/src/index.ts",
+        "tsConfig": "packages/anymap/tsconfig.lib.json",
+        "format": ["esm", "cjs"],
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "./packages/anymap/",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/anymap/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["docs/anymap/coverage/lcov-report"],
+      "options": {
+        "jestConfig": "packages/anymap/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "docs": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "npx typedoc --options packages/anymap/typedoc.json",
+          "nx test anymap --code-coverage --skip-nx-cache"
+        ],
+        "parallel": false
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "commitMessageFormat": "chore(${projectName}): release version ${version}",
+        "tagPrefix": "${projectName}-v",
+        "noVerify": true,
+        "push": true,
+        "postTargets": ["anymap:github"]
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
+      }
+    }
+  },
+  "tags": []
+}

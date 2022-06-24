@@ -1,6 +1,7 @@
 {
   "version": 2,
   "projects": {
+    "anymap": "packages/anymap",
     "environment": "packages/environment",
     "environment-angular": "packages/environment-angular",
     "race-condition": "packages/race-condition"

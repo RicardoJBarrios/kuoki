@@ -120,6 +120,7 @@
         "always",
         [
           "kuoki",
+          "anymap",
           "environment",
           "environment-angular",
           "race-condition"

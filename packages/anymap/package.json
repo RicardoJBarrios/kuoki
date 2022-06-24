@@ -1,0 +1,23 @@
+{
+  "name": "@kuoki/anymap",
+  "version": "0.0.1",
+  "description": "A helper class for testing use cases where the value is of type any",
+  "keywords": [
+    "kuoki",
+    "test",
+    "JavaScript",
+    "TypeScript"
+  ],
+  "homepage": "https://ricardojbarrios.github.io/kuoki/anymap/",
+  "bugs": {
+    "url": "https://github.com/RicardoJBarrios/kuoki/labels/anymap"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RicardoJBarrios/kuoki.git",
+    "directory": "packages/anymap"
+  },
+  "sideEffects": false,
+  "private": false
+}
