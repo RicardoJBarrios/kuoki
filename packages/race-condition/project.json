@@ -10,7 +10,7 @@
         "outputPath": "dist/packages/race-condition",
         "entryFile": "packages/race-condition/src/index.ts",
         "tsConfig": "packages/race-condition/tsconfig.lib.json",
-        "format": ["esm", "umd"],
+        "format": ["esm", "cjs"],
         "globals": [
           {
             "global": "Rx",
