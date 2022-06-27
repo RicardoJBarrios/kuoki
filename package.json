@@ -13,6 +13,7 @@
     "audit:fix": "yarn-audit-fix",
     "commit": "cz",
     "format:all": "nx format:write --all",
+    "build:all": "nx run-many --all --target=build",
     "lint:all": "nx run-many --all --target=lint",
     "test:all": "nx run-many --all --target=test",
     "nx": "nx",
