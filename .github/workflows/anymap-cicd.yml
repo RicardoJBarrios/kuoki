@@ -1,4 +1,4 @@
-name: Environment Continuous Integration and Deployment
+name: Anymap Continuous Integration and Deployment
 
 on:
   workflow_dispatch:
