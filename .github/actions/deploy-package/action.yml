@@ -11,7 +11,7 @@ runs:
   steps:
     - name: Build
       shell: bash
-      run: yarn nx build ${{ env.PROJECT_NAME }}
+      run: yarn nx build ${{ env.PROJECT_NAME }} --with-deps
     - name: Deploy in npm.js
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm_token }}
