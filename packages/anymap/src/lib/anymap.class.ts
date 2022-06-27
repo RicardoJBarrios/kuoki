@@ -2,6 +2,9 @@ import { flatten, mergeWith, uniq } from 'lodash-es';
 
 import { ANYMAP_KEYS } from './anymap.keys';
 
+/**
+ * A helper class for testing use cases where the value is of type any.
+ */
 export class Anymap {
   private _dict: Record<string, any[] | undefined> = {};
 
@@ -9,57 +12,89 @@ export class Anymap {
     this.add(ANYMAP_KEYS);
   }
 
+  /**
+   * Gets the elements of the anymap as a dictionary.
+   */
   get dict(): Record<string, any[]> {
     return this._dict as Record<string, any[]>;
   }
 
+  /**
+   * Gets all the keys of the anymap.
+   */
   get keys(): string[] {
     return Object.keys(this.dict);
   }
 
+  /**
+   * Gets all the values of the anymap.
+   */
   get values(): any[] {
     return flatten(Object.values(this.dict));
   }
 
+  /**
+   * Gets all entries of the anymap as [key, value] tuples.
+   */
   get entries(): [string, any][] {
-    return this.keys.reduce((prev: [string, any][], key: string) => {
+    return this.keys.reduce((entries: [string, any][], key: string) => {
       const values: any[] = this.dict[key];
 
       values.forEach((value: any) => {
-        prev.push([key, value]);
+        entries.push([key, value]);
       });
 
-      return prev;
+      return entries;
     }, []);
   }
 
+  /**
+   * Adds new elements to the anymap.
+   * If a key exists, adds the new value to the existing key.
+   * @param elements The elements to add.
+   * @returns The anymap with the added elements.
+   */
   add(elements: Record<string, any[]>): Anymap {
     this._dict = mergeWith({ ...this.dict }, elements, mergeWithArray);
 
     return this;
   }
 
+  /**
+   * Clears all the elements from the anymap.
+   * @returns The empty anymap.
+   */
   clear(): Anymap {
     this._dict = {};
 
     return this;
   }
 
-  includes(...keys: string[]): Anymap {
-    this._dict = keys.reduce((record: Record<string, any[]>, keyword: string) => {
-      const value: any[] | undefined = this.dict[keyword];
+  /**
+   * Returns an anymap with the provided keys.
+   * @param keys The keys to include.
+   * @returns The anymap with the provided keys.
+   */
+  include(...keys: string[]): Anymap {
+    this._dict = keys.reduce((dict: Record<string, any[]>, key: string) => {
+      const value: any[] | undefined = this.dict[key];
 
       if (value != null && value.length > 0) {
-        record[keyword] = value;
+        dict[key] = value;
       }
 
-      return record;
+      return dict;
     }, {});
 
     return this;
   }
 
-  excludes(...keys: string[]): Anymap {
+  /**
+   * Returns an anymap without the provided keys.
+   * @param keys The keys to exclude.
+   * @returns The anymap without the provided keys.
+   */
+  exclude(...keys: string[]): Anymap {
     keys.forEach((keyword: string) => {
       delete this._dict[keyword];
     });
@@ -68,9 +103,9 @@ export class Anymap {
   }
 
   /**
-   * Combines two Anymaps and returns the elements from both.
-   * @param anymap The second Anymap.
-   * @returns The elements from both Anymaps.
+   * Combines two anymaps and returns the elements from both.
+   * @param anymap The second anymap.
+   * @returns The anymap with elements from both.
    */
   union(anymap: Anymap): Anymap {
     this._dict = mergeWith({ ...this.dict }, { ...anymap.dict }, mergeWithArray);
@@ -79,34 +114,35 @@ export class Anymap {
   }
 
   /**
-   * Combines two Anymaps and returns only the elements from the first Anymap that doesn't exists in the second Anymap.
-   * @param anymap The second Anymap.
-   * @returns The elements not available in `anymap`.
+   * Combines two anymaps and returns the elements from the first that doesn't exists in the second.
+   * @param anymap The second anymap.
+   * @returns The anymap with elements not in `anymap`.
    */
   except(anymap: Anymap): Anymap {
-    this.excludes(...anymap.keys);
+    this.exclude(...anymap.keys);
 
     return this;
   }
 
   /**
-   * Combines two Anymaps and returns only the elements from the first Anymap that exists in the second Anymap.
-   * @param anymap The second Anymap.
-   * @returns The elements available in `anymap`.
+   * Combines two anymaps and returns the elements from the first that exists in the second.
+   * @param anymap The second anymap.
+   * @returns The anymap with elements in `anymap`.
    */
   intersect(anymap: Anymap): Anymap {
-    this.includes(...anymap.keys);
+    this.include(...anymap.keys);
 
     return this;
   }
 
   /**
-   * Returns the elements of an Anymap that meet the condition specified in a callback function.
+   * Filters the anymap values that meet the condition specified in a callback function.
+   * Deletes the key if all values are filtered.
    * @param predicate A function that accepts one argument.
-   * @returns The filtered Anymap.
+   * @returns The filtered anymap.
    */
   filter(predicate: (value: any) => boolean): Anymap {
-    Object.keys(this.dict).forEach((key: string) => {
+    this.keys.forEach((key: string) => {
       const filteredValues = this.dict[key].filter((value: any) => predicate(value));
 
       if (filteredValues.length > 0) {
