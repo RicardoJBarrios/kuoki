@@ -1,0 +1,48 @@
+name: Environment Continuous Integration and Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - anymap-v*
+
+env:
+  PROJECT_NAME: anymap
+
+concurrency:
+  group: ci-anymap-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    name: Generate Reports and Analyze in SonarCloud
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/sonar
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  deploy_package:
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+    name: Generate and Deploy Package
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/deploy-package
+        with:
+          npm_token: ${{ secrets.NPM_TOKEN }}
+
+  deploy_docs:
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+    name: Generate and Deploy Documentation
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/deploy-docs
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
