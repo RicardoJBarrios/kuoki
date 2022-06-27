@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.3](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.2...environment-angular-v1.0.3) (2022-06-27)
+
+
+
 ## [1.0.2](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.1...environment-angular-v1.0.2) (2022-06-10)
 
 
