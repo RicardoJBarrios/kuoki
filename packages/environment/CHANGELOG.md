@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.4.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.3.1...environment-v1.4.0) (2022-12-31)
+
+
+### Features
+
+* **environment:** add undefined to Property ([1ff269c](https://github.com/RicardoJBarrios/kuoki/commit/1ff269c9009a85b22eecba127045780f7515d308))
+
+
+
 ## [1.3.1](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.3.0...environment-v1.3.1) (2022-06-27)
 
 
