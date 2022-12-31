@@ -1,10 +1,11 @@
 {
+  "name": "anymap",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/anymap/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "project": "packages/anymap/package.json",
@@ -30,14 +31,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["docs/anymap/coverage/lcov-report"],
+      "outputs": ["{workspaceRoot}/docs/anymap/coverage/lcov-report"],
       "options": {
         "jestConfig": "packages/anymap/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "docs": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "npx typedoc --options packages/anymap/typedoc.json",

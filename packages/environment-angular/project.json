@@ -1,4 +1,5 @@
 {
+  "name": "environment-angular",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "packages/environment-angular/src",
@@ -6,7 +7,7 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/environment-angular"],
+      "outputs": ["{workspaceRoot}/dist/packages/environment-angular"],
       "dependsOn": ["environment"],
       "options": {
         "project": "packages/environment-angular/ng-package.json"
@@ -23,7 +24,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["docs/environment-angular/coverage/lcov-report"],
+      "outputs": ["{workspaceRoot}/docs/environment-angular/coverage/lcov-report"],
       "options": {
         "jestConfig": "packages/environment-angular/jest.config.ts",
         "passWithNoTests": true
@@ -37,7 +38,7 @@
       }
     },
     "docs": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "npx typedoc --options packages/environment-angular/typedoc.json",

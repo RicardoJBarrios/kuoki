@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default {
   displayName: 'race-condition',
   setupFilesAfterEnv: ['<rootDir>/test-setup.ts'],
