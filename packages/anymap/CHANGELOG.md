@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.3](https://github.com/RicardoJBarrios/kuoki/compare/anymap-v0.1.2...anymap-v0.1.3) (2023-04-11)
+
+
+
 ## [0.1.2](https://github.com/RicardoJBarrios/kuoki/compare/anymap-v0.1.1...anymap-v0.1.2) (2023-04-11)
 
 
