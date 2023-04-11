@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.7](https://github.com/RicardoJBarrios/kuoki/compare/race-condition-v1.0.6...race-condition-v1.0.7) (2023-04-11)
+
+
+
 ## [1.0.6](https://github.com/RicardoJBarrios/kuoki/compare/race-condition-v1.0.5...race-condition-v1.0.6) (2023-04-11)
 
 
