@@ -1,10 +1,10 @@
 name: Anymap Continuous Integration and Deployment
 
 on:
-  workflow_dispatch:
   push:
     tags:
-      - anymap-v*
+      - 'anymap-v*'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: anymap

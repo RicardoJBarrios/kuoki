@@ -1,10 +1,10 @@
 name: Environment Continuous Integration and Deployment
 
 on:
-  workflow_dispatch:
   push:
     tags:
-      - environment-v*
+      - 'environment-v*'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: environment
