@@ -12,6 +12,9 @@ concurrency:
   group: ci-kuoki-${{ github.ref }}-1
   cancel-in-progress: true
 
+env:
+  HUSKY: 0
+
 jobs:
   test:
     runs-on: ubuntu-latest
