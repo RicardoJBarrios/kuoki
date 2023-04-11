@@ -12,8 +12,8 @@ import {
   PathExistsError
 } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
-import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentResult } from './environment-result.type';
+import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentService } from './environment-service.interface';
 
 /**

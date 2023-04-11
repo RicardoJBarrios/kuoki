@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "@commitlint/config-conventional"
+  ],
+  "rules": {
+    "scope-enum": [
+      2,
+      "always",
+      [
+        "kuoki",
+        "anymap",
+        "environment",
+        "environment-angular",
+        "race-condition"
+      ]
+    ]
+  },
+  "prompt": {}
+}

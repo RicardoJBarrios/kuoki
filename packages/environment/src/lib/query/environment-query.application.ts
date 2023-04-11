@@ -6,9 +6,9 @@ import { DeepRequired } from 'ts-essentials';
 import { asString, AtLeastOne, delayedPromise, filterNil } from '../helpers';
 import { Path } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
-import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
-import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { EnvironmentQuery } from './environment-query.interface';
+import { EnvironmentQueryConfig } from './environment-query-config.interface';
+import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
 import { GetOptions } from './get-options.interface';
 import { GetProperty } from './get-property.type';
 

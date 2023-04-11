@@ -3,13 +3,14 @@ export default {
   displayName: 'anymap',
 
   setupFilesAfterEnv: ['<rootDir>/test-setup.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json'
-    }
-  },
+  globals: {},
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest'
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json'
+      }
+    ]
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../docs/anymap/coverage/lcov-report',

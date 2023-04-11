@@ -1,6 +1,6 @@
+import { Path } from './path.type';
 import { pathAsArray } from './path-as-array.function';
 import { pathAsString } from './path-as-string.function';
-import { Path } from './path.type';
 
 /**
  * Adds a prefix to a path.

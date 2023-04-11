@@ -1,5 +1,5 @@
-import { pathAsString } from './path-as-string.function';
 import { Path } from './path.type';
+import { pathAsString } from './path-as-string.function';
 
 /**
  * Creates a path exists error.
