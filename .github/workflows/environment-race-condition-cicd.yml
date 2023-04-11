@@ -1,10 +1,10 @@
 name: Race Condition Continuous Integration and Deployment
 
 on:
-  workflow_dispatch:
   push:
     tags:
-      - race-condition-v*
+      - 'race-condition-v*'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: race-condition

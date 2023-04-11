@@ -1,10 +1,10 @@
 name: Environment Angular Continuous Integration and Deployment
 
 on:
-  workflow_dispatch:
   push:
     tags:
-      - environment-angular-v*
+      - 'environment-angular-v*'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: environment-angular
