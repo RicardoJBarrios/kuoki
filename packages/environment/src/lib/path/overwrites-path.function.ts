@@ -2,8 +2,8 @@ import { get } from 'lodash-es';
 
 import { EnvironmentState } from '../store';
 import { isPath } from './is-path.function';
-import { pathAsArray } from './path-as-array.function';
 import { Path } from './path.type';
+import { pathAsArray } from './path-as-array.function';
 
 /**
  * Checks is the path overwrites a value in the environment.

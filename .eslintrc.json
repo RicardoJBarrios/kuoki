@@ -5,7 +5,14 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "plugins": ["simple-import-sort", "unused-imports"],
       "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": "warn",
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
@@ -20,6 +27,13 @@
           }
         ]
       }
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
+      "rules": {}
     },
     {
       "files": ["*.ts", "*.tsx"],

@@ -8,7 +8,7 @@
     "build": {
       "executor": "@nrwl/angular:package",
       "outputs": ["{workspaceRoot}/dist/packages/environment-angular"],
-      "dependsOn": ["environment"],
+      "dependsOn": [{ "projects": "dependencies", "target": "build" }],
       "options": {
         "project": "packages/environment-angular/ng-package.json"
       },

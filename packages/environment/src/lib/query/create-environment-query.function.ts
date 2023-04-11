@@ -1,7 +1,7 @@
 import { EnvironmentStore } from '../store';
-import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { DefaultEnvironmentQuery } from './environment-query.application';
 import { EnvironmentQuery } from './environment-query.interface';
+import { EnvironmentQueryConfig } from './environment-query-config.interface';
 
 /**
  * Creates a default environment query instance.

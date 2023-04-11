@@ -2,8 +2,8 @@ import { ArrayOrSingle } from 'ts-essentials';
 
 import { EnvironmentSource } from '../source';
 import { DuplicatedSourcesError } from './duplicated-sources.error';
-import { loaderSourceFactory } from './loader-source-factory.function';
 import { LoaderSource } from './loader-source.type';
+import { loaderSourceFactory } from './loader-source-factory.function';
 
 /**
  * Converts a set of sources to loader sources.

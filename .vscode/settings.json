@@ -18,10 +18,6 @@
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "files.eol": "\n",
-  "typescriptHero.imports.multiLineWrapThreshold": 120,
-  "typescriptHero.imports.organizeOnSave": true,
-  "typescriptHero.imports.multiLineTrailingComma": false,
-  "typescriptHero.imports.grouping": ["Plains", "Modules", "Workspace"],
   "sonarlint.analyzerProperties": {
     "sonar.typescript.exclusions": "**/*.spec.ts,**/test-setup.ts"
   },

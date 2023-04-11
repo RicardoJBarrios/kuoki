@@ -1,12 +1,10 @@
-import fetch, { enableFetchMocks } from 'jest-fetch-mock';
+import fetch, { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock';
 import { catchError, of, throwError } from 'rxjs';
 
 import { createEnvironmentLoader, EnvironmentLoader } from '../loader';
 import { createEnvironmentQuery, EnvironmentQuery } from '../query';
 import { createEnvironmentService, EnvironmentService } from '../service';
 import { createEnvironmentStore, EnvironmentStore } from '../store';
-
-enableFetchMocks();
 
 describe('EnvironmentSource Use Cases', () => {
   let store: EnvironmentStore;
@@ -51,7 +49,7 @@ describe('EnvironmentSource Use Cases', () => {
   });
 
   it(`Use values from other sources`, async () => {
-    fetch.once(JSON.stringify({ basePath: 'https://myapi.com/api' })).once(JSON.stringify({ a: 0 }));
+    fetch.mockOnce(JSON.stringify({ basePath: 'https://myapi.com/api' })).mockOnce(JSON.stringify({ a: 0 }));
     const source1 = {
       load: async () => fetch('env.json').then((response: Response) => response.json())
     };
