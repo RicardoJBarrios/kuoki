@@ -40,10 +40,7 @@
     "docs": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "npx typedoc --options packages/anymap/typedoc.json",
-          "nx test anymap --code-coverage --skip-nx-cache"
-        ],
+        "commands": ["npx typedoc --options packages/anymap/typedoc.json", "nx test anymap --code-coverage"],
         "parallel": false
       }
     },

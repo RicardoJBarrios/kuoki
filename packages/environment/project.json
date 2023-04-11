@@ -54,10 +54,7 @@
     "docs": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "npx typedoc --options packages/environment/typedoc.json",
-          "nx test environment --code-coverage --skip-nx-cache"
-        ],
+        "commands": ["npx typedoc --options packages/environment/typedoc.json", "nx test environment --code-coverage"],
         "parallel": false
       }
     },
