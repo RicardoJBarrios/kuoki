@@ -1,20 +1,21 @@
 name: Deploy Documentation
-description: Deploy Kuoki project Documentation
-
-inputs:
-  github_token:
-    description: GitHub Token
-    required: true
+description: Deploy project Documentation
 
 runs:
   using: composite
   steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup
+      uses: ./.github/actions/setup
+
     - name: Generate Documentation
       shell: bash
       run: yarn nx docs ${{ env.PROJECT_NAME }}
+
     - name: Deploy Documentation to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ inputs.github_token }}
+        github_token: ${{ env.GITHUB_TOKEN }}
         publish_dir: docs/${{ env.PROJECT_NAME }}
         destination_dir: ${{ env.PROJECT_NAME }}

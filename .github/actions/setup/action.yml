@@ -17,20 +17,25 @@ runs:
     - name: Checkout all commits from main
       uses: actions/checkout@v3
       with:
+        token: ${{ env.GITHUB_TOKEN }}
         fetch-depth: 0
+
     - name: Derive appropriate SHAs for base and head for `nx affected` commands
       uses: nrwl/nx-set-shas@v2
+
+    - name: Setup Git User
+      shell: bash
+      run: |
+        git config user.name "🤖 Kuoki Bot"
+        git config user.email "-"
+
     - name: Setup node.js ${{ inputs.node_version }}
       uses: actions/setup-node@v3
       with:
         cache: 'yarn'
         node-version: ${{ inputs.node_version }}
         registry-url: ${{ inputs.registry-url }}
-    - name: Setup Git User
-      shell: bash
-      run: |
-        git config user.name "Kuoki Bot"
-        git config user.email "-"
+
     - name: Install Dependencies
       shell: bash
-      run: yarn install --frozen-lockfile --prefer-offline --no-progress --non-interactive
+      run: yarn install --immutable --immutable-cache --prefer-offline --no-progress --non-interactive

@@ -14,6 +14,9 @@ concurrency:
 
 env:
   HUSKY: 0
+  GITHUB_TOKEN: ${{ secrets.GIT_BOT_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   test:
@@ -24,9 +27,12 @@ jobs:
     name: Test Affected on NodeJS ${{ matrix.node_version }}
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
           node_version: ${{ matrix.node_version }}
+
       - name: Test Affected
         run: yarn nx affected --target=test
 
@@ -35,11 +41,15 @@ jobs:
     name: Build & Lint Affected
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
-      - name: Build Affected
-        run: yarn nx affected --target=build
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
       - name: Lint Affected
         run: yarn nx affected --target=lint
+
+      - name: Build Affected
+        run: yarn nx affected --target=build
 
   version:
     needs: [test, build-lint]
@@ -47,15 +57,17 @@ jobs:
     name: Generate Affected Versions
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
       - name: Version Affected
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx nx affected --target=version --parallel=1
+
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ env.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
           force: true
           tags: true
