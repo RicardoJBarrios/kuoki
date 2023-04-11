@@ -8,6 +8,9 @@ on:
 
 env:
   PROJECT_NAME: environment
+  GITHUB_TOKEN: ${{ secrets.GIT_BOT_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 concurrency:
   group: ci-environment-${{ github.ref }}-1
@@ -18,31 +21,18 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate Reports and Analyze in SonarCloud
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
       - uses: ./.github/actions/sonar
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
 
   deploy_package:
     needs: sonarcloud
     runs-on: ubuntu-latest
     name: Generate and Deploy Package
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-package
-        with:
-          npm_token: ${{ secrets.NPM_TOKEN }}
 
   deploy_docs:
     needs: sonarcloud
     runs-on: ubuntu-latest
     name: Generate and Deploy Documentation
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
       - uses: ./.github/actions/deploy-docs
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}

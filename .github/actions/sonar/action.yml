@@ -1,13 +1,5 @@
 name: Sonar
-description: Executes a SonarCloud Analysis
-
-inputs:
-  github_token:
-    description: GitHub Token
-    required: true
-  sonar_token:
-    description: SonarCloud Token
-    required: true
+description: Executes SonarCloud Analysis
 
 runs:
   using: composite
@@ -17,18 +9,23 @@ runs:
       uses: gregoranders/nodejs-project-info@v0.0.18
       with:
         path: packages/${{ env.PROJECT_NAME }}/package.json
+
     - name: Generate Unit Tests Coverage
       shell: bash
       run: yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ env.PROJECT_NAME }} --skip-nx-cache
+
     - name: Modify lcov.info
       shell: bash
       run: sed -i 's#packages/${{ env.PROJECT_NAME }}/##g' packages/${{ env.PROJECT_NAME }}/lcov.info
+
     - name: Generate Lint Report
       shell: bash
       run: yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json --skip-nx-cache
+
     - name: Modify eslint.json
       shell: bash
       run: sed -i 's#/home/runner/work/kuoki/kuoki#/github/workspace#g' packages/${{ env.PROJECT_NAME }}/eslint.json
+
     - name: Analyze in SonarCloud
       uses: SonarSource/sonarcloud-github-action@master
       with:
@@ -36,5 +33,5 @@ runs:
         args: >
           -Dsonar.projectVersion=${{ steps.projectinfo.outputs.version }}
       env:
-        GITHUB_TOKEN: ${{ inputs.github_token }}
-        SONAR_TOKEN: ${{ inputs.sonar_token }}
+        GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
