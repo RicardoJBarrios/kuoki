@@ -42,7 +42,7 @@
       "options": {
         "commands": [
           "npx typedoc --options packages/environment-angular/typedoc.json",
-          "nx test environment-angular --code-coverage --skip-nx-cache"
+          "nx test environment-angular --code-coverage"
         ],
         "parallel": false
       }
@@ -50,7 +50,7 @@
     "version": {
       "executor": "@jscutlery/semver:version",
       "options": {
-        "commitMessageFormat": "chore(${projectName}): release version ${version}",
+        "commitMessageFormat": "chore(${projectName}): release version ${version} [skip ci]",
         "tagPrefix": "${projectName}-v",
         "noVerify": true,
         "push": true,

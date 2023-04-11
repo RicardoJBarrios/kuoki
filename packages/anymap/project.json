@@ -40,17 +40,14 @@
     "docs": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "npx typedoc --options packages/anymap/typedoc.json",
-          "nx test anymap --code-coverage --skip-nx-cache"
-        ],
+        "commands": ["npx typedoc --options packages/anymap/typedoc.json", "nx test anymap --code-coverage"],
         "parallel": false
       }
     },
     "version": {
       "executor": "@jscutlery/semver:version",
       "options": {
-        "commitMessageFormat": "chore(${projectName}): release version ${version}",
+        "commitMessageFormat": "chore(${projectName}): release version ${version} [skip ci]",
         "tagPrefix": "${projectName}-v",
         "noVerify": true,
         "push": true,
