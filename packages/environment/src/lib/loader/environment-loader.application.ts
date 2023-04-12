@@ -150,6 +150,7 @@ export class DefaultEnvironmentLoader implements EnvironmentLoader {
     return source.mapFn != null ? source.mapFn(properties) : properties;
   }
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   preAddProperties(properties: EnvironmentState, source?: LoaderSource): EnvironmentState {
     return properties;
   }

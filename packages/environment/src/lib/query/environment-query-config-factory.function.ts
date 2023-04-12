@@ -11,7 +11,8 @@ export function environmentQueryConfigFactory(
   config?: EnvironmentQueryConfig | null
 ): DeepRequired<EnvironmentQueryConfig> {
   return {
-    interpolation: config?.interpolation ?? ['{{', '}}'],
-    transpileEnvironment: config?.transpileEnvironment ?? false
+    interpolation: ['{{', '}}'],
+    transpileEnvironment: false,
+    ...config
   } as DeepRequired<EnvironmentQueryConfig>;
 }
