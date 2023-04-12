@@ -144,6 +144,15 @@ query.getAsync('b', { dueTime: 100 }); // resolves 0 at 60ms
 query.getAsync('b', { dueTime: 20 }); // resolves undefined at 20ms
 ```
 
+Throws an error if the property is required.
+
+```js
+// Environment = ^{}-{a:0}-{a:1}-{b:0}-
+query.get('z', { required: false }); // undefined
+query.get('z', { required: true }); // throws ReferenceError
+// 'The environment property "z" is not defined'
+```
+
 Transpile the returned value.
 
 ```js
