@@ -1,4 +1,4 @@
-name: Anymap Continuous Integration and Deployment
+name: Anymap Continuous Deployment
 
 on:
   push:
@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate Reports and Analyze in SonarCloud
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/sonar
 
   deploy_package:
@@ -28,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate and Deploy Package
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy-package
 
   deploy_docs:
@@ -35,4 +37,5 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate and Deploy Documentation
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy-docs

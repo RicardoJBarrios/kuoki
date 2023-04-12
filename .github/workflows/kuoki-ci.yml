@@ -63,11 +63,3 @@ jobs:
 
       - name: Version Affected
         run: npx nx affected --target=version --parallel=1
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ env.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-          force: true
-          tags: true
