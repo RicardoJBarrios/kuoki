@@ -216,7 +216,7 @@ describe('EnvironmentQuery', () => {
       const expected = m.cold('-a---b---a-|', { a: '0', b: undefined });
       jest.spyOn(store, 'getAll$').mockReturnValue(source);
 
-      m.expect(query.get$('a.a', { targetType })).toBeObservable(expected);
+      m.expect(query.get$<any>('a.a', { targetType })).toBeObservable(expected);
     })
   );
 
@@ -316,6 +316,21 @@ describe('EnvironmentQuery', () => {
     const targetType = String;
 
     expect(query.get('a.a', { targetType })).toEqual('0');
+  });
+
+  it(`get(path,{required:true}) returns environment property at path if exists`, () => {
+    expect(query.get('a.a', { required: true })).toEqual(0);
+  });
+
+  it(`get(path,{required:true}) throws error if the path cannot be resolved`, () => {
+    expect(() => query.get('a.z', { required: true })).toThrowWithMessage(
+      ReferenceError,
+      'The environment property "a.z" is not defined'
+    );
+  });
+
+  it(`get(path,{required:false}) returns undefined if the path cannot be resolved`, () => {
+    expect(query.get('a.z', { required: false })).toBeUndefined();
   });
 
   it(`get(path,{transpile}) returns the transpiled environment property at path`, () => {

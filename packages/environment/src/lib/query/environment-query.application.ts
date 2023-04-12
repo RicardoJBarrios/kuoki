@@ -9,8 +9,7 @@ import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentQuery } from './environment-query.interface';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
-import { GetOptions } from './get-options.interface';
-import { GetProperty } from './get-property.type';
+import { GetOptions, GetOptionsAsync, GetOptionsObs } from './get-options.interface';
 
 /**
  * Gets the properties from the environment.
@@ -119,19 +118,22 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     return containsList.some((contains: boolean) => contains);
   }
 
-  get$<T = Property>(path: Path, options?: GetOptions<T>): Observable<T | undefined> {
+  get$<T extends Property, K = T>(path: Path, options?: GetOptionsObs<T, K>): Observable<T | K | undefined> {
     return this.getAll$().pipe(
       map((state: EnvironmentState) => this.getProperty(state, path)),
-      map((property?: Property) => this.getDefaultValue(property, options?.defaultValue)),
-      map((property?: Property) => this.getTargetType(property, options?.targetType)),
-      map((property?: Property | T) => this.getTranspile(property, options?.transpile, options?.config)),
+      map((property?: unknown) => this.getDefaultValue(property, options?.defaultValue)),
+      map((property?: unknown) => this.getTargetType(property, options?.targetType)),
+      map((property?: unknown) => this.getTranspile(property, options?.transpile, options?.config)),
       distinctUntilChanged(isEqual)
     );
   }
 
-  getAsync<T = Property>(path: Path, options?: GetOptions<T>): Promise<T | undefined> {
-    const get$: Observable<T | undefined> = this.get$<T>(path, options).pipe(filterNil());
-    const getAsync: Promise<T | undefined> = firstValueFrom(get$);
+  getAsync<T extends Property, K = T>(
+    path: Path,
+    options?: GetOptionsAsync<T, K> & { dueTime?: number }
+  ): Promise<T | K | undefined> {
+    const get$: Observable<T | K> = this.get$<T, K>(path, options).pipe(filterNil());
+    const getAsync: Promise<T | K> = firstValueFrom(get$);
 
     if (options?.dueTime != null) {
       const dueAsync: Promise<undefined> = delayedPromise(undefined, options.dueTime);
@@ -142,42 +144,48 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     return getAsync;
   }
 
-  get<T = Property>(path: Path, options?: GetOptions<T>): T | undefined {
+  get<T extends Property, K = T>(path: Path, options?: GetOptions<T, K>): T | K | undefined {
     const state: EnvironmentState = this.getAll();
-    let property: GetProperty<T> = this.getProperty(state, path);
+    let property: unknown = this.getProperty(state, path);
 
-    property = this.getDefaultValue(property, options?.defaultValue);
-    property = this.getTargetType(property, options?.targetType);
+    property = this.getDefaultValue<T>(property, options?.defaultValue);
+    property = this.getTargetType<T, K>(property, options?.targetType);
     property = this.getTranspile(property, options?.transpile, options?.config);
 
-    return property as T;
+    if (options?.required && property === undefined) {
+      throw new ReferenceError(`The environment property "${path}" is not defined`);
+    }
+
+    return property as T | K | undefined;
   }
 
-  protected getProperty(state: EnvironmentState, path: Path): Property | undefined {
+  protected getProperty(state: EnvironmentState, path: Path): unknown {
     return get(state, path);
   }
 
-  protected getDefaultValue(property?: Property, defaultValue?: Property): Property | undefined {
-    return property === undefined && defaultValue !== undefined ? defaultValue : property;
+  protected getDefaultValue<T>(property?: unknown, defaultValue?: T): T | undefined {
+    return property === undefined && defaultValue !== undefined ? defaultValue : (property as T | undefined);
   }
 
-  protected getTargetType<T>(property?: Property, targetType?: (property: Property) => T): GetProperty<T> {
-    return property !== undefined && targetType !== undefined ? targetType(property) : property;
+  protected getTargetType<T, K>(property?: unknown, targetType?: (property?: T) => K): T | K | undefined {
+    return property !== undefined && targetType !== undefined ? targetType(property as T) : (property as T | undefined);
   }
 
   protected getTranspile<T>(
-    property?: Property | T,
+    property?: unknown,
     transpile?: EnvironmentState,
     config?: EnvironmentQueryConfig
-  ): GetProperty<T> {
-    return property !== undefined && transpile !== undefined ? this.transpile(transpile, property, config) : property;
+  ): T | undefined {
+    return property !== undefined && transpile !== undefined
+      ? (this.transpile(transpile, property, config) as T)
+      : (property as T | undefined);
   }
 
   protected transpile<T>(
     transpile: EnvironmentState,
     property?: Property | T,
     config?: EnvironmentQueryConfig
-  ): GetProperty<T> {
+  ): T | Property {
     const localConfig: DeepRequired<EnvironmentQueryConfig> = this.getLocalConfig(config);
 
     if (isString(property)) {
