@@ -47,7 +47,7 @@
     "version": {
       "executor": "@jscutlery/semver:version",
       "options": {
-        "commitMessageFormat": "chore(${projectName}): release version ${version} [skip ci]",
+        "commitMessageFormat": "chore(${projectName}): release version ${version}",
         "tagPrefix": "${projectName}-v",
         "noVerify": true,
         "push": true,

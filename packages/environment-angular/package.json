@@ -1,6 +1,6 @@
 {
   "name": "@kuoki/environment-angular",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "An Asynchronous Environment Manager for Angular Applications",
   "keywords": [
     "kuoki",
