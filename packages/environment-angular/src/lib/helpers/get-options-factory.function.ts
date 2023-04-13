@@ -7,10 +7,10 @@ export function getOptionsFactory<T extends Property, K>(options?: GetOptionsAll
   }
 
   const getOptions: Record<string, unknown> = {
-    defaultValue: options?.defaultValue,
-    targetType: options?.targetType,
-    transpile: options?.transpile,
-    config: options?.config
+    defaultValue: options.defaultValue,
+    targetType: options.targetType,
+    transpile: options.transpile,
+    config: options.config
   };
 
   if ('required' in options) {
