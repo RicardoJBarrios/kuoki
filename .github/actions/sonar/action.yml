@@ -17,7 +17,7 @@ runs:
 
     - name: Generate Unit Tests Coverage
       shell: bash
-      run: yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ env.PROJECT_NAME }}
+      run: yarn nx test ${{ env.PROJECT_NAME }} --code-coverage --coverageReporters lcov --coverageDirectory packages/${{ env.PROJECT_NAME }} --skip-nx-cache
 
     - name: Modify lcov.info
       shell: bash
@@ -25,7 +25,7 @@ runs:
 
     - name: Generate Lint Report
       shell: bash
-      run: yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json
+      run: yarn nx lint ${{ env.PROJECT_NAME }} --format json --outputFile packages/${{ env.PROJECT_NAME }}/eslint.json --skip-nx-cache
 
     - name: Modify eslint.json
       shell: bash
