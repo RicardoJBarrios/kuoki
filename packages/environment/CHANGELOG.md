@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.5.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.4.4...environment-v1.5.0) (2023-04-13)
+
+
+### Features
+
+* **environment:** add GetOptionsAll type ([f02654d](https://github.com/RicardoJBarrios/kuoki/commit/f02654d50de9d8a4a8d036078c0c8a206f46ecda))
+* **environment:** add required option to query.get ([38e86f9](https://github.com/RicardoJBarrios/kuoki/commit/38e86f9a4936d1f202550827241e21768bcaeed9))
+* **environment:** remove uneeded interface ([9735abc](https://github.com/RicardoJBarrios/kuoki/commit/9735abc7f2d255d3dba6f05d24c6ea21cc8e594c))
+
+
+
 ## [1.4.4](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.4.3...environment-v1.4.4) (2023-04-12)
 
 
