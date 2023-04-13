@@ -1,26 +1,29 @@
-import { GetOptions, GetOptionsAll, GetOptionsAsync, GetOptionsObs, Property } from '@kuoki/environment';
+import { GetOptions, GetOptionsAll, GetOptionsAsync, Property } from '@kuoki/environment';
+import { pickBy } from 'lodash-es';
 
 export function getOptionsFactory<T extends Property, K>(options?: GetOptionsAll<T, K>): GetOptionsAll<T, K> {
   if (options == null) {
-    return {} as GetOptionsObs<T, K>;
+    return {} as GetOptionsAll<T, K>;
   }
 
-  const getOptions: GetOptionsObs<T, K> = {
+  const getOptions: Record<string, unknown> = {
     defaultValue: options?.defaultValue,
     targetType: options?.targetType,
     transpile: options?.transpile,
     config: options?.config
   };
 
-  if ('dueTime' in options != null) {
-    const dueTime = (options as GetOptionsAsync<T, K>).dueTime;
-    return { ...getOptions, dueTime } as GetOptionsAsync<T, K>;
+  if ('required' in options) {
+    return defined({ ...getOptions, required: options.required }) as GetOptions<T, K>;
   }
 
-  if ('required' in options != null) {
-    const required = (options as GetOptions<T, K>).required;
-    return { ...getOptions, required } as GetOptions<T, K>;
+  if ('dueTime' in options) {
+    return defined({ ...getOptions, dueTime: options.dueTime }) as GetOptionsAsync<T, K>;
   }
 
-  return getOptions;
+  return defined(getOptions) as GetOptionsAll<T, K>;
+}
+
+function defined(obj: Record<string, unknown>): Record<string, unknown> {
+  return pickBy(obj, (v) => v !== undefined);
 }
