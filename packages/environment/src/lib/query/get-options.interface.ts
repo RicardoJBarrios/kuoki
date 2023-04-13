@@ -50,3 +50,8 @@ export interface GetOptions<T extends Property, K = T> extends GetOptionsObs<T, 
    */
   required?: boolean;
 }
+
+/**
+ * The options to get a property.
+ */
+export type GetOptionsAll<T extends Property, K = T> = GetOptionsObs<T, K> | GetOptionsAsync<T, K> | GetOptions<T, K>;
