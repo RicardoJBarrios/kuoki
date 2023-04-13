@@ -126,7 +126,11 @@
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -143,69 +147,77 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">42x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">42x</span>
-<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">27x</span>
-<span class="cline-any cline-yes">27x</span>
-<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">43x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">27x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">42x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-yes">26x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import 'reflect-metadata';
 &nbsp;
-import { GetOptions, Path, prefixPath } from '@kuoki/environment';
+import { GetOptionsAll, Path, prefixPath, Property } from '@kuoki/environment';
 import { Observable } from 'rxjs';
 import { Newable } from 'ts-essentials';
 &nbsp;
 import { getOptionsFactory } from '../helpers';
 import { ENVIRONMENT_PREFIX_METADATA_KEY } from './environment-prefix.decorator';
-import { EnvironmentValueDecoratorOptions } from './environment-value-decorator-options.type';
+import { GetOptionsDecorator } from './get-options-decorator.type';
 &nbsp;
 export type EnvironmentValueDecoratorMethodReturn&lt;T&gt; = T | Observable&lt;T | unknown&gt; | Promise&lt;T | unknown&gt; | unknown;
 &nbsp;
-export function environmentValueDecoratorFactory&lt;T&gt;(
-  getEnvironmentValueFn: (path: Path, options: GetOptions&lt;T&gt;) =&gt; EnvironmentValueDecoratorMethodReturn&lt;T&gt;,
-  path: Path,
-  options?: EnvironmentValueDecoratorOptions&lt;T&gt;
-): PropertyDecorator | MethodDecorator {
+export function environmentValueDecoratorFactory&lt;T extends Property, K = T&gt;({
+  getEnvironmentValueFn,
+  path,
+  options
+}: {
+  getEnvironmentValueFn: (path: Path, options: GetOptionsAll&lt;T, K&gt;) =&gt; EnvironmentValueDecoratorMethodReturn&lt;T&gt;;
+  path: Path;
+  options?: GetOptionsAll&lt;T, K&gt; &amp; GetOptionsDecorator;
+}): PropertyDecorator | MethodDecorator {
   return (
     target: object,
     propertyKey: PropertyKey,
@@ -234,7 +246,7 @@ export function environmentValueDecoratorFactory&lt;T&gt;(
           target.constructor
         );
         const localPath: Path = prefixDecorator != null ? prefixPath(path, prefixDecorator) : path;
-        const getOptions: GetOptions&lt;T&gt; = getOptionsFactory&lt;T, EnvironmentValueDecoratorOptions&lt;unknown&gt;&gt;(options);
+        const getOptions: GetOptionsAll&lt;T, K&gt; = getOptionsFactory&lt;T, K&gt;(options);
         value = getEnvironmentValueFn(localPath, getOptions);
 &nbsp;
         if (options?.static !== false) {
@@ -259,7 +271,7 @@ export function environmentValueDecoratorFactory&lt;T&gt;(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sat Dec 31 2022 12:49:46 GMT+0000 (Coordinated Universal Time)
+                at Thu Apr 13 2023 10:33:38 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
