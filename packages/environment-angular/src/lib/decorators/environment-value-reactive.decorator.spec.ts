@@ -40,7 +40,7 @@ describe('@EnvironmentValue$(path,options?)', () => {
     expect(spectator.service.envValue).toBeUndefined();
   });
 
-  it(`sets the environment value at path as Observable if property value is undefined`, (done) => {
+  it(`sets the environment value at path as Observable`, (done) => {
     sub = spectator.service.envValue?.subscribe((v) => {
       expect(v).toEqual(fromEnv);
       done();

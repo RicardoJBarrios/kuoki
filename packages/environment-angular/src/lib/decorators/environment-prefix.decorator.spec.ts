@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EnvironmentQuery } from '@kuoki/environment';
-import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 
 import { EnvironmentModule } from '../module';
 import { EnvironmentPrefix } from './environment-prefix.decorator';
@@ -16,9 +15,8 @@ class TetsService {
   envValue?: number;
 }
 
-describe('@EnvironmentValueAsync(path,options?)', () => {
+describe('@EnvironmentPrefix(path,options?)', () => {
   let spectator: SpectatorService<TetsService>;
-  let query: SpyObject<EnvironmentQuery>;
 
   const createService = createServiceFactory({
     service: TetsService,
@@ -27,14 +25,9 @@ describe('@EnvironmentValueAsync(path,options?)', () => {
 
   beforeEach(() => {
     spectator = createService();
-    query = spectator.inject(EnvironmentQuery);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it(`sets the environment value at path if property value is undefined`, () => {
+  it(`sets the environment value at path if property value is undefined using the environment prefix`, () => {
     expect(spectator.service.envValue).toEqual(fromEnv);
   });
 });

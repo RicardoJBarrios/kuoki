@@ -12,11 +12,13 @@ const initialState = { a: fromEnv };
 class TetsService {
   @EnvironmentValueAsync('a')
   envValue?: Promise<number>;
+
+  @EnvironmentValueAsync('b', { dueTime: 10 })
+  noValue?: Promise<number>;
 }
 
 describe('@EnvironmentValueAsync(path,options?)', () => {
   let spectator: SpectatorService<TetsService>;
-  let query: SpyObject<EnvironmentQuery>;
 
   const createService = createServiceFactory({
     service: TetsService,
@@ -25,7 +27,6 @@ describe('@EnvironmentValueAsync(path,options?)', () => {
 
   beforeEach(() => {
     spectator = createService();
-    query = spectator.inject(EnvironmentQuery);
   });
 
   afterEach(() => {
@@ -37,7 +38,11 @@ describe('@EnvironmentValueAsync(path,options?)', () => {
     expect(spectator.service.envValue).toBeUndefined();
   });
 
-  it(`sets the environment value at path as Promise if property value is undefined`, async () => {
+  it(`sets the environment value at path as Promise`, async () => {
     await expect(spectator.service.envValue).resolves.toEqual(fromEnv);
+  });
+
+  it(`sets undefined as Promise if path doesn't exist and dueTime`, async () => {
+    await expect(spectator.service.noValue).resolves.toBeUndefined();
   });
 });
