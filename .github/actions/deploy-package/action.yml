@@ -11,7 +11,7 @@ runs:
 
     - name: Build
       shell: bash
-      run: yarn nx build ${{ env.PROJECT_NAME }} --with-deps
+      run: yarn nx build ${{ env.PROJECT_NAME }}
 
     - name: Deploy in npm.js
       shell: bash
