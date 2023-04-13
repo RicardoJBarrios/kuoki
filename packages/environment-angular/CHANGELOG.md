@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.10](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.9...environment-angular-v1.0.10) (2023-04-13)
+
+
+### Bug Fixes
+
+* **environment-angular:** fix deprecated functions params ([a6dc5b9](https://github.com/RicardoJBarrios/kuoki/commit/a6dc5b9ad5386161dd54f32ca9005917a0d72260))
+
+
+
 ## [1.0.9](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.8...environment-angular-v1.0.9) (2023-04-13)
 
 
