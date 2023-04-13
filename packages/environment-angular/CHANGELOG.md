@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.9](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.8...environment-angular-v1.0.9) (2023-04-13)
+
+
+### Bug Fixes
+
+* **environment-angular:** update to use new query.get types and required ([69b8c75](https://github.com/RicardoJBarrios/kuoki/commit/69b8c75053036c992c1ff8f0e4530612b779a417))
+
+
+
 ## [1.0.8](https://github.com/RicardoJBarrios/kuoki/compare/environment-angular-v1.0.7...environment-angular-v1.0.8) (2023-04-12)
 
 
