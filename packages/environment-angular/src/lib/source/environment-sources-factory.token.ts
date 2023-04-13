@@ -1,4 +1,4 @@
-import { inject, InjectFlags, InjectionToken } from '@angular/core';
+import { inject, InjectionToken } from '@angular/core';
 import { EnvironmentSource } from '@kuoki/environment';
 import { ArrayOrSingle } from 'ts-essentials';
 
@@ -12,10 +12,9 @@ export const ENVIRONMENT_SOURCES_FACTORY: InjectionToken<EnvironmentSource[]> = 
   'ENVIRONMENT_SOURCES_FACTORY',
   {
     factory: () => {
-      const sources: ArrayOrSingle<OrProvider<EnvironmentSource>> | null = inject(
-        ENVIRONMENT_SOURCES,
-        InjectFlags.Optional
-      );
+      const sources: ArrayOrSingle<OrProvider<EnvironmentSource>> | null = inject(ENVIRONMENT_SOURCES, {
+        optional: true
+      });
 
       if (!Array.isArray(sources)) {
         return sources;
