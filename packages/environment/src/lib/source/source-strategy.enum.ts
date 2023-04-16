@@ -1,5 +1,5 @@
 /**
- * The strategy used to add the source properties to the environment.
+ * Strategy used to add the source properties to the EnvironmentState.
  */
 export enum SourceStrategy {
   /**
