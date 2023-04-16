@@ -3,10 +3,10 @@ import { DefaultEnvironmentStore } from './environment-store.application';
 import { EnvironmentStore } from './environment-store.interface';
 
 /**
- * Creates a default environment store instance.
- * @param initialState The initial environment state.
- * @returns A default environment store instance.
+ * Creates a DefaultEnvironmentStore instance.
+ * @param initialState The initial EnvironmentState.
+ * @returns A DefaultEnvironmentStore instance.
  */
-export function createEnvironmentStore(initialState?: EnvironmentState): EnvironmentStore {
+export function createEnvironmentStore(initialState: EnvironmentState = {}): EnvironmentStore {
   return new DefaultEnvironmentStore(initialState);
 }
