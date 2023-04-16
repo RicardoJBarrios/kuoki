@@ -9,6 +9,7 @@
     "./src/lib/loader/index.ts",
     "./src/lib/helpers/index.ts",
     "./src/lib/guards/index.ts",
+    "./src/lib/pipes/index.ts",
     "./src/lib/decorators/index.ts"
   ],
   "includes": "./src/lib",
@@ -17,5 +18,6 @@
   "excludeInternal": true,
   "excludePrivate": true,
   "excludeProtected": true,
+  "excludeExternals": true,
   "plugin": ["typedoc-plugin-missing-exports"]
 }
