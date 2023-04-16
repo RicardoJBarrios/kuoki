@@ -2,7 +2,6 @@ import { asString } from '../helpers';
 
 /**
  * Creates an invalid environment source error.
- * @see {@link isEnvironmentSource}
  */
 export class InvalidSourceError extends Error {
   /**
