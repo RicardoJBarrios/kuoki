@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>92/92</span>
+                <span class='fraction'>93/93</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>83/83</span>
+                <span class='fraction'>84/84</span>
             </div>
         
             
@@ -309,7 +309,11 @@
 <a name='L244'></a><a href='#L244'>244</a>
 <a name='L245'></a><a href='#L245'>245</a>
 <a name='L246'></a><a href='#L246'>246</a>
-<a name='L247'></a><a href='#L247'>247</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,6 +323,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -427,6 +432,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -560,27 +568,28 @@ import { combineLatest, firstValueFrom, MonoTypeOperatorFunction, Observable } f
 import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 import { DeepRequired } from 'ts-essentials';
 &nbsp;
-import { asString, AtLeastOne, delayedPromise, filterNil } from '../helpers';
+import { asString, AtLeastOne, delayedPromise, filterNil, NonUndefined } from '../helpers';
 import { Path } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentQuery } from './environment-query.interface';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
-import { GetOptions, GetOptionsAsync, GetOptionsObs } from './get-options.interface';
+import { EnvironmentReferenceError } from './environment-reference.error';
+import { GetOptions, GetOptionsAsync, GetOptionsReactive } from './get-options.interface';
 &nbsp;
 /**
- * Gets the properties from the environment.
+ * Gets the properties from the EnvironmentState.
  */
 export class DefaultEnvironmentQuery implements EnvironmentQuery {
   /**
-   * The configuration parameters for the environment query.
+   * Configuration parameters for EnvironmentQuery.
    */
   protected readonly config: DeepRequired&lt;EnvironmentQueryConfig&gt; = environmentQueryConfigFactory(this.queryConfig);
 &nbsp;
   /**
-   * Gets the properties from the environment store.
-   * @param store Manages the environment store.
-   * @param queryConfig Configuration parameters for the environment query.
+   * Gets the properties from the EnvironmentState.
+   * @param store The EnvironmentStore.
+   * @param queryConfig Configuration parameters for EnvironmentQuery.
    */
   constructor(
     protected readonly store: EnvironmentStore,
@@ -675,7 +684,10 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     return containsList.some((contains: boolean) =&gt; contains);
   }
 &nbsp;
-  get$&lt;T extends Property, K = T&gt;(path: Path, options?: GetOptionsObs&lt;T, K&gt;): Observable&lt;T | K | undefined&gt; {
+  get$&lt;T extends NonUndefined&lt;Property&gt;, K = T&gt;(
+    path: Path,
+    options?: GetOptionsReactive&lt;T, K&gt;
+  ): Observable&lt;T | K | undefined&gt; {
     return this.getAll$().pipe(
       map((state: EnvironmentState) =&gt; this.getProperty(state, path)),
       map((property?: unknown) =&gt; this.getDefaultValue(property, options?.defaultValue)),
@@ -685,7 +697,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     );
   }
 &nbsp;
-  getAsync&lt;T extends Property, K = T&gt;(
+  getAsync&lt;T extends NonUndefined&lt;Property&gt;, K = T&gt;(
     path: Path,
     options?: GetOptionsAsync&lt;T, K&gt; &amp; { dueTime?: number }
   ): Promise&lt;T | K | undefined&gt; {
@@ -701,7 +713,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     return getAsync;
   }
 &nbsp;
-  get&lt;T extends Property, K = T&gt;(path: Path, options?: GetOptions&lt;T, K&gt;): T | K | undefined {
+  get&lt;T extends NonUndefined&lt;Property&gt;, K = T&gt;(path: Path, options?: GetOptions&lt;T, K&gt;): T | K | undefined {
     const state: EnvironmentState = this.getAll();
     let property: unknown = this.getProperty(state, path);
 &nbsp;
@@ -710,7 +722,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     property = this.getTranspile(property, options?.transpile, options?.config);
 &nbsp;
     if (options?.required &amp;&amp; property === undefined) {
-      throw new ReferenceError(`The environment property "${path}" is not defined`);
+      throw new EnvironmentReferenceError(path);
     }
 &nbsp;
     return property as T | K | undefined;
@@ -808,7 +820,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Thu Apr 13 2023 10:31:44 GMT+0000 (Coordinated Universal Time)
+                at Mon Apr 17 2023 21:44:00 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
