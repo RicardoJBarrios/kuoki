@@ -3,22 +3,22 @@
  */
 export enum EnvironmentResultCode {
   /**
-   * The environment property have been updated.
+   * The EnvironmentState property have been updated.
    */
   'UPDATED' = 200,
 
   /**
-   * The environment property have been created.
+   * The EnvironmentState property have been created.
    */
   'CREATED' = 201,
 
   /**
-   * The environment property have been deleted.
+   * The EnvironmentState property have been deleted.
    */
   'DELETED' = 204,
 
   /**
-   * The environment state have been resetted.
+   * The EnvironmentState have been resetted.
    */
   'RESET' = 205,
 

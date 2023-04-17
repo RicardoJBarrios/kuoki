@@ -1,8 +1,10 @@
 # Environment Service
 
-> Sets the environment properties in the store.
+> Sets the EnvironmentState properties.
 
-An environment service is an interface that must be implemented to mutate the environment store. Can be integrated into any application using the provided default implementation or a custom one. Each method returns an `EnvironmentResult` to make it easy to develop these customizations.
+This service is responsible for mutating the EnvironmentState values. It is normally only needed for the load operation, and should not be exposed to the rest of the application unless for functional reasons the properties can be mutated at runtime. Each method returns an `EnvironmentResult` to make it easy to develop customizations.
+
+EnvironmentService is an interface that must be implemented to mutate the environment store. Can be integrated into any application using the provided default implementation or a custom one.
 
 ```ts
 import { EnvironmentService } from '@kuoki/environment';
@@ -32,7 +34,7 @@ const environmentStore: EnvironmentStore = createEnvironmentStore();
 const environmentService: EnvironmentService = createEnvironmentService(environmentStore);
 ```
 
-1. The newable class.
+2. The newable class.
 
 ```js
 import {
@@ -46,7 +48,7 @@ const environmentStore: EnvironmentStore = new DefaultEnvironmentStore();
 const environmentService: EnvironmentService = new DefaultEnvironmentService(environmentStore);
 ```
 
-1. A class that extends `DefaultEnvironmentService`.
+3. A class that extends `DefaultEnvironmentService`.
 
 ```ts
 import { DefaultEnvironmentService, EnvironmentStore } from '@kuoki/environment';
@@ -84,6 +86,8 @@ Below are examples of the expected behavior and some custom implementation examp
 
 ### reset
 
+Resets the initial EnvironmentState to the provided one.
+
 ```js
 // EnvironmentState = {a:0}
 environmentService.reset(); // {code:205}
@@ -91,6 +95,8 @@ environmentService.reset(); // {code:205}
 ```
 
 ### create
+
+Creates a single new property in the EnvironmentState and returns an error if the path exists or the operation cannot complete.
 
 ```js
 // EnvironmentState = {}
@@ -110,6 +116,8 @@ environmentService.create('a', 1);
 
 ### update
 
+Updates a single property from the EnvironmentState and returns an error if the path does not exist or the operation cannot be completed.
+
 ```js
 // EnvironmentState = {a:0}
 environmentService.update('a', 1);
@@ -127,6 +135,8 @@ environmentService.update('b', 1);
 ```
 
 ### upsert
+
+Creates or updates a single property from the EnvironmentState and returns an error if the operation cannot be completed.
 
 ```js
 // EnvironmentState = {a:0}
@@ -146,6 +156,8 @@ environmentService.upsert('2a', 0);
 
 ### delete
 
+Deletes a single property from the EnvironmentState and returns an error if the path does not exist or the operation cannot be completed.
+
 ```js
 // EnvironmentState = {a:0, b:1}
 environmentService.delete('a');
@@ -163,6 +175,8 @@ environmentService.delete('a');
 ```
 
 ### add
+
+Adds a set of properties to the EnvironmentState overwriting the existing ones.
 
 ```js
 // EnvironmentState = {a:{a:0}}
@@ -186,6 +200,8 @@ environmentService.add({ a: 1 }, '2a');
 
 ### addPreserving
 
+Adds a set of properties to the EnvironmentState preserving the existing ones.
+
 ```js
 // EnvironmentState = {a:{a:0}
 environmentService.addPreserving({ a: 1 });
@@ -207,6 +223,8 @@ environmentService.addPreserving({ a: 1 }, '2a');
 ```
 
 ### merge
+
+Adds a set of properties to the EnvironmentState merging the values and overwriting the existing ones.
 
 ```js
 // EnvironmentState = {a:0}
@@ -234,6 +252,8 @@ environmentService.merge({ a: 1 }, '2a');
 
 ### mergePreserving
 
+Adds a set of properties to the EnvironmentState merging the values and preserving the existing ones.
+
 ```js
 // EnvironmentState = {a:0}
 environmentService.mergePreserving({ a: 1 });
@@ -259,6 +279,8 @@ environmentService.mergePreserving({ a: 1 }, '2a');
 ```
 
 ### Log actions
+
+An example implementation that overrides all methods to provide a log of the actions.
 
 ```ts
 import {
