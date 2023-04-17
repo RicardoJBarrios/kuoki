@@ -72,7 +72,7 @@ Below are examples of the expected behavior and some custom implementation examp
 
 ### getAll$
 
-Returns the values ​​of all properties asynchronously, emitting an Observable each time it changes.
+Returns the values ​​of all properties in the EnvironmentState asynchronously, emitting an Observable each time it changes.
 
 ```js
 // EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
@@ -81,7 +81,7 @@ environmentStore.getAll$(); // ^{a:0}-{a:0}-{a:0,b:0}-
 
 ### getAll
 
-Returns the values ​​of all the properties synchronously, the state that exists at that moment.
+Returns the values ​​of all the propertiesin the EnvironmentState synchronously, the one that exists at that moment.
 
 ```js
 // EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
@@ -110,7 +110,7 @@ environmentStore.update({ b: 0 });
 
 ### reset
 
-Resets the initial environment state to the provided one.
+Resets the initial EnvironmentState to the provided one.
 
 ```js
 // EnvironmentState = {a:0}
