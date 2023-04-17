@@ -9,3 +9,4 @@ export * from './delayed-promise.function';
 export * from './filter-nil.operator';
 export * from './if-defined.function';
 export * from './mutable.function';
+export * from './non-undefined-type';

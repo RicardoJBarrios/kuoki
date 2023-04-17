@@ -20,7 +20,7 @@
 
 ## About The Project
 
-This library provides wrappers for managing environment properties in Angular applications using the [`@kuoki/environment`](https://ricardojbarrios.github.io/kuoki/environment/) library, as well as additional tools such as decorators and guards.
+This library provides wrappers for managing environment properties in Angular applications using the [`@kuoki/environment`](https://ricardojbarrios.github.io/kuoki/environment/) library, as well as additional tools such as decorators, pipes and guards.
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ Dependencies
 
 - [Angular](https://angular.io) >= 13
 - [rxjs](https://rxjs.dev) >= 7.0.0
-- [@kuoki/environment](https://ricardojbarrios.github.io/kuoki/environment) >= 1.1.0
+- [@kuoki/environment](https://ricardojbarrios.github.io/kuoki/environment) >= 1.5.0
 
 ## Usage
 

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { GetOptionsAll, Path, prefixPath, Property } from '@kuoki/environment';
+import { GetOptionsAll, NonUndefined, Path, prefixPath, Property } from '@kuoki/environment';
 import { Observable } from 'rxjs';
 import { Newable } from 'ts-essentials';
 
@@ -10,7 +10,7 @@ import { GetOptionsDecorator } from './get-options-decorator.type';
 
 export type EnvironmentValueDecoratorMethodReturn<T> = T | Observable<T | unknown> | Promise<T | unknown> | unknown;
 
-export function environmentValueDecoratorFactory<T extends Property, K = T>({
+export function environmentValueDecoratorFactory<T extends NonUndefined<Property>, K = T>({
   getEnvironmentValueFn,
   path,
   options

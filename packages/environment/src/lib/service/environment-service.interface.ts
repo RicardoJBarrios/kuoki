@@ -3,23 +3,23 @@ import { EnvironmentState, Property } from '../store';
 import { EnvironmentResult } from './environment-result.type';
 
 /**
- * Sets the environment properties in the store.
+ * Sets the EnvironmentState properties.
  */
 export abstract class EnvironmentService {
   /**
-   * Resets the environment to the initial state.
-   * @returns The operation result with the code:
+   * Resets the EnvironmentState to the initial state.
+   * @returns EnvironmentResult with the code:
    * - 205 Store resetted
    * - 460 Store error
    */
   abstract reset(): EnvironmentResult;
 
   /**
-   * Creates a new property in the environment and sets the value.
+   * Creates a new property in the EnvironmentState and sets the value.
    * Ignores the action if property path already exists or is an invalid path.
-   * @param path The path of the property to create.
+   * @param path The EnvironmentState path to create.
    * @param value The value of the property.
-   * @returns The operation result with the code:
+   * @returns EnvironmentResult with the code:
    * - 201 Property created
    * - 400 Invalid path
    * - 422 Property path already exists
@@ -28,11 +28,11 @@ export abstract class EnvironmentService {
   abstract create(path: Path, value: Property): EnvironmentResult;
 
   /**
-   * Updates the value of a property in the environment.
+   * Updates the value of a property in the EnvironmentState.
    * Ignores the action if property doesn't exist or is an invalid path.
-   * @param path The path of the property to update.
+   * @param path The EnvironmentState path to update.
    * @param value The value of the property.
-   * @returns The operation result with the code:
+   * @returns EnvironmentResult with the code:
    * - 200 Property updated
    * - 400 Invalid path
    * - 422 Property doesn't exist
@@ -41,11 +41,11 @@ export abstract class EnvironmentService {
   abstract update(path: Path, value: Property): EnvironmentResult;
 
   /**
-   * Updates or creates the value of a property in the environment.
+   * Updates or creates the value of a property in the EnvironmentState.
    * Ignores the action if is an invalid path.
-   * @param path The path of the property to upsert.
+   * @param path The EnvironmentState path to upsert.
    * @param value The value of the property.
-   * @returns The operation result with the code:
+   * @returns EnvironmentResult with the code:
    * - 201 Property created
    * - 200 Property updated
    * - 400 Invalid path
@@ -54,10 +54,10 @@ export abstract class EnvironmentService {
   abstract upsert(path: Path, value: Property): EnvironmentResult;
 
   /**
-   * Deletes a property from the environment.
+   * Deletes a property from the EnvironmentState.
    * Ignores the action if property doesn't exist or is an invalid path.
-   * @param path The path of the property to delete.
-   * @returns The operation result with the code:
+   * @param path The EnvironmentState path to delete.
+   * @returns EnvironmentResult with the code:
    * - 204 Property deleted
    * - 400 Invalid path
    * - 422 Property doesn't exist
@@ -66,11 +66,11 @@ export abstract class EnvironmentService {
   abstract delete(path: Path): EnvironmentResult;
 
   /**
-   * Adds properties to the environment overwriting the existing ones.
+   * Adds properties to the EnvironmentState overwriting the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to add.
-   * @param path The path of the properties to add.
-   * @returns The operation result with the code:
+   * @param path The EnvironmentState path to add.
+   * @returns EnvironmentResult with the code:
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
@@ -78,11 +78,11 @@ export abstract class EnvironmentService {
   abstract add(properties: EnvironmentState, path?: Path): EnvironmentResult;
 
   /**
-   * Adds properties to the environment preserving the existing ones.
+   * Adds properties to the EnvironmentState preserving the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to add.
-   * @param path The path of the properties to add.
-   * @returns The operation result with the code:
+   * @param path The EnvironmentState path to add.
+   * @returns EnvironmentResult with the code:
    * - 200 Properties added
    * - 400 Invalid path
    * - 460 Store error
@@ -90,11 +90,11 @@ export abstract class EnvironmentService {
   abstract addPreserving(properties: EnvironmentState, path?: Path): EnvironmentResult;
 
   /**
-   * Adds properties to the environment merging the values and overwriting the existing ones.
+   * Adds properties to the EnvironmentState merging the values and overwriting the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
-   * @param path The path of the properties to merge.
-   * @returns The operation result with the code:
+   * @param path The EnvironmentState path to merge.
+   * @returns EnvironmentResult with the code:
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error
@@ -102,11 +102,11 @@ export abstract class EnvironmentService {
   abstract merge(properties: EnvironmentState, path?: Path): EnvironmentResult;
 
   /**
-   * Adds properties to the environment merging the values and preserving the existing ones.
+   * Adds properties to the EnvironmentState merging the values and preserving the existing ones.
    * Ignores the action if is an invalid path.
    * @param properties The properties to merge.
-   * @param path The path of the properties to merge.
-   * @returns The operation result with the code:
+   * @param path The EnvironmentState path to merge.
+   * @returns EnvironmentResult with the code:
    * - 200 Properties merged
    * - 400 Invalid path
    * - 460 Store error

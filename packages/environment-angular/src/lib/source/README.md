@@ -1,6 +1,12 @@
 # Angular Environment Sources
 
-> The sources from which to get environment properties.
+> Source from which to get environment properties.
+
+An EnvironmentSource is a service from which to fetch environment variables into a browser synchronously or asynchronously. It can be a constant, a file, a browser storage, a property server, a WebSocket stream or any other type of source that the browser has access to.
+
+An application can have as many sources as it needs, and they all have access to the EnvironmentState to build calls, wait for specific properties or other sources, etc. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
+
+The EnvironmentSource is an interface that must be implemented to obtain environment properties.
 
 ## ENVIRONMENT_SOURCES
 

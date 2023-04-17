@@ -6,7 +6,7 @@ import { EnvironmentState } from '../store';
  */
 export abstract class EnvironmentLoader {
   /**
-   * Loads the environment properties from the provided asynchronous sources.
+   * Loads the properties from the provided asynchronous sources.
    * @returns A promise once the required sources are loaded.
    */
   abstract load(): Promise<void>;

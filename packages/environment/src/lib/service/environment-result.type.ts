@@ -3,7 +3,7 @@ import { Property } from '../store';
 import { EnvironmentResultCode } from './environment-result-code.enum';
 
 /**
- * An environment service operation result.
+ * EnvironmentService operation result.
  */
 export interface EnvironmentResult {
   /**

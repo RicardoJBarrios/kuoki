@@ -5,7 +5,7 @@ import { EnvironmentState } from '../store';
 import { SourceStrategy } from './source-strategy.enum';
 
 /**
- * The source from which to get environment properties.
+ * Source from which to get environment properties.
  */
 export abstract class EnvironmentSource {
   /**
@@ -40,12 +40,12 @@ export abstract class EnvironmentSource {
   ignoreError?: boolean;
 
   /**
-   * The strategy to add properties to the environment.
+   * The strategy to add properties to the EnvironmentState.
    */
   strategy?: SourceStrategy;
 
   /**
-   * The path to set the properties in the environment.
+   * The path to set the properties in the EnvironmentState.
    */
   path?: Path;
 
@@ -61,6 +61,7 @@ export abstract class EnvironmentSource {
 
   /**
    * A function to manage errors.
+   * @template E The error type.
    */
-  errorHandler?: <E>(error: E) => EnvironmentState;
+  errorHandler?: <E extends Error>(error: E) => EnvironmentState;
 }

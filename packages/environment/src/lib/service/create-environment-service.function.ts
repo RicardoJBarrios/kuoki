@@ -3,9 +3,9 @@ import { DefaultEnvironmentService } from './environment-service.application';
 import { EnvironmentService } from './environment-service.interface';
 
 /**
- * Creates a default environment service instance.
- * @param store The environment store.
- * @returns A default environment service instance.
+ * Creates a DefaultEnvironmentService instance.
+ * @param store The EnvironmentStore.
+ * @returns A DefaultEnvironmentService instance.
  */
 export function createEnvironmentService(store: EnvironmentStore): EnvironmentService {
   return new DefaultEnvironmentService(store);

@@ -44,8 +44,6 @@ export class DefaultEnvironmentLoader implements EnvironmentLoader {
    * Loads the environment properties from the provided asynchronous sources.
    * @throws InvalidSourceError if an environmnet source is invalid.
    * @throws DuplicatedSourcesError If there are sources with duplicated ids.
-   * @see {@link InvalidSourceError}
-   * @see {@link DuplicatedSourcesError}
    */
   constructor(
     protected readonly service: EnvironmentService,
@@ -120,7 +118,7 @@ export class DefaultEnvironmentLoader implements EnvironmentLoader {
 
         return (isPlainObject(load) ? [load] : load) as ObservableInput<EnvironmentState>;
       }).pipe(
-        catchError(<E>(error: E) => this.checkErrorHandler(error, source)),
+        catchError(<E extends Error>(error: E) => this.checkErrorHandler(error, source)),
         tap((properties: EnvironmentState) => lifecycleHook(this, 'onBeforeSourceAdd', properties, source)),
         map((properties: EnvironmentState) => this.checkMapFn(properties, source)),
         map((properties: EnvironmentState) => this.preAddProperties(properties, source)),
@@ -136,7 +134,7 @@ export class DefaultEnvironmentLoader implements EnvironmentLoader {
     });
   }
 
-  protected checkErrorHandler<E>(error: E, source: LoaderSource): Observable<EnvironmentState> {
+  protected checkErrorHandler<E extends Error>(error: E, source: LoaderSource): Observable<EnvironmentState> {
     if (source.errorHandler != null) {
       const state: EnvironmentState = source.errorHandler(error);
 

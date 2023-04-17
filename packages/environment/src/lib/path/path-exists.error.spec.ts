@@ -7,15 +7,19 @@ describe('PathExistsError', () => {
     error = new PathExistsError(['a', 'a']);
   });
 
-  it(`name is PathExistsError`, () => {
+  it(`#name is PathExistsError`, () => {
     expect(error.name).toEqual('PathExistsError');
   });
 
-  it(`message converts Path as string`, () => {
+  it(`#message converts Path as string`, () => {
     expect(error.message).toEqual('The path "a.a" already exists in the environment');
   });
 
-  it(`stack is defined`, () => {
+  it(`#path is stored`, () => {
+    expect(error.path).toEqual(['a', 'a']);
+  });
+
+  it(`#stack is defined`, () => {
     expect(error.stack).toBeDefined();
   });
 });

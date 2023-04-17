@@ -8,9 +8,9 @@ import { createEnvironmentStore, EnvironmentStore } from '../store';
 import { EnvironmentModule } from './environment-module.interface';
 
 /**
- * Creates an environment module with all the default implementations and starts the load of properties.
- * @param sources The sources to get environment properties.
- * @returns An environment module as Promise with all the default implementations.
+ * Creates an EnvironmentModule with all the default implementations and starts the load of properties.
+ * @param sources The list of EnvironmentSources.
+ * @returns An EnvironmentModule as Promise with all the default implementations.
  */
 export async function createEnvironmentModule(sources?: ArrayOrSingle<EnvironmentSource>): Promise<EnvironmentModule> {
   const store: EnvironmentStore = createEnvironmentStore();

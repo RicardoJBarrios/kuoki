@@ -1,8 +1,10 @@
 # Environment Store
 
-> Stores the environment properties that the application needs.
+> Stores the properties that the application needs.
 
-An environment store is an interface that must be implemented to manage the environment state. Can be integrated into any application using the provided default implementation or creating a custom one to integrate it with any state manager already used by the application.
+EnvironmentStore is a singleton service responsible for maintaining a reference to all the technical or functional properties that the application needs. It is the most important service of the library and must be implemented to manage the environment state.
+
+Can be integrated into any application using the provided default implementation or creating a custom one to integrate it with any state manager already used by the application.
 
 ```ts
 import { EnvironmentStore } from '@kuoki/environment';
@@ -27,7 +29,7 @@ const environmentStore1: EnvironmentStore = createEnvironmentStore({});
 const environmentStore2: EnvironmentStore = createEnvironmentStore({ a: 0 });
 ```
 
-1. The newable class.
+2. The newable class.
 
 ```js
 import { DefaultEnvironmentStore, EnvironmentStore } from '@kuoki/environment';
@@ -36,7 +38,7 @@ const environmentStore1: EnvironmentStore = new DefaultEnvironmentStore({});
 const environmentStore2: EnvironmentStore = new DefaultEnvironmentStore({ a: 0 });
 ```
 
-1. A class that extends `DefaultEnvironmentStore`.
+3. A class that extends `DefaultEnvironmentStore`.
 
 ```ts
 import { DefaultEnvironmentStore, EnvironmentState, EnvironmentStore } from '@kuoki/environment';
@@ -70,12 +72,16 @@ Below are examples of the expected behavior and some custom implementation examp
 
 ### getAll$
 
+Returns the values ​​of all properties in the EnvironmentState asynchronously, emitting an Observable each time it changes.
+
 ```js
 // EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
 environmentStore.getAll$(); // ^{a:0}-{a:0}-{a:0,b:0}-
 ```
 
 ### getAll
+
+Returns the values ​​of all the propertiesin the EnvironmentState synchronously, the one that exists at that moment.
 
 ```js
 // EnvironmentState = ^{a:0}-{a:0}-{a:0,b:0}-
@@ -85,7 +91,7 @@ environmentStore.getAll(); // {a:0}
 ### update
 
 It is important to ensure that **the store update is an overwrite and not a partial update**,
-as the service will manage the entire environment in the implementation,
+because the service will manage the entire environment in the implementation,
 and a partial update can cause inconsistencies.
 
 ```js
@@ -103,6 +109,8 @@ environmentStore.update({ b: 0 });
 ```
 
 ### reset
+
+Resets the initial EnvironmentState to the provided one.
 
 ```js
 // EnvironmentState = {a:0}

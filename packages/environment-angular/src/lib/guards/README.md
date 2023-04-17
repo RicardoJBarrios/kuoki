@@ -2,6 +2,8 @@
 
 > Angular guards related with the environment module.
 
+These guards allow you to manage the load of a route based on the existence or not of certain properties.
+
 ## CanActivateEnvironment
 
 Prevent path to be activated if required environment properties doesn't exist.

@@ -1,6 +1,10 @@
 # Angular Environment Decorators
 
-> Decorators to assign an environment value to an object property.
+> Decorators to assign an environment value to a property of an object.
+
+These decorators sets the property value, or getter/setter value, with the value at path from the Environment only if the original value is undefined. If the property value is defined at any moment the decorator's behavior will be ignored.
+
+To use these decorators it is not necessary to inject the [`EnvironmentQuery`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentQuery.html) service into the component. They use their own injector to get the properties.
 
 ## Use cases
 
@@ -20,6 +24,8 @@ Below are examples of the expected behavior and some implementation examples.
 
 ### @EnvironmentPrefix
 
+Sets a base path for the class used by the other decorators.
+
 ```ts
 @Injectable()
 @EnvironmentPrefix('a')
@@ -34,48 +40,161 @@ classA.a; // 0
 
 ### @EnvironmentValue
 
-This decorator uses the [`EnvironmentQuery.get(path,options?)`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentQuery.html#get) to get the value if the decorated property value its undefined.
+Gets the synchronous value at path from environment if the property, or the getter, is undefined.
+
+This decorator uses the [`EnvironmentQuery.get(Path,GetOptions?)`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentQuery.html#get) to set the value if the decorated property value its undefined.
 
 ```ts
 @Injectable()
-class ClassA {
-  @EnvironmentValue('a');
+class TestService {
+  @EnvironmentValue('a')
   a?: number;
 
-  @EnvironmentValue('a');
-  a2?: number = 1;
+  @EnvironmentValue('a')
+  b: number = 1;
 
-  @EnvironmentValue('b');
-  b?: number;
+  @EnvironmentValue('z')
+  c?: number;
 
-  @EnvironmentValue('b');
-  b2?: number = 2;
+  @EnvironmentValue('z', { defaultValue: 1 })
+  d!: number;
 
-  @EnvironmentValue('c', {defaultValue: 3, targetType: String});
-  c?: string;
+  @EnvironmentValue('a', { targetType: (v?: number) => (v ?? 0) + 1 })
+  e!: number;
 
-  @EnvironmentValue('c', {defaultValue: 3, targetType: String});
-  c2?: string = '4';
+  @EnvironmentValue('b', { transpile: { a: 0 } })
+  f?: string;
+
+  @EnvironmentValue('b', { transpile: {}, config: { transpileEnvironment: true } })
+  g?: string;
+
+  @EnvironmentValue('a', { required: true })
+  h!: number;
+
+  @EnvironmentValue('z', { required: true })
+  i!: number;
+
+  private _getter?: number = undefined;
+
+  @EnvironmentValue('a')
+  get getter(): number | undefined {
+    return this._getter;
+  }
+
+  set getter(value: number | undefined) {
+    this._getter = value;
+  }
+
+  private _setter?: number = undefined;
+
+  get setter(): number | undefined {
+    return this._setter;
+  }
+
+  @EnvironmentValue('a')
+  set setter(value: number | undefined) {
+    this._setter = value;
+  }
+
+  @EnvironmentValue('a')
+  method(): number | undefined {
+    return undefined;
+  }
 }
 
-const classA: ClassA = Injector.get(ClassA);
+const testService: TestService = inject(TestService);
 
-// Environment = {a:0}
-classA.a; // 0
-classA.a = 10;
-classA.a; // 10
-classA.a = null;
-classA.a; // null
-classA.a = undefined;
-classA.a; // 0
-classA.a2; // 1
-classA.b; // undefined
-classA.b2; // 2
-classA.c; // '3'
-classA.c2; // '4'
+// Environment = {a:0, b:'v{{a}}'};
+testService.a; // 0
+testService.b; // 1
+testService.c; // undefined
+testService.d; // 1
+testService.e; // 2
+testService.f; // 'v0'
+testService.g; // 'v0'
+testService.h; // 0
+testService.i; // throws EnvironmentReferenceError
+testService.getter; // 0
+testService.setter; // 0
+testService.method(); // undefined
 ```
 
 ### @EnvironmentValueAsync
+
+Gets the value at path from environment if the property is undefined.
+
+This decorator uses the [`EnvironmentQuery.get(Path,GetOptions?)`](https://ricardojbarrios.github.io/kuoki/environment/modules/EnvironmentQuery.html#get) to set the value if the decorated property value its undefined.
+
+```ts
+@Injectable()
+class TestService {
+  @EnvironmentValueAsync('a')
+  a?: Promise<number>;
+
+  @EnvironmentValueAsync('a')
+  b: Promise<number> = Promise.resolve(1);
+
+  @EnvironmentValueAsync('z')
+  c?: Promise<number>;
+
+  @EnvironmentValueAsync('z', { defaultValue: 1 })
+  d!: Promise<number>;
+
+  @EnvironmentValueAsync('a', { targetType: (v?: number) => (v ?? 0) + 1 })
+  e!: Promise<number>;
+
+  @EnvironmentValueAsync('b', { transpile: { a: 0 } })
+  f?: Promise<string>;
+
+  @EnvironmentValueAsync('b', { transpile: {}, config: { transpileEnvironment: true } })
+  g?: Promise<string>;
+
+  @EnvironmentValueAsync('z', { dueTime: 10 })
+  h!: Promise<number>;
+
+  private _getter?: Promise<number> = undefined;
+
+  @EnvironmentValueAsync('a')
+  get getter(): Promise<number | undefined> {
+    return this._getter;
+  }
+
+  set getter(value: Promise<number | undefined>) {
+    this._getter = value;
+  }
+
+  private _setter?: Promise<number> = undefined;
+
+  get setter(): Promise<number | undefined> {
+    return this._setter;
+  }
+
+  @EnvironmentValueAsync('a')
+  set setter(value: Promise<number | undefined>) {
+    this._setter = value;
+  }
+
+  @EnvironmentValueAsync('a')
+  method(): Promise<number> | undefined {
+    return undefined;
+  }
+}
+
+const testService: TestService = inject(TestService);
+
+// Environment = {a:0, b:'v{{a}}'};
+testService.a; // Promise 0
+testService.b; // Promise 1
+testService.c; // Promise never resolves
+testService.d; // Promise 1
+testService.e; // Promise 2
+testService.f; // Promise 'v0'
+testService.g; // Promise 'v0'
+testService.h; // Promise undefined after 10 ms
+testService.getter; // Promise 0
+testService.setter; // Promise 0
+testService.method(); // undefined
+```
 
 ### @EnvironmentValue$
 

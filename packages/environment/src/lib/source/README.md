@@ -1,8 +1,12 @@
 # Environment Source
 
-> The source from which to get environment properties.
+> Source from which to get environment properties.
 
-An environment source is an interface that must be implemented to obtain environment properties from different sources. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
+An EnvironmentSource is a service from which to fetch environment variables into a browser synchronously or asynchronously. It can be a constant, a file, a browser storage, a property server, a WebSocket stream or any other type of source that the browser has access to.
+
+An application can have as many sources as it needs, and they all have access to the EnvironmentState to build calls, wait for specific properties or other sources, etc. How these sources are resolved or how they add the properties to the environment can be defined by the source properties.
+
+The EnvironmentSource is an interface that must be implemented to obtain environment properties.
 
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';
@@ -33,6 +37,8 @@ Below are examples of the expected behavior with the default environment loader 
 </details>
 
 ### isRequired
+
+This property marks the properties loaded by the EnvironmentSource as required. So must be loaded before the application load and should stop the load if there is an error.
 
 ```js
 const source1 = {
@@ -100,6 +106,8 @@ loader.load(); // resolves at 10ms
 
 ### isOrdered
 
+Forces the checked properties to load in order, waiting for one to finish loading before starting the next.
+
 ```js
 const source1 = {
   isOrdered: true,
@@ -161,6 +169,8 @@ loader.load(); // resolves immediately
 
 ### ignoreError
 
+Ignores required source errors so that you can continue to load the application.
+
 ```js
 const source1 = {
   isRequired: true,
@@ -177,6 +187,8 @@ loader.load(); // resolves at 10ms
 
 ### path
 
+The EnvironmentState path in which to save the properties of this source.
+
 ```js
 const source1 = { path: 'a'; load: () => [{ a: 0 }] };
 loader.load(); // resolves at 0ms
@@ -184,6 +196,8 @@ loader.load(); // resolves at 0ms
 ```
 
 ### load()
+
+The method that gets the sources.
 
 ```js
 const source1 = { load: () => Promise.resolve({ a: 0 }) };
@@ -194,7 +208,7 @@ const source4 = { load: () => ({ a: 0 }) };
 
 ### mapFn()
 
-Its's executed before `EnvironmentLoader.preAddProperties()`.
+A function that's executed before `EnvironmentLoader#preAddProperties()` that allows to modify the loaded properties.
 
 ```js
 const source = {
@@ -207,7 +221,7 @@ loader.load(); // resolves at 0ms
 
 ### errorHandler()
 
-Return a default environment state on error.
+Returns an EnvironmentState on error.
 
 ```js
 const source = {
@@ -252,9 +266,7 @@ loader.load(); // rejects at 0ms
 
 ### Fallback sources
 
-Sometimes is needed to provide a fallback source if the first one fails. This can be done easily in the original
-source with the `catch` method or the `catchError` operator function.
-This condition can be chained as many times as necessary.
+Sometimes is needed to provide a fallback source if the first one fails. This can be done easily in the original source with the `catch` method or the `catchError` operator function. This condition can be chained as many times as necessary.
 
 1. Using `catch` with `Promise`.
 
@@ -267,7 +279,7 @@ const fileSource = {
 };
 ```
 
-1. Using `catchError` with `Observable`.
+2. Using `catchError` with `Observable`.
 
 ```ts
 import { EnvironmentSource, EnvironmentState } from '@kuoki/environment';

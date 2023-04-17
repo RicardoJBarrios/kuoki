@@ -6,6 +6,7 @@ import { delay } from 'rxjs/operators';
 import { DefaultEnvironmentStore, EnvironmentState, EnvironmentStore } from '../store';
 import { DefaultEnvironmentQuery } from './environment-query.application';
 import { EnvironmentQuery } from './environment-query.interface';
+import { EnvironmentReferenceError } from './environment-reference.error';
 
 const envA1 = Object.freeze({ a: Object.freeze({ a: 0 }), b: '{{a.a}}' });
 const envA2 = { a: { a: 0 }, b: '{{a.a}}' };
@@ -308,13 +309,11 @@ describe('EnvironmentQuery', () => {
 
   it(`get(path,{defaultValue}) returns the default value if the path cannot be resolved`, () => {
     const defaultValue = 1;
-
     expect(query.get('a.z', { defaultValue })).toEqual(1);
   });
 
   it(`get(path,{targetType}) returns the typed environment property at path`, () => {
     const targetType = String;
-
     expect(query.get('a.a', { targetType })).toEqual('0');
   });
 
@@ -324,7 +323,7 @@ describe('EnvironmentQuery', () => {
 
   it(`get(path,{required:true}) throws error if the path cannot be resolved`, () => {
     expect(() => query.get('a.z', { required: true })).toThrowWithMessage(
-      ReferenceError,
+      EnvironmentReferenceError,
       'The environment property "a.z" is not defined'
     );
   });

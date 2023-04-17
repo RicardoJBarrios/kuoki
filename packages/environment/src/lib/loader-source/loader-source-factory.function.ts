@@ -1,16 +1,15 @@
-import { EnvironmentSource, InvalidSourceError, isEnvironmentSource, SourceStrategy } from '../source';
+import { EnvironmentSource, InvalidEnvironmentSourceError, isEnvironmentSource, SourceStrategy } from '../source';
 import { LoaderSource } from './loader-source.type';
 
 /**
  * Converts a source to loader source.
- * @param source the source to convert.
- * @returns A loader sources.
+ * @param source The EnvironmentSource.
+ * @returns A LoaderSource.
  * @throws InvalidSourceError if an environmnet source is invalid.
- * @see {@link InvalidSourceError}
  */
 export function loaderSourceFactory(source: EnvironmentSource): LoaderSource {
   if (!isEnvironmentSource(source)) {
-    throw new InvalidSourceError(source);
+    throw new InvalidEnvironmentSourceError(source);
   }
 
   source.id = source.id ?? randomId();

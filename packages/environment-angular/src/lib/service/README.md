@@ -1,6 +1,10 @@
 # Angular Environment Service
 
-> Sets the environment properties in the store.
+> Sets the EnvironmentState properties.
+
+This service is responsible for mutating the EnvironmentState values. It is normally only needed for the load operation, and should not be exposed to the rest of the application unless for functional reasons the properties can be mutated at runtime. Each method returns an `EnvironmentResult` to make it easy to develop customizations.
+
+EnvironmentService is an interface that must be implemented to mutate the environment store. Can be integrated into any application using the provided default implementation or a custom one.
 
 ## DefaultEnvironmentService
 

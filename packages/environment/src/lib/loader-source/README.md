@@ -1,6 +1,6 @@
 # Loader Source
 
-> The source with all the default values used by the loader.
+> EnvironmentSource with all the default values used by the loader.
 
 ## Use cases
 

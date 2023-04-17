@@ -22,11 +22,10 @@ import { EnvironmentModule } from './environment.module';
 @Injectable()
 export class CustomEnvironmentStore extends DefaultEnvironmentStore {
   constructor(
-    @Optional()
     @Inject(ENVIRONMENT_INITIAL_STATE)
-    protected override readonly _initialState?: EnvironmentState
+    protected override readonly initialState: EnvironmentState
   ) {
-    super(_initialState);
+    super(initialState);
   }
 }
 

@@ -22,7 +22,7 @@
     "@angular/common": ">=13.2.0",
     "@angular/core": ">=13.2.0",
     "@angular/router": ">=13.2.0",
-    "@kuoki/environment": ">1.4.4",
+    "@kuoki/environment": ">1.5.0",
     "rxjs": ">=7.0.0"
   },
   "dependencies": {

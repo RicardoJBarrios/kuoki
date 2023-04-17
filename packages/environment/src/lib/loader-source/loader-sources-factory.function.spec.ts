@@ -1,5 +1,5 @@
-import { EnvironmentSource, InvalidSourceError, SourceStrategy } from '../source';
-import { DuplicatedSourcesError } from './duplicated-sources.error';
+import { EnvironmentSource, InvalidEnvironmentSourceError, SourceStrategy } from '../source';
+import { DuplicatedEnvironmentSourcesError } from './duplicated-environment-sources.error';
 import { LoaderSource } from './loader-source.type';
 import { loaderSourcesFactory } from './loader-sources-factory.function';
 
@@ -64,7 +64,7 @@ describe('loaderSourcesFactory(sources?)', () => {
 
   it(`throws if an environmnet source is invalid`, () => {
     const source1: any = { load: 0 };
-    const error: Error = new InvalidSourceError(source1);
+    const error: Error = new InvalidEnvironmentSourceError(source1);
 
     expect(() => loaderSourcesFactory(source1)).toThrowError(error);
   });
@@ -74,7 +74,7 @@ describe('loaderSourcesFactory(sources?)', () => {
     const source2: EnvironmentSource = { id: 'a', load: () => [{}] };
     const source3: EnvironmentSource = { id: 'b', load: () => [{}] };
     const source4: EnvironmentSource = { id: 'b', load: () => [{}] };
-    const error: Error = new DuplicatedSourcesError(['a', 'b']);
+    const error: Error = new DuplicatedEnvironmentSourcesError(['a', 'b']);
 
     expect(() => loaderSourcesFactory([source1, source2, source3, source4])).toThrowError(error);
   });

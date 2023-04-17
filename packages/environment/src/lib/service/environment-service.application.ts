@@ -17,12 +17,12 @@ import { EnvironmentResultCode } from './environment-result-code.enum';
 import { EnvironmentService } from './environment-service.interface';
 
 /**
- * Sets the environment properties in the store.
+ * Sets the EnvironmentState properties.
  */
 export class DefaultEnvironmentService implements EnvironmentService {
   /**
-   * Sets the environment properties in the store.
-   * @param store The store used by the implementation.
+   * Sets the EnvironmentState properties.
+   * @param store The EnvironmentStore.
    */
   constructor(protected readonly store: EnvironmentStore) {}
 
