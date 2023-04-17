@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - packages/**
+      - packages/*/src/**
 
 concurrency:
   group: ci-kuoki-${{ github.ref }}-1
