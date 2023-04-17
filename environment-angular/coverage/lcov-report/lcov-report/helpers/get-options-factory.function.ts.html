@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">78.94% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>15/19</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
@@ -92,48 +92,69 @@
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">75x</span>
+<span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { GetOptions, GetOptionsAll, GetOptionsAsync, Property } from '@kuoki/environment';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { GetOptions, GetOptionsAll, GetOptionsAsync, NonUndefined, Property } from '@kuoki/environment';
 import { pickBy } from 'lodash-es';
 &nbsp;
-export function getOptionsFactory&lt;T extends Property, K&gt;(options?: GetOptionsAll&lt;T, K&gt;): GetOptionsAll&lt;T, K&gt; {
+/**
+ * A factory to create the GetOptionsAll object.
+ * @param options the original GetOptionsAll.
+ * @returns A safe GetOptionsAll.
+ */
+export function getOptionsFactory&lt;T extends NonUndefined&lt;Property&gt;, K&gt;(
+  options?: GetOptionsAll&lt;T, K&gt;
+): GetOptionsAll&lt;T, K&gt; {
   if (options == null) {
     return {} as GetOptionsAll&lt;T, K&gt;;
   }
 &nbsp;
   const getOptions: Record&lt;string, unknown&gt; = {
-    defaultValue: options<span class="branch-0 cbranch-no" title="branch not covered" >?.d</span>efaultValue,
-    targetType: options<span class="branch-0 cbranch-no" title="branch not covered" >?.t</span>argetType,
-    transpile: options<span class="branch-0 cbranch-no" title="branch not covered" >?.t</span>ranspile,
-    config: options<span class="branch-0 cbranch-no" title="branch not covered" >?.c</span>onfig
+    defaultValue: options.defaultValue,
+    targetType: options.targetType,
+    transpile: options.transpile,
+    config: options.config
   };
 &nbsp;
   if ('required' in options) {
@@ -157,7 +178,7 @@ function defined(obj: Record&lt;string, unknown&gt;): Record&lt;string, unknown&
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Thu Apr 13 2023 13:07:26 GMT+0000 (Coordinated Universal Time)
+                at Mon Apr 17 2023 21:44:22 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
