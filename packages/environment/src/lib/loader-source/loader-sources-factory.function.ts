@@ -1,18 +1,16 @@
 import { ArrayOrSingle } from 'ts-essentials';
 
 import { EnvironmentSource } from '../source';
-import { DuplicatedSourcesError } from './duplicated-sources.error';
+import { DuplicatedEnvironmentSourcesError } from './duplicated-environment-sources.error';
 import { LoaderSource } from './loader-source.type';
 import { loaderSourceFactory } from './loader-source-factory.function';
 
 /**
- * Converts a set of sources to loader sources.
- * @param sources the list of sources to convert.
- * @returns A set of loader sources.
+ * Converts a set of EnvironmentSources to LoaderSource.
+ * @param sources The list of EnvironmentSources.
+ * @returns A set of LoaderSource.
  * @throws InvalidSourceError if an environmnet source is invalid.
  * @throws DuplicatedSourcesError if there are sources with duplicated ids.
- * @see {@link InvalidSourceError}
- * @see {@link DuplicatedSourcesError}
  */
 export function loaderSourcesFactory(sources?: ArrayOrSingle<EnvironmentSource> | null): LoaderSource[] {
   if (sources == null) {
@@ -35,7 +33,7 @@ function checkSourcesIdUniqueness(loaderSources: LoaderSource[]): LoaderSource[]
   const duplicated = ids.filter((item: string, index: number) => ids.indexOf(item) !== index);
 
   if (duplicated.length > 0) {
-    throw new DuplicatedSourcesError(duplicated);
+    throw new DuplicatedEnvironmentSourcesError(duplicated);
   }
 
   return loaderSources;

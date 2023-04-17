@@ -1,4 +1,4 @@
-import { EnvironmentSource, InvalidSourceError, SourceStrategy } from '../source';
+import { EnvironmentSource, InvalidEnvironmentSourceError, SourceStrategy } from '../source';
 import { loaderSourceFactory } from './loader-source-factory.function';
 import { LoaderSource } from './loader-source.type';
 
@@ -53,7 +53,7 @@ describe('loaderSourceFactory(source)', () => {
 
   it(`throws if an environmnet source is invalid`, () => {
     const source1: any = { load: 0 };
-    const error: Error = new InvalidSourceError(source1);
+    const error: Error = new InvalidEnvironmentSourceError(source1);
 
     expect(() => loaderSourceFactory(source1)).toThrowError(error);
   });
