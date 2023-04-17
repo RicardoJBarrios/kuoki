@@ -22,7 +22,7 @@ import { EnvironmentService } from './environment-service.interface';
 export class DefaultEnvironmentService implements EnvironmentService {
   /**
    * Sets the EnvironmentState properties.
-   * @param store The EnvironmentStore used by the application.
+   * @param store The EnvironmentStore.
    */
   constructor(protected readonly store: EnvironmentStore) {}
 
