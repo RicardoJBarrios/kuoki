@@ -3,27 +3,28 @@ import { combineLatest, firstValueFrom, MonoTypeOperatorFunction, Observable } f
 import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 import { DeepRequired } from 'ts-essentials';
 
-import { asString, AtLeastOne, delayedPromise, filterNil } from '../helpers';
+import { asString, AtLeastOne, delayedPromise, filterNil, NonUndefined } from '../helpers';
 import { Path } from '../path';
 import { EnvironmentState, EnvironmentStore, Property } from '../store';
 import { EnvironmentQuery } from './environment-query.interface';
 import { EnvironmentQueryConfig } from './environment-query-config.interface';
 import { environmentQueryConfigFactory } from './environment-query-config-factory.function';
-import { GetOptions, GetOptionsAsync, GetOptionsObs } from './get-options.interface';
+import { EnvironmentReferenceError } from './environment-reference.error';
+import { GetOptions, GetOptionsAsync, GetOptionsReactive } from './get-options.interface';
 
 /**
- * Gets the properties from the environment.
+ * Gets the properties from the EnvironmentState.
  */
 export class DefaultEnvironmentQuery implements EnvironmentQuery {
   /**
-   * The configuration parameters for the environment query.
+   * Configuration parameters for EnvironmentQuery.
    */
   protected readonly config: DeepRequired<EnvironmentQueryConfig> = environmentQueryConfigFactory(this.queryConfig);
 
   /**
-   * Gets the properties from the environment store.
-   * @param store Manages the environment store.
-   * @param queryConfig Configuration parameters for the environment query.
+   * Gets the properties from the EnvironmentState.
+   * @param store The EnvironmentStore.
+   * @param queryConfig Configuration parameters for EnvironmentQuery.
    */
   constructor(
     protected readonly store: EnvironmentStore,
@@ -118,7 +119,10 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     return containsList.some((contains: boolean) => contains);
   }
 
-  get$<T extends Property, K = T>(path: Path, options?: GetOptionsObs<T, K>): Observable<T | K | undefined> {
+  get$<T extends NonUndefined<Property>, K = T>(
+    path: Path,
+    options?: GetOptionsReactive<T, K>
+  ): Observable<T | K | undefined> {
     return this.getAll$().pipe(
       map((state: EnvironmentState) => this.getProperty(state, path)),
       map((property?: unknown) => this.getDefaultValue(property, options?.defaultValue)),
@@ -128,7 +132,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     );
   }
 
-  getAsync<T extends Property, K = T>(
+  getAsync<T extends NonUndefined<Property>, K = T>(
     path: Path,
     options?: GetOptionsAsync<T, K> & { dueTime?: number }
   ): Promise<T | K | undefined> {
@@ -144,7 +148,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     return getAsync;
   }
 
-  get<T extends Property, K = T>(path: Path, options?: GetOptions<T, K>): T | K | undefined {
+  get<T extends NonUndefined<Property>, K = T>(path: Path, options?: GetOptions<T, K>): T | K | undefined {
     const state: EnvironmentState = this.getAll();
     let property: unknown = this.getProperty(state, path);
 
@@ -153,7 +157,7 @@ export class DefaultEnvironmentQuery implements EnvironmentQuery {
     property = this.getTranspile(property, options?.transpile, options?.config);
 
     if (options?.required && property === undefined) {
-      throw new ReferenceError(`The environment property "${path}" is not defined`);
+      throw new EnvironmentReferenceError(path);
     }
 
     return property as T | K | undefined;

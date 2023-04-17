@@ -1,6 +1,8 @@
 # Environment Query
 
-> Gets the properties from the environment.
+> Gets the properties from the EnvironmentState.
+
+This class provides multiple ways to consume EnvironmentState properties synchronously and asynchronously, plus other options like marking properties as required, interpolating values ​​in properties, etc. Typically this will be the class that is exposed to the rest of the application to get the properties.
 
 The environment query is an interface that must be implemented to get the environment values. Can be integrated into any application using the provided default implementation or a custom one.
 
@@ -30,7 +32,7 @@ const queryConfig: EnvironmentQueryConfig = { transpileEnvironment: true, interp
 const environmentQuery2: EnvironmentQuery = createEnvironmentQuery(environmentStore, queryConfig);
 ```
 
-1. The newable class.
+2. The newable class.
 
 ```js
 import {
@@ -47,7 +49,7 @@ const queryConfig: EnvironmentQueryConfig = { transpileEnvironment: true, interp
 const environmentQuery2: EnvironmentQuery = new DefaultEnvironmentQuery(environmentStore, queryConfig);
 ```
 
-1. A class that extends `DefaultEnvironmentQuery`.
+3. A class that extends `DefaultEnvironmentQuery`.
 
 ```ts
 import { DefaultEnvironmentQuery, EnvironmentStore } from '@kuoki/environment';
@@ -79,10 +81,13 @@ const environmentQuery1: EnvironmentQuery = new CustomEnvironmentQuery(environme
     <li><a href="#containssome">containsSome</a></li>
     <li><a href="#get">get</a></li>
     <li><a href="#first-not-nil-observable">First not nil Observable</a></li>
+    <li><a href="#errors">Errors</a></li>
   </ol>
 </details>
 
 ### getAll
+
+Gets all the EnvironmentState properties.
 
 ```js
 // Environment = ^{}-{a:0}-{a:0}-{a:1}-
@@ -93,6 +98,8 @@ query.getAll(); // {}
 
 ### containsAll
 
+Checks if all the EnvironmentState property paths are available for resolution.
+
 ```js
 // Environment = ^{}-{a:0}-{a:0}-{a:1,b:0}-
 query.containsAll$('a', 'b'); // ^false-----true-
@@ -102,6 +109,8 @@ query.containsAll('a', 'b'); // false
 
 ### containsSome
 
+Checks if some EnvironmentState property paths are available for resolution.
+
 ```js
 // Environment = ^{}-{a:0}-{a:0}-{b:0}-
 query.containsSome$('a', 'c'); // ^false-true---false-
@@ -110,6 +119,8 @@ query.containsSome('a', 'c'); // false
 ```
 
 ### get
+
+Gets the EnvironmentState property value.
 
 ```js
 // Environment = ^{}-{a:0}-{a:1}-{b:0}-
@@ -144,12 +155,12 @@ query.getAsync('b', { dueTime: 100 }); // resolves 0 at 60ms
 query.getAsync('b', { dueTime: 20 }); // resolves undefined at 20ms
 ```
 
-Throws an error if the property is required.
+Throws an `EnvironmentReferenceError` if the property is required.
 
 ```js
 // Environment = ^{}-{a:0}-{a:1}-{b:0}-
 query.get('z', { required: false }); // undefined
-query.get('z', { required: true }); // throws ReferenceError
+query.get('z', { required: true }); // throws EnvironmentReferenceError
 // 'The environment property "z" is not defined'
 ```
 
@@ -230,4 +241,10 @@ if you want to get the first not nil value on a time period using RxJS observabl
 // observable = -null-undefined-0-1-2-
 query.get$('a').pipe(filterNil(), take(1), timeout(100)).subscribe(); // -----(0|)
 query.get$('a').pipe(filterNil(), take(1), timeout(2)).subscribe(); // --# TimeoutError
+```
+
+### Errors
+
+```js
+new EnvironmentReferenceError(path); // The environment property "a" is not defined
 ```
