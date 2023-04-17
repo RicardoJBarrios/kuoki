@@ -2,6 +2,40 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [2.0.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.5.0...environment-v2.0.0) (2023-04-17)
+
+
+* Feature/angular pipe (#9) ([467ad59](https://github.com/RicardoJBarrios/kuoki/commit/467ad59ea50c9ae541980ccaf080c439e6f5d764)), closes [#9](https://github.com/RicardoJBarrios/kuoki/issues/9)
+
+
+### BREAKING CHANGES
+
+* InvalidEnvironmentSourceError name change
+
+* docs(environment): update store documentation
+
+* docs(environment): update service docs
+
+* feat(environment): add EnvironmentReferenceError and update docs
+
+* docs(environment): update service documentation
+
+* feat(environment): update path errors and docs
+
+* docs(environment): update module documentation
+
+* docs(environment): update module errors
+
+* feat(environment): add DuplicatedEnvironmentSourcesError and update docs
+
+* feat(environment): add NonUndefined and update docs
+
+* feat(environment-angular): align changes in environment with angular-environment
+
+* feat(environment-angular): add pipes
+
+
+
 # [1.5.0](https://github.com/RicardoJBarrios/kuoki/compare/environment-v1.4.4...environment-v1.5.0) (2023-04-13)
 
 
