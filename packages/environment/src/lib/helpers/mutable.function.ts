@@ -10,7 +10,7 @@ import { Writable } from 'ts-essentials';
 export function mutable<T extends object>(value: T): Writable<T>;
 /**
  * Returns the value.
- * @template T The type of the value.
+ * @template T The type of the object value.
  * @param value The value.
  * @returns The value.
  */

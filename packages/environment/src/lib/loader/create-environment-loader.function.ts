@@ -7,8 +7,8 @@ import { EnvironmentLoader } from './environment-loader.interface';
 
 /**
  * Creates a default environment loader instance.
- * @param service The environment service.
- * @param sources The sources to get environment properties.
+ * @param service The EnvironmentService.
+ * @param sources The list of EnvironmentSources.
  * @returns A default environment loader instance.
  */
 export function createEnvironmentLoader(
