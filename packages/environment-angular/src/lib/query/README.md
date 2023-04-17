@@ -1,6 +1,10 @@
 # Angular Environment Query
 
-> Gets the properties from the environment.
+> Gets the properties from the EnvironmentState.
+
+This class provides multiple ways to consume EnvironmentState properties synchronously and asynchronously, plus other options like marking properties as required, interpolating values ​​in properties, etc. Typically this will be the class that is exposed to the rest of the application to get the properties.
+
+The environment query is an interface that must be implemented to get the environment values. Can be integrated into any application using the provided default implementation or a custom one.
 
 ## DefaultEnvironmentQuery
 

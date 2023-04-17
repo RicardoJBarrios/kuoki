@@ -1,7 +1,14 @@
-import { GetOptions, GetOptionsAll, GetOptionsAsync, Property } from '@kuoki/environment';
+import { GetOptions, GetOptionsAll, GetOptionsAsync, NonUndefined, Property } from '@kuoki/environment';
 import { pickBy } from 'lodash-es';
 
-export function getOptionsFactory<T extends Property, K>(options?: GetOptionsAll<T, K>): GetOptionsAll<T, K> {
+/**
+ * A factory to create the GetOptionsAll object.
+ * @param options the original GetOptionsAll.
+ * @returns A safe GetOptionsAll.
+ */
+export function getOptionsFactory<T extends NonUndefined<Property>, K>(
+  options?: GetOptionsAll<T, K>
+): GetOptionsAll<T, K> {
   if (options == null) {
     return {} as GetOptionsAll<T, K>;
   }

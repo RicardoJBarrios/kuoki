@@ -2,6 +2,10 @@
 
 > Stores the environment properties that the Angular application needs.
 
+EnvironmentStore is a singleton service responsible for maintaining a reference to all the technical or functional properties that the application needs. It is the most important service of the library and must be implemented to manage the environment state.
+
+Can be integrated into any application using the provided default implementation or creating a custom one to integrate it with any state manager already used by the application.
+
 ## DefaultEnvironmentStore
 
 A simple implementation of the `EnvironmentStore` that uses a [BehaviorSubject](https://rxjs.dev/api/index/class/BehaviorSubject) as state manager.

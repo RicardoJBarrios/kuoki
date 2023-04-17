@@ -1,35 +1,45 @@
 import { Injectable } from '@angular/core';
-import { EnvironmentService, Property } from '@kuoki/environment';
+import { EnvironmentReferenceError, EnvironmentService, Property } from '@kuoki/environment';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 
 import { EnvironmentModule } from '../module';
 import { EnvironmentValue } from './environment-value.decorator';
 
-const fromEnv = 0;
-const fromValue = 1;
-const defaultValue = '9';
-const targetType = (v: Property) => parseInt(String(v), 10);
-const getOptionsValue = 9;
-const initialState = { a: fromEnv };
+const initialState = { a: 0, b: 'v{{a}}' };
 
 @Injectable()
 class TetsService {
   @EnvironmentValue('a')
-  envValue?: number;
+  a?: number;
 
   @EnvironmentValue('a')
-  propValue?: number = fromValue;
+  b: number = 1;
 
-  @EnvironmentValue('b')
-  noEnvValue?: number;
+  @EnvironmentValue('z')
+  c?: number;
 
-  @EnvironmentValue('b', { defaultValue, targetType })
-  getOptions?: number;
+  @EnvironmentValue('z', { defaultValue: 1 })
+  d!: number;
+
+  @EnvironmentValue('a', { targetType: (v?: number) => (v ?? 0) + 1 })
+  e!: number;
+
+  @EnvironmentValue('b', { transpile: { a: 0 } })
+  f?: string;
+
+  @EnvironmentValue('b', { transpile: {}, config: { transpileEnvironment: true } })
+  g?: string;
+
+  @EnvironmentValue('a', { required: true })
+  h!: string;
+
+  @EnvironmentValue('z', { required: true })
+  i!: string;
 
   @EnvironmentValue('a', { static: false })
-  decoratorOptions?: number;
+  j?: number;
 
-  private _getter?: number;
+  private _getter?: number = undefined;
 
   @EnvironmentValue('a')
   get getter(): number | undefined {
@@ -40,7 +50,7 @@ class TetsService {
     this._getter = value;
   }
 
-  private _setter?: number;
+  private _setter?: number = undefined;
 
   get setter(): number | undefined {
     return this._setter;
@@ -69,103 +79,90 @@ describe('@EnvironmentValue(path,options?)', () => {
     spectator = createService();
   });
 
-  afterEach(() => {
+  it(`sets undefined if no EnvironmentQuery`, () => {
+    jest.spyOn(EnvironmentModule, 'query', 'get').mockReturnValue(undefined);
+    expect(spectator.service.a).toBeUndefined();
     jest.restoreAllMocks();
+  });
+
+  it(`sets the property with the environment value`, () => {
+    expect(spectator.service.a).toEqual(0);
+  });
+
+  it(`ignores environment value if property is defined`, () => {
+    expect(spectator.service.b).toEqual(1);
+  });
+
+  it(`sets undefined if no environment value`, () => {
+    expect(spectator.service.c).toBeUndefined();
+  });
+
+  it(`sets the property with defaultValue`, () => {
+    expect(spectator.service.d).toEqual(1);
+  });
+
+  it(`sets the property with targetType`, () => {
+    expect(spectator.service.e).toEqual(1);
+  });
+
+  it(`sets the property with transpile`, () => {
+    expect(spectator.service.f).toEqual('v0');
+  });
+
+  it(`sets the property with transpile`, () => {
+    expect(spectator.service.g).toEqual('v0');
+  });
+
+  it(`sets the property with required`, () => {
+    expect(spectator.service.h).toEqual(0);
+  });
+
+  it(`throws error if the path doesn't exist and required`, () => {
+    expect(() => spectator.service.i).toThrowWithMessage(
+      EnvironmentReferenceError,
+      'The environment property "z" is not defined'
+    );
+  });
+
+  it(`sets the property with static=true (default)`, () => {
+    const service = spectator.inject(EnvironmentService);
+    expect(spectator.service.a).toEqual(0);
+    service.update('a', 1);
+    expect(spectator.service.a).toEqual(0);
+  });
+
+  it(`sets the property with static=false`, () => {
+    const service = spectator.inject(EnvironmentService);
+    expect(spectator.service.j).toEqual(0);
+    service.update('a', 1);
+    expect(spectator.service.j).toEqual(1);
+  });
+
+  it(`gets the property from getter`, () => {
+    expect(spectator.service.getter).toEqual(0);
+  });
+
+  it(`gets the property from setter`, () => {
+    expect(spectator.service.setter).toEqual(0);
+  });
+
+  it(`ignores the property from method`, () => {
+    expect(spectator.service.method()).toBeUndefined();
   });
 
   it(`sets the value at instance level`, () => {
     const obj1 = new TetsService();
     const obj2 = new TetsService();
-    obj2.envValue = fromValue;
-    obj2.propValue = fromValue;
-    obj2.noEnvValue = fromValue;
-    obj2.getOptions = fromValue;
-    obj2.getter = fromValue;
-    obj2.setter = fromValue;
 
-    expect(obj1.envValue).toEqual(fromEnv);
-    expect(obj1.propValue).toEqual(fromValue);
-    expect(obj1.noEnvValue).toBeUndefined();
-    expect(obj1.getOptions).toEqual(getOptionsValue);
-    expect(obj1.getter).toEqual(fromEnv);
-    expect(obj1.setter).toEqual(fromEnv);
+    expect(obj1.a).toEqual(0);
+    expect(obj2.a).toEqual(0);
 
-    expect(obj2.envValue).toEqual(fromValue);
-    expect(obj2.propValue).toEqual(fromValue);
-    expect(obj2.noEnvValue).toEqual(fromValue);
-    expect(obj2.getOptions).toEqual(fromValue);
-    expect(obj2.getter).toEqual(fromValue);
-    expect(obj2.setter).toEqual(fromValue);
+    obj2.a = 1;
+    expect(obj1.a).toEqual(0);
+    expect(obj2.a).toEqual(1);
 
-    obj2.envValue = undefined;
-    obj2.propValue = undefined;
-    obj2.noEnvValue = undefined;
-    obj2.getOptions = undefined;
-    obj2.getter = undefined;
-    obj2.setter = undefined;
-
-    expect(obj1.envValue).toEqual(fromEnv);
-    expect(obj1.propValue).toEqual(fromValue);
-    expect(obj1.noEnvValue).toBeUndefined();
-    expect(obj1.getOptions).toEqual(getOptionsValue);
-    expect(obj1.getter).toEqual(fromEnv);
-    expect(obj1.setter).toEqual(fromEnv);
-
-    expect(obj2.envValue).toEqual(fromEnv);
-    expect(obj2.propValue).toEqual(fromEnv);
-    expect(obj2.noEnvValue).toBeUndefined();
-    expect(obj2.getOptions).toEqual(getOptionsValue);
-    expect(obj2.getter).toEqual(fromEnv);
-    expect(obj2.setter).toEqual(fromEnv);
-  });
-
-  it(`sets undefined if no EnvironmentQuery`, () => {
-    jest.spyOn(EnvironmentModule, 'query', 'get').mockReturnValue(undefined);
-    expect(spectator.service.envValue).toBeUndefined();
-  });
-
-  it(`sets the environment value at path if property value is undefined`, () => {
-    expect(spectator.service.envValue).toEqual(fromEnv);
-  });
-
-  it(`sets the environment value at path if accessor getter is undefined`, () => {
-    expect(spectator.service.getter).toEqual(fromEnv);
-    expect(spectator.service.setter).toEqual(fromEnv);
-  });
-
-  it(`do not changes the property if value is defined`, () => {
-    expect(spectator.service.propValue).toEqual(fromValue);
-  });
-
-  it(`sets the environment value at path if property is set to undefined again`, () => {
-    expect(spectator.service.propValue).toEqual(fromValue);
-    spectator.service.propValue = undefined;
-    expect(spectator.service.propValue).toEqual(fromEnv);
-  });
-
-  it(`sets undefined if path is not in environment`, () => {
-    expect(spectator.service.noEnvValue).toBeUndefined();
-  });
-
-  it(`uses GetOptions to resolve the value`, () => {
-    expect(spectator.service.getOptions).toEqual(getOptionsValue);
-  });
-
-  it(`uses {static:true} to resolve the value`, () => {
-    const service = spectator.inject(EnvironmentService);
-    expect(spectator.service.envValue).toEqual(fromEnv);
-    service.update('a', fromValue);
-    expect(spectator.service.envValue).toEqual(fromEnv);
-  });
-
-  it(`uses {static:false} to resolve the value`, () => {
-    const service = spectator.inject(EnvironmentService);
-    expect(spectator.service.decoratorOptions).toEqual(fromEnv);
-    service.update('a', fromValue);
-    expect(spectator.service.decoratorOptions).toEqual(fromValue);
-  });
-
-  it(`ignores decorated methods`, () => {
-    expect(spectator.service.method()).toBeUndefined();
+    obj2.a = undefined;
+    expect(obj1.a).toEqual(0);
+    expect(obj2.a).toEqual(0);
   });
 });
