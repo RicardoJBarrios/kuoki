@@ -38,7 +38,7 @@ describe('EnvironmentLoader', () => {
     const source2: EnvironmentSource = { id: 'a', load: () => [{}] };
     const source3: EnvironmentSource = { id: 'b', load: () => [{}] };
     const source4: EnvironmentSource = { id: 'b', load: () => [{}] };
-    const error: Error = new Error(`There are sources with duplicate id's: a, b`);
+    const error: Error = new Error(`There are environment sources with duplicate id's: a, b`);
 
     expect(() => new DefaultEnvironmentLoader(service, [source1, source2, source3, source4])).toThrowError(error);
   });
